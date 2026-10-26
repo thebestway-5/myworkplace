@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Image & PDF to Excel</title>
+
+<!-- Libraries loaded from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<style>
+:root {
+  --green:#217346;
+  --green2:#e2f0d9;
+  --line:#d5dbe1;
+  --bg:#f3f5f7;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  font-family:Arial,"Segoe UI",sans-serif;
+  color:#222;
+  background:var(--bg);
+}
+header {
+  background:var(--green);
+  color:white;
+  padding:15px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+header h1 {font-size:21px;margin:0 0 5px}
+header p {font-size:12px;margin:0;opacity:.9}
+.toolbar {
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  padding:10px;
+  background:white;
+  border-bottom:1px solid var(--line);
+}
+button,.file-label {
+  padding:9px 12px;
+  border:1px solid #c7d0d7;
+  background:white;
+  border-radius:5px;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  color:#222;
+}
+button:hover,.file-label:hover {background:#edf5ef}
+button.primary {background:var(--green);color:white;border-color:var(--green)}
+button:disabled {opacity:.5;cursor:not-allowed}
+input[type=file] {display:none}
+main {padding:14px;max-width:1800px;margin:auto}
+.upload {
+  border:2px dashed #aab8ad;
+  border-radius:9px;
+  padding:25px 12px;
+  text-align:center;
+  background:white;
+  cursor:pointer;
+}
+.upload.drag {background:#e4f4e8;border-color:var(--green)}
+.upload .emoji {font-size:35px}
+.upload h2 {font-size:18px;margin:7px}
+.upload p {font-size:13px;color:#666;margin:6px}
+.settings {
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px 18px;
+  align-items:center;
+  background:white;
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:12px;
+  margin:12px 0;
+  font-size:13px;
+}
+.settings label {display:flex;align-items:center;gap:6px}
+.settings input[type=number] {width:68px;padding:6px}
+.settings select {padding:6px;max-width:100%}
+#pageOptions {display:none}
+#status {font-size:13px;margin:12px 0;color:#333}
+.progress {height:5px;background:#ddd;border-radius:4px;overflow:hidden;margin-top:7px}
+#progressBar {height:100%;width:0;background:var(--green);transition:width .2s}
+.workspace {
+  display:grid;
+  grid-template-columns:minmax(220px,29%) minmax(0,1fr);
+  gap:12px;
+  align-items:start;
+}
+.panel {
+  background:white;
+  border:1px solid var(--line);
+  border-radius:7px;
+  overflow:hidden;
+  min-width:0;
+}
+.panel-title {
+  padding:11px;
+  background:#f8faf9;
+  border-bottom:1px solid var(--line);
+  font-size:14px;
+  font-weight:bold;
+}
+.preview-area {
+  padding:10px;
+  text-align:center;
+  min-height:150px;
+  background:#fafafa;
+}
+#preview {max-width:100%;max-height:450px;object-fit:contain}
+#pdfPreview {width:100%;height:450px;display:none}
+#emptyPreview {padding:45px 5px;color:#888;font-size:13px}
+.sheet-controls {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  align-items:center;
+  padding:8px;
+  border-bottom:1px solid var(--line);
+}
+.sheet-controls button {padding:7px 9px}
+#cellAddress {width:70px;padding:6px;border:1px solid var(--line)}
+#formulaBar {
+  width:100%;
+  padding:8px;
+  border:1px solid var(--line);
+  font-size:13px;
+}
+.sheet-info {margin-left:auto;font-size:12px;color:#555}
+
+/* Spreadsheet viewport: both scrollbars are always available */
+.sheet-viewport {
+  position:relative;
+  overflow:auto;
+  width:100%;
+  height:65vh;
+  min-height:260px;
+  max-height:850px;
+  resize:vertical;
+  background:white;
+  scrollbar-width:auto;
+  scrollbar-color:#929292 #eee;
+  overscroll-behavior:contain;
+}
+.sheet-viewport::-webkit-scrollbar {width:14px;height:14px}
+.sheet-viewport::-webkit-scrollbar-thumb {
+  background:#aaa;border:3px solid #eee;border-radius:8px
+}
+.sheet-viewport::-webkit-scrollbar-track {background:#eee}
+#sheet {
+  border-collapse:separate;
+  border-spacing:0;
+  table-layout:fixed;
+  width:max-content;
+  min-width:100%;
+  font-size:13px;
+}
+#sheet th,#sheet td {
+  border-right:1px solid #dfe3e6;
+  border-bottom:1px solid #dfe3e6;
+  height:29px;
+  padding:0;
+}
+#sheet thead th {
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:#edf0f2;
+  height:30px;
+  text-align:center;
+  font-weight:600;
+  user-select:none;
+}
+#sheet th.corner {
+  left:0;
+  z-index:8;
+  width:43px;
+  min-width:43px;
+  position:sticky;
+}
+#sheet .rowhead {
+  position:sticky;
+  left:0;
+  z-index:3;
+  background:#edf0f2;
+  text-align:center;
+  width:43px;
+  min-width:43px;
+  user-select:none;
+}
+#sheet td {position:relative;background:white}
+#sheet td.selected {outline:2px solid var(--green);outline-offset:-2px}
+.cell-input {
+  display:block;
+  border:0;
+  outline:none;
+  width:100%;
+  height:100%;
+  min-height:28px;
+  padding:5px 7px;
+  background:transparent;
+  font:inherit;
+  color:inherit;
+  white-space:nowrap;
+}
+.cell-input:focus {background:#fff;border:2px solid var(--green)}
+.cell-input.date-cell {background:#fff9df}
+.cell-input.number-cell {text-align:right}
+.resize-handle {
+  position:absolute;
+  right:-2px;
+  top:0;
+  width:7px;
+  height:100%;
+  cursor:col-resize;
+  z-index:6;
+}
+.resize-handle:hover {background:#76a98a}
+.row-resize {
+  position:absolute;
+  left:0;
+  bottom:-2px;
+  height:6px;
+  width:100%;
+  cursor:row-resize;
+  z-index:7;
+}
+.bottom-note {
+  padding:9px;
+  color:#666;
+  font-size:12px;
+  border-top:1px solid var(--line);
+}
+#progressText {font-weight:600}
+@media(max-width:850px) {
+  main {padding:8px}
+  .workspace {grid-template-columns:1fr}
+  #preview {max-height:300px}
+  #pdfPreview {height:280px}
+  .sheet-viewport {height:58vh;min-height:250px}
+  header h1 {font-size:18px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>▦ Image & PDF to Excel Pro</h1>
+    <p>OCR · PDF pages · Editable cells · Excel export</p>
+  </div>
+  <p>Works on desktop and mobile browsers</p>
+</header>
+
+<div class="toolbar">
+  <label for="fileInput" class="file-label">📂 Upload Image / PDF</label>
+  <button id="extractBtn" class="primary" disabled>✨ Extract Data</button>
+  <button id="addRowBtn">＋ Add Row</button>
+  <button id="addColBtn">＋ Add Column</button>
+  <button id="delRowBtn">− Delete Row</button>
+  <button id="delColBtn">− Delete Column</button>
+  <button id="exportBtn" class="primary">⬇ Export Excel</button>
+  <button id="csvBtn">Export CSV</button>
+  <input id="fileInput" type="file" accept="image/*,.pdf,application/pdf">
+</div>
+
+<main>
+  <div class="upload" id="dropZone" tabindex="0">
+    <div class="emoji">📄 📷</div>
+    <h2>Drop PDF or image here</h2>
+    <p>Tap to browse files, including scanned PDFs and phone photos.</p>
+    <p>PDF · PNG · JPG · JPEG · WEBP · BMP</p>
+  </div>
+
+  <div class="settings">
+    <label><input id="dates" type="checkbox" checked> Detect dates</label>
+    <label><input id="numbers" type="checkbox" checked> Detect numbers</label>
+    <label>Expected columns
+      <input id="cols" type="number" min="1" max="40" value="5">
+    </label>
+    <label>OCR language
+      <select id="lang">
+        <option value="eng">English</option>
+        <option value="eng+chi_sim">English + Chinese (Simplified)</option>
+        <option value="eng+msa">English + Malay</option>
+      </select>
+    </label>
+    <label id="pageOptions">PDF pages
+      <input id="pageStart" type="number" min="1" value="1" style="width:60px">
+      to
+      <input id="pageEnd" type="number" min="1" value="1" style="width:60px">
+    </label>
+    <label>PDF render scale
+      <select id="scale">
+        <option value="1.5">Normal</option>
+        <option value="2.5" selected>High quality</option>
+        <option value="3.5">Very high quality</option>
+      </select>
+    </label>
+  </div>
+
+  <div id="status">
+    <span id="progressText">Ready. Upload a file to start.</span>
+    <div class="progress"><div id="progressBar"></div></div>
+  </div>
+
+  <div class="workspace">
+    <section class="panel">
+      <div class="panel-title">Source Preview</div>
+      <div class="preview-area">
+        <div id="emptyPreview">No file selected</div>
+        <img id="preview" alt="Source image" hidden>
+        <canvas id="pdfPreview"></canvas>
+      </div>
+      <div class="bottom-note">
+        PDF: first page preview. The selected page range is processed during extraction.
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-title">Excel-style Spreadsheet</div>
+      <div class="sheet-controls">
+        <input id="cellAddress" value="A1" title="Cell address">
+        <button id="goCellBtn">Go to Cell</button>
+        <button id="clearBtn">Clear</button>
+        <button id="dateBtn">Format Dates</button>
+        <button id="fitBtn">Fit Columns</button>
+        <span class="sheet-info" id="sheetInfo">0 rows</span>
+        <input id="formulaBar" placeholder="Cell value / formula bar">
+      </div>
+
+      <div class="sheet-viewport" id="sheetViewport">
+        <table id="sheet"></table>
+      </div>
+
+      <div class="bottom-note">
+        Edit any cell. Drag column boundaries to resize columns and row boundaries to resize rows.
+        Use the bottom scrollbar to see all columns and the right scrollbar to see all rows.
+        The grid area can also be resized vertically.
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+let sourceFile = null;
+let sourceKind = "";
+let pdfDocument = null;
+let sheetData = Array.from({length:10},()=>Array(5).fill(""));
+let selected = {r:0,c:0};
+let columnWidths = [];
+let rowHeights = [];
+let worker = null;
+let busy = false;
+
+if (window.pdfjsLib) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+}
+
+function status(message, percent=0) {
+  $("progressText").textContent = message;
+  $("progressBar").style.width = Math.max(0,Math.min(100,percent))+"%";
+}
+function colName(n) {
+  let s="";
+  while(n>0) {
+    const r=(n-1)%26;
+    s=String.fromCharCode(65+r)+s;
+    n=Math.floor((n-1)/26);
+  }
+  return s;
+}
+function colNumber(s) {
+  let n=0;
+  for(const ch of s.toUpperCase()) {
+    if(ch<"A"||ch>"Z") return 0;
+    n=n*26+ch.charCodeAt(0)-64;
+  }
+  return n;
+}
+function isDate(s) {
+  if(!$("dates").checked) return false;
+  s=String(s||"").trim();
+  return (
+    /^\d{4}[-/.]\d{1,2}[-/.]\d{1,2}$/.test(s) ||
+    /^\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}$/.test(s) ||
+    /^\d{1,2}\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{2,4}$/i.test(s) ||
+    /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2},?\s+\d{4}$/i.test(s)
+  );
+}
+function isNumber(s) {
+  return $("numbers").checked && String(s||"").trim()!=="" &&
+    /^[-+]?\(?\s*[$€£RM]?\s*\d[\d,]*(?:\.\d+)?%?\)?$/.test(String(s).trim());
+}
+function normalizeDate(s) {
+  s=String(s).trim();
+  let m=s.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/);
+  if(m) return `${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}`;
+  // DD/MM and MM/DD can be ambiguous: leave the original untouched.
+  return s;
+}
+
+function renderSheet(focusCell=false) {
+  const table=$("sheet");
+  table.replaceChildren();
+  const rowCount=Math.max(1,sheetData.length);
+  const colCount=Math.max(1,...sheetData.map(r=>r.length));
+  const thead=document.createElement("thead");
+  const hr=document.createElement("tr");
+  const corner=document.createElement("th");
+  corner.className="corner";
+  corner.textContent="#";
+  hr.appendChild(corner);
+
+  for(let c=0;c<colCount;c++) {
+    if(!columnWidths[c]) columnWidths[c]=125;
+    const th=document.createElement("th");
+    th.style.width=columnWidths[c]+"px";
+    th.style.minWidth=columnWidths[c]+"px";
+    th.style.maxWidth=columnWidths[c]+"px";
+    th.textContent=colName(c+1);
+
+    const handle=document.createElement("div");
+    handle.className="resize-handle";
+    handle.addEventListener("pointerdown",e=>{
+      e.preventDefault();
+      const startX=e.clientX;
+      const startWidth=th.getBoundingClientRect().width;
+      handle.setPointerCapture(e.pointerId);
+      function move(ev) {
+        const w=Math.max(45,Math.min(700,startWidth+ev.clientX-startX));
+        columnWidths[c]=w;
+        th.style.width=w+"px";
+        th.style.minWidth=w+"px";
+        th.style.maxWidth=w+"px";
+        table.querySelectorAll(`td[data-col="${c}"]`).forEach(td=>{
+          td.style.width=w+"px";
+          td.style.minWidth=w+"px";
+          td.style.maxWidth=w+"px";
+        });
+      }
+      function up() {
+        handle.removeEventListener("pointermove",move);
+        handle.removeEventListener("pointerup",up);
+        handle.removeEventListener("pointercancel",up);
+      }
+      handle.addEventListener("pointermove",move);
+      handle.addEventListener("pointerup",up);
+      handle.addEventListener("pointercancel",up);
+    });
+    th.appendChild(handle);
+    thead.appendChild(hr);
+    hr.appendChild(th);
+  }
+  table.appendChild(thead);
+
+  const tbody=document.createElement("tbody");
+  for(let r=0;r<rowCount;r++) {
+    const tr=document.createElement("tr");
+    const rh=document.createElement("td");
+    rh.className="rowhead";
+    rh.textContent=r+1;
+    rh.style.height=(rowHeights[r]||29)+"px";
+
+    const rowHandle=document.createElement("div");
+    rowHandle.className="row-resize";
+    rowHandle.addEventListener("pointerdown",e=>{
+      e.preventDefault();
+      const startY=e.clientY;
+      const startHeight=tr.getBoundingClientRect().height;
+      rowHandle.setPointerCapture(e.pointerId);
+      function move(ev) {
+        const h=Math.max(22,Math.min(200,startHeight+ev.clientY-startY));
+        rowHeights[r]=h;
+        tr.style.height=h+"px";
+        [...tr.children].forEach(td=>td.style.height=h+"px");
+      }
+      function up() {
+        rowHandle.removeEventListener("pointermove",move);
+        rowHandle.removeEventListener("pointerup",up);
+        rowHandle.removeEventListener("pointercancel",up);
+      }
+      rowHandle.addEventListener("pointermove",move);
+      rowHandle.addEventListener("pointerup",up);
+      rowHandle.addEventListener("pointercancel",up);
+    });
+    rh.appendChild(rowHandle);
+    tr.appendChild(rh);
+
+    for(let c=0;c<colCount;c++) {
+      const td=document.createElement("td");
+      td.dataset.col=c;
+      const w=columnWidths[c]||125;
+      td.style.width=w+"px";
+      td.style.minWidth=w+"px";
+      td.style.maxWidth=w+"px";
+      td.style.height=(rowHeights[r]||29)+"px";
+
+      const input=document.createElement("input");
+      input.className="cell-input";
+      input.value=sheetData[r]?.[c]??"";
+      input.dataset.r=r;
+      input.dataset.c=c;
+      input.setAttribute("aria-label",colName(c+1)+(r+1));
+      if(isDate(input.value)) input.classList.add("date-cell");
+      else if(isNumber(input.value)) input.classList.add("number-cell");
+
+      input.addEventListener("focus",()=>{
+        selected={r,c};
+        $("cellAddress").value=colName(c+1)+(r+1);
+        $("formulaBar").value=input.value;
+        $("sheetInfo").textContent=`${r+1} rows · ${colCount} columns`;
+        table.querySelectorAll("td.selected").forEach(el=>el.classList.remove("selected"));
+        td.classList.add("selected");
+      });
+      input.addEventListener("input",()=>{
+        while(sheetData.length<=r) sheetData.push([]);
+        while(sheetData[r].length<=c) sheetData[r].push("");
+        sheetData[r][c]=input.value;
+        $("formulaBar").value=input.value;
+        input.classList.toggle("date-cell",isDate(input.value));
+        input.classList.toggle("number-cell",!isDate(input.value)&&isNumber(input.value));
+      });
+      input.addEventListener("keydown",e=>{
+        let nr=r,nc=c;
+        if(e.key==="Enter") nr++;
+        else if(e.key==="ArrowDown"&&e.altKey===false&&input.selectionStart===input.selectionEnd) nr++;
+        else if(e.key==="ArrowUp"&&e.altKey===false) nr--;
+        else if(e.key==="Tab") nc+=e.shiftKey?-1:1;
+        else if(e.key==="ArrowRight"&&input.selectionStart===input.value.length) nc++;
+        else if(e.key==="ArrowLeft"&&input.selectionStart===0) nc--;
+        else return;
+        e.preventDefault();
+        if(nr<0||nc<0) return;
+        while(sheetData.length<=nr) sheetData.push(Array(colCount).fill(""));
+        while(sheetData[nr].length<=nc) sheetData[nr].push("");
+        renderSheet(true);
+        const next=table.querySelector(`[data-r="${nr}"][data-c="${nc}"]`);
+        if(next) next.focus();
+      });
+      td.appendChild(input);
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody);
+  $("sheetInfo").textContent=`${rowCount} rows · ${colCount} columns`;
+  if(focusCell) {
+    const el=table.querySelector(`[data-r="${selected.r}"][data-c="${selected.c}"]`);
+    if(el) el.focus();
+  }
+}
+
+function selectCell(r,c) {
+  selected={r,c};
+  while(sheetData.length<=r) sheetData.push([]);
+  const maxCols=Math.max(1,...sheetData.map(x=>x.length));
+  while(sheetData[r].length<=c) sheetData[r].push("");
+  renderSheet();
+  const input=$("sheet").querySelector(`[data-r="${r}"][data-c="${c}"]`);
+  if(input) {
+    input.focus();
+    input.scrollIntoView({block:"nearest",inline:"nearest"});
+  }
+}
+
+$("formulaBar").addEventListener("input",()=>{
+  const el=$("sheet").querySelector(`[data-r="${selected.r}"][data-c="${selected.c}"]`);
+  if(el) {
+    el.value=$("formulaBar").value;
+    el.dispatchEvent(new Event("input"));
+  }
+});
+
+$("goCellBtn").addEventListener("click",()=>{
+  const m=$("cellAddress").value.trim().match(/^([A-Z]+)(\d+)$/i);
+  if(!m||+m[2]<1||colNumber(m[1])<1) {
+    status("Enter a cell address such as A1 or AB20.",0);
+    return;
+  }
+  selectCell(+m[2]-1,colNumber(m[1])-1);
+});
+
+$("fitBtn").addEventListener("click",()=>{
+  const cols=Math.max(1,...sheetData.map(r=>r.length));
+  columnWidths=Array(cols).fill(125);
+  renderSheet();
+});
+
+$("addRowBtn").addEventListener("click",()=>{
+  const n=Math.max(1,...sheetData.map(r=>r.length));
+  sheetData.push(Array(n).fill(""));
+  renderSheet();
+});
+$("addColBtn").addEventListener("click",()=>{
+  sheetData.forEach(r=>r.push(""));
+  columnWidths.push(125);
+  renderSheet();
+});
+$("delRowBtn").addEventListener("click",()=>{
+  if(sheetData.length>1) sheetData.splice(selected.r,1);
+  if(!sheetData.length) sheetData=[[""]];
+  selected.r=Math.min(selected.r,sheetData.length-1);
+  renderSheet();
+});
+$("delColBtn").addEventListener("click",()=>{
+  const n=Math.max(1,...sheetData.map(r=>r.length));
+  if(n<=1) return;
+  sheetData.forEach(r=>r.splice(selected.c,1));
+  columnWidths.splice(selected.c,1);
+  selected.c=Math.min(selected.c,n-2);
+  renderSheet();
+});
+$("clearBtn").addEventListener("click",()=>{
+  sheetData=sheetData.map(r=>r.map(()=> ""));
+  renderSheet();
+});
+$("dateBtn").addEventListener("click",()=>{
+  sheetData=sheetData.map(r=>r.map(v=>isDate(v)?normalizeDate(v):v));
+  renderSheet();
+  status("Date formatting applied where unambiguous.",100);
+});
+
+function setFile(file) {
+  if(!file) return;
+  const isPdf=file.type==="application/pdf"||file.name.toLowerCase().endsWith(".pdf");
+  if(!isPdf&&!file.type.startsWith("image/")) {
+    status("Unsupported file. Please choose a PDF or image.",0);
+    return;
+  }
+  sourceFile=file;
+  sourceKind=isPdf?"pdf":"image";
+  pdfDocument=null;
+  $("extractBtn").disabled=false;
+  $("preview").hidden=true;
+  $("pdfPreview").style.display="none";
+  $("emptyPreview").style.display="none";
+  $("pageOptions").style.display=isPdf?"flex":"none";
+
+  if(isPdf) {
+    $("emptyPreview").style.display="block";
+    $("emptyPreview").textContent="PDF selected. Loading preview...";
+    loadPdfPreview(file);
+  } else {
+    $("preview").src=URL.createObjectURL(file);
+    $("preview").hidden=false;
+    status("Image loaded: "+file.name,0);
+  }
+}
+
+async function loadPdfPreview(file) {
+  try {
+    if(!window.pdfjsLib) throw new Error("PDF library unavailable. Check internet.");
+    const bytes=await file.arrayBuffer();
+    pdfDocument=await pdfjsLib.getDocument({data:bytes}).promise;
+    $("pageStart").max=pdfDocument.numPages;
+    $("pageEnd").max=pdfDocument.numPages;
+    $("pageEnd").value=pdfDocument.numPages;
+    const page=await pdfDocument.getPage(1);
+    const scale=Math.min(1.5,400/page.getViewport({scale:1}).width);
+    const viewport=page.getViewport({scale});
+    const canvas=$("pdfPreview");
+    canvas.width=viewport.width;
+    canvas.height=viewport.height;
+    await page.render({canvasContext:canvas.getContext("2d"),viewport}).promise;
+    $("emptyPreview").style.display="none";
+    canvas.style.display="block";
+    status(`PDF loaded: ${pdfDocument.numPages} pages.`,0);
+  } catch(e) {
+    status("PDF preview error: "+e.message,0);
+  }
+}
+
+const zone=$("dropZone");
+zone.addEventListener("click",()=>$("fileInput").click());
+zone.addEventListener("keydown",e=>{
+  if(e.key==="Enter"||e.key===" ") {
+    e.preventDefault();
+    $("fileInput").click();
+  }
+});
+zone.addEventListener("dragover",e=>{
+  e.preventDefault();zone.classList.add("drag");
+});
+zone.addEventListener("dragleave",()=>zone.classList.remove("drag"));
+zone.addEventListener("drop",e=>{
+  e.preventDefault();zone.classList.remove("drag");
+  setFile(e.dataTransfer.files[0]);
+});
+$("fileInput").addEventListener("change",e=>setFile(e.target.files[0]));
+
+async function fileToCanvas(file) {
+  const img=new Image();
+  const url=URL.createObjectURL(file);
+  try {
+    await new Promise((resolve,reject)=>{
+      img.onload=resolve;img.onerror=reject;img.src=url;
+    });
+    const max=3200;
+    const scale=Math.min(1,max/Math.max(img.width,img.height));
+    const canvas=document.createElement("canvas");
+    canvas.width=Math.round(img.width*scale);
+    canvas.height=Math.round(img.height*scale);
+    const ctx=canvas.getContext("2d");
+    ctx.fillStyle="white";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    return canvas;
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
+async function getImagePages() {
+  if(sourceKind==="image") return [await fileToCanvas(sourceFile)];
+
+  if(!pdfDocument) {
+    const bytes=await sourceFile.arrayBuffer();
+    pdfDocument=await pdfjsLib.getDocument({data:bytes}).promise;
+  }
+  let start=Math.max(1,parseInt($("pageStart").value)||1);
+  let end=Math.max(start,parseInt($("pageEnd").value)||pdfDocument.numPages);
+  start=Math.min(start,pdfDocument.numPages);
+  end=Math.min(end,pdfDocument.numPages);
+  const scale=Number($("scale").value)||2.5;
+  const pages=[];
+
+  for(let n=start;n<=end;n++) {
+    status(`Rendering PDF page ${n} of ${end}...`,10+((n-start)/(end-start+1))*15);
+    const page=await pdfDocument.getPage(n);
+    const viewport=page.getViewport({scale});
+    const canvas=document.createElement("canvas");
+    canvas.width=Math.ceil(viewport.width);
+    canvas.height=Math.ceil(viewport.height);
+    await page.render({canvasContext:canvas.getContext("2d"),viewport}).promise;
+    pages.push(canvas);
+  }
+  return pages;
+}
+
+/* Group OCR words by vertical alignment, then use recurring x positions
+   to estimate columns. This is useful for simple tables but cannot guarantee
+   perfect reconstruction of complex/merged cells. */
+function groupRows(words,height) {
+  const sorted=words.filter(w=>w.text&&w.text.trim()&&w.confidence>10)
+    .sort((a,b)=>((a.bbox.y0+a.bbox.y1)-(b.bbox.y0+b.bbox.y1)));
+  const rows=[];
+  const tolerance=Math.max(9,height*.009);
+  for(const w of sorted) {
+    const cy=(w.bbox.y0+w.bbox.y1)/2;
+    let row=rows.find(r=>Math.abs(r.cy-cy)<tolerance);
+    if(!row) {row={cy,words:[]};rows.push(row);}
+    row.words.push(w);
+    row.cy=row.words.reduce((sum,x)=>sum+(x.bbox.y0+x.bbox.y1)/2,0)/row.words.length;
+  }
+  rows.sort((a,b)=>a.cy-b.cy);
+  rows.forEach(r=>r.words.sort((a,b)=>a.bbox.x0-b.bbox.x0));
+  return rows;
+}
+
+function inferStarts(rows,count) {
+  const all=rows.flatMap(r=>r.words.map(w=>w.bbox.x0)).sort((a,b)=>a-b);
+  const clusters=[];
+  for(const x of all) {
+    let c=clusters.find(c=>Math.abs(c.x-x)<28);
+    if(!c) {c={x,n:0,sum:0};clusters.push(c);}
+    c.sum+=x;c.n++;c.x=c.sum/c.n;
+  }
+  clusters.sort((a,b)=>a.x-b.x);
+
+  // Recurring alignment is more reliable than dividing the image into
+  // equal-width sections. If insufficient alignments exist, use fallback.
+  if(clusters.length>=count) return clusters.slice(0,count).map(c=>c.x);
+  return null;
+}
+
+function rowsToGrid(rows,count,width) {
+  const starts=inferStarts(rows,count);
+  return rows.map(row=>{
+    const cells=Array(count).fill("");
+    for(const w of row.words) {
+      const x=(w.bbox.x0+w.bbox.x1)/2;
+      let c=0;
+      if(starts) {
+        let best=Infinity;
+        for(let i=0;i<starts.length;i++) {
+          const d=Math.abs(w.bbox.x0-starts[i]);
+          if(d<best){best=d;c=i;}
+        }
+      } else {
+        c=Math.min(count-1,Math.floor(x/width*count));
+      }
+      cells[c]=(cells[c]?cells[c]+" ":"")+w.text;
+    }
+    return cells.map(v=>v.trim());
+  });
+}
+
+$("extractBtn").addEventListener("click",async()=>{
+  if(!sourceFile||busy) return;
+  busy=true;
+  $("extractBtn").disabled=true;
+  try {
+    if(!window.Tesseract||!window.XLSX) {
+      throw new Error("Required library failed to load. Check internet access.");
+    }
+    status("Preparing source pages...",5);
+    const pages=await getImagePages();
+    const count=Math.max(1,Math.min(40,parseInt($("cols").value)||5));
+    const allRows=[];
+    let pageIndex=0;
+
+    for(const canvas of pages) {
+      pageIndex++;
+      status(`Recognizing page ${pageIndex} of ${pages.length}...`,
+        25+(pageIndex-1)/pages.length*65);
+
+      const result=await Tesseract.recognize(canvas,$("lang").value,{
+        logger:m=>{
+          if(m.status==="recognizing text") {
+            const p=25+(pageIndex-1)/pages.length*65+
+              (m.progress||0)*65/pages.length;
+            status(`OCR page ${pageIndex}/${pages.length}: ${Math.round((m.progress||0)*100)}%`,p);
+          }
+        }
+      });
+
+      const words=result.data.words||[];
+      const rows=groupRows(words,canvas.height);
+      const grid=rowsToGrid(rows,count,canvas.width);
+      if(pages.length>1) {
+        allRows.push([`PDF Page ${pageIndex}`,...Array(count-1).fill("")]);
+      }
+      allRows.push(...grid);
+    }
+
+    if(!allRows.length) throw new Error("No text found. Try a clearer scan or photo.");
+
+    sheetData=allRows;
+    const n=Math.max(1,...sheetData.map(r=>r.length));
+    sheetData.forEach(r=>{while(r.length<n)r.push("");});
+    sheetData=sheetData.map(r=>r.map(v=>isDate(v)?normalizeDate(v):v));
+    columnWidths=Array(n).fill(145);
+    rowHeights=[];
+    selected={r:0,c:0};
+    renderSheet();
+    status(`Finished: ${sheetData.length} rows and ${n} columns. Review the cells before export.`,100);
+  } catch(e) {
+    console.error(e);
+    status("Extraction failed: "+e.message,0);
+  } finally {
+    busy=false;
+    $("extractBtn").disabled=!sourceFile;
+  }
+});
+
+function exportGrid() {
+  return sheetData.map(row=>row.map(v=>{
+    v=String(v??"").trim();
+    return isDate(v)?normalizeDate(v):v;
+  }));
+}
+$("exportBtn").addEventListener("click",()=>{
+  if(!window.XLSX) {status("Excel library unavailable. Check internet.",0);return;}
+  const rows=exportGrid();
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws["!cols"]=Array(Math.max(1,...rows.map(r=>r.length))).fill({wch:18});
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"Extracted Data");
+  XLSX.writeFile(wb,"converted-data.xlsx");
+  status("Excel workbook downloaded.",100);
+});
+$("csvBtn").addEventListener("click",()=>{
+  const csv=exportGrid().map(row=>row.map(v=>
+    '"'+String(v).replace(/"/g,'""')+'"'
+  ).join(",")).join("\r\n");
+  const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="converted-data.csv";a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+
+renderSheet();
+</script>
+</body>
+</html>
