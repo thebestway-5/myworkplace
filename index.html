@@ -1,332 +1,747 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#101827">
-<title>IVY Future Hub — Visual Studio Edition</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVY Future Hub — Share & Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* =========================================================
-   IVY FUTURE HUB — VISUAL STUDIO EDITION
-   Change CONFIG.THEME in the script to switch the default theme.
-   Available: midnight, glass, japanese, apple, vintage, sage, burgundy
-   ========================================================= */
-:root{
-  --bg:#0b1220; --panel:rgba(17,27,45,.82); --panel-solid:#111b2d;
-  --text:#edf4ff; --muted:#aab8cc; --accent:#72e5d1; --accent2:#8aa8ff;
-  --line:rgba(255,255,255,.13); --shadow:0 18px 60px rgba(0,0,0,.25);
-  --radius:22px; --blur:18px; --button-text:#07131b;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:var(--bg);overflow-x:hidden;transition:background .3s,color .3s}
-button,input,select{font:inherit}
-button{cursor:pointer}
-#backgroundLayer{position:fixed;inset:0;z-index:-5;background:radial-gradient(ellipse at 15% 10%,rgba(68,111,180,.24),transparent 45%),radial-gradient(ellipse at 85% 75%,rgba(43,191,168,.15),transparent 42%),var(--bg);background-size:cover;background-position:center;transition:opacity .25s}
-#backgroundVideo,#backgroundImage{position:absolute;width:100%;height:100%;inset:0;object-fit:cover;display:none}
-#backgroundLayer:after{content:"";position:absolute;inset:0;background:var(--overlay,rgba(5,10,20,.38));pointer-events:none}
-#youtubeFrame{position:absolute;width:100%;height:100%;inset:0;display:none;border:0;transform:scale(1.25);pointer-events:none}
-#glow{position:fixed;z-index:10;pointer-events:none;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(114,229,209,.16),rgba(138,168,255,.07) 35%,transparent 70%);transform:translate(-50%,-50%);left:-500px;top:-500px;mix-blend-mode:screen}
-.shell{width:min(1240px,calc(100% - 32px));margin:0 auto}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 0;position:relative;z-index:2}
-.brand{display:flex;align-items:center;gap:12px;font-weight:850;letter-spacing:.12em}
-.brand-mark{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--button-text);font-weight:950;box-shadow:0 8px 25px #0002}
-.brand small{display:block;color:var(--muted);font-weight:500;letter-spacing:.04em;margin-top:3px}
-.actions{display:flex;gap:9px;flex-wrap:wrap}
-.btn,.icon-btn{border:1px solid var(--line);color:var(--text);background:var(--panel);backdrop-filter:blur(var(--blur));border-radius:12px;padding:10px 14px;transition:transform .2s,border-color .2s,background .2s}
-.btn:hover,.icon-btn:hover{transform:translateY(-2px);border-color:var(--accent)}
-.btn.primary{background:var(--accent);color:var(--button-text);border-color:transparent;font-weight:750}
-.hero{padding:52px 0 32px;display:grid;grid-template-columns:1.25fr .75fr;gap:30px;align-items:center}
-.eyebrow{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:99px;padding:7px 12px;color:var(--accent);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;background:var(--panel)}
-.pulse{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px var(--accent)}
-h1{font-size:clamp(2.7rem,6vw,5.5rem);line-height:.98;letter-spacing:-.065em;margin:22px 0}
-.gradient{background:linear-gradient(100deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
-.lead{max-width:650px;color:var(--muted);font-size:1.08rem;line-height:1.8}
-.hero-card,.panel,.tool-card,.stat{background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(var(--blur));box-shadow:var(--shadow);border-radius:var(--radius)}
-.hero-card{padding:24px;position:relative;overflow:hidden}
-.hero-card:before{content:"";position:absolute;width:210px;height:210px;right:-90px;top:-95px;border-radius:50%;background:var(--accent);filter:blur(75px);opacity:.18}
-.clock-label{color:var(--muted);font-size:.85rem}
-#clock{font-size:clamp(2.5rem,5vw,4.4rem);font-weight:800;letter-spacing:-.06em;margin:8px 0}
-.date-line{color:var(--muted)}
-.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}
-.stat{padding:14px;border-radius:16px;box-shadow:none}
-.stat strong{display:block;font-size:1.2rem}
-.stat span{font-size:.76rem;color:var(--muted)}
-nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px 0 26px;border-bottom:1px solid var(--line)}
-nav a{color:var(--muted);text-decoration:none;padding:10px 13px;border-radius:11px;border:1px solid transparent}
-nav a:hover{color:var(--text);background:var(--panel);border-color:var(--line)}
-.section{padding:38px 0}
-.section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:18px}
-.section-head h2{margin:0;font-size:clamp(1.5rem,3vw,2.15rem);letter-spacing:-.04em}
-.section-head p{color:var(--muted);margin:8px 0 0;line-height:1.6}
-.search{width:min(290px,100%);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--text);outline:none}
-.search:focus,input:focus,select:focus{border-color:var(--accent);outline:2px solid color-mix(in srgb,var(--accent) 24%,transparent)}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.tool-card{padding:20px;transition:transform .22s,border-color .22s;box-shadow:none;min-height:190px;display:flex;flex-direction:column}
-.tool-card:hover{transform:translateY(-4px);border-color:var(--accent)}
-.tool-icon{width:44px;height:44px;border-radius:14px;background:color-mix(in srgb,var(--accent) 16%,transparent);display:grid;place-items:center;font-size:1.35rem;margin-bottom:16px}
-.tool-card h3{margin:0 0 8px;font-size:1.05rem}
-.tool-card p{margin:0 0 18px;color:var(--muted);font-size:.9rem;line-height:1.6;flex:1}
-.card-link{color:var(--accent);text-decoration:none;font-weight:700;font-size:.9rem}
-.panel{padding:22px}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.panel h3{margin:0 0 8px}
-.panel p,.hint{color:var(--muted);font-size:.9rem;line-height:1.65}
-.quick-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
-.quick-row .btn{padding:9px 12px}
-.field{display:flex;flex-direction:column;gap:7px;margin:13px 0}
-.field label{font-size:.84rem;color:var(--muted)}
-.field input[type="text"],.field input[type="url"],.field select{width:100%;background:rgba(0,0,0,.13);color:var(--text);border:1px solid var(--line);border-radius:11px;padding:11px 12px}
-.field input[type="range"]{width:100%;accent-color:var(--accent)}
-.field input[type="file"]{max-width:100%;color:var(--muted)}
-.field select option{background:var(--panel-solid);color:var(--text)}
-.swatches{display:flex;gap:8px;flex-wrap:wrap}
-.swatch{width:31px;height:31px;border-radius:50%;border:2px solid #ffffff55;box-shadow:0 0 0 2px transparent}
-.swatch:focus,.swatch:hover{box-shadow:0 0 0 2px var(--accent)}
-.preset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.preset{border:1px solid var(--line);border-radius:15px;min-height:78px;padding:12px;color:var(--text);background:var(--panel);text-align:left}
-.preset strong{display:block;margin-bottom:5px}
-.preset span{font-size:.78rem;color:var(--muted)}
-#status{min-height:20px;color:var(--accent);font-size:.85rem}
-footer{border-top:1px solid var(--line);margin-top:30px;padding:26px 0 40px;color:var(--muted);font-size:.85rem;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.58);z-index:1000;display:none;align-items:center;justify-content:center;padding:18px}
-.modal-backdrop.open{display:flex}
-.modal{width:min(800px,100%);max-height:88vh;overflow:auto;background:var(--panel-solid);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:var(--shadow)}
-.modal-head{display:flex;justify-content:space-between;gap:16px;align-items:center}
-.modal-head h2{margin:0}
-.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.notice{border:1px solid var(--line);border-radius:13px;padding:12px;background:rgba(255,255,255,.035);font-size:.85rem;line-height:1.6;color:var(--muted)}
-.hidden{display:none!important}
-#translateArea{min-height:30px}
-@media(max-width:850px){.hero{grid-template-columns:1fr;padding-top:30px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two-col{grid-template-columns:1fr}.modal-grid{grid-template-columns:1fr}}
-@media(max-width:560px){.shell{width:min(100% - 22px,1240px)}.topbar{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:1fr}.section-head{align-items:stretch;flex-direction:column}.search{width:100%}.preset-grid{grid-template-columns:1fr 1fr}.stat-row{grid-template-columns:1fr 1fr 1fr}.hero{padding-top:20px}}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+:root{--aqua:#0abab5;--bg:#0a0a0a;--muted:#888;--border:rgba(255,255,255,.12)}
+body{min-height:100vh;font-family:Inter,-apple-system,sans-serif;background:var(--bg);color:#f5f5f5;overflow-x:hidden;position:relative;display:flex;flex-direction:column}
+#bg-layer{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+#bg-layer img,#bg-layer video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:var(--bg-opacity,.28);filter:blur(var(--bg-blur,1px)) brightness(.72)}
+#bg-layer iframe{position:absolute;top:50%;left:50%;width:177.78vh;height:100vh;min-width:100vw;min-height:56.25vw;transform:translate(-50%,-50%);opacity:var(--bg-opacity,.28);pointer-events:none;border:0}
+#cursor-glow{position:fixed;width:560px;height:560px;border-radius:50%;pointer-events:none;z-index:4;transform:translate(-50%,-50%);mix-blend-mode:screen;will-change:transform;opacity:1;filter:blur(1px);background-repeat:no-repeat}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.022;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.top{position:sticky;top:0;z-index:100;background:rgba(10,10,10,.76);backdrop-filter:blur(20px);border-bottom:1px solid rgba(10,186,181,.12)}
+.top-inner{width:min(1200px,calc(100% - 40px));margin:auto;display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:68px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;flex-shrink:0}
+.brand-mark{width:30px;height:30px;border:1.5px solid #fff;border-radius:50%;display:grid;place-items:center;font:500 11px 'JetBrains Mono';transition:.4s}
+.brand:hover .brand-mark{transform:rotate(180deg);border-color:var(--aqua)}
+.brand-name{font-size:15px;font-weight:700;letter-spacing:1px}
+.nav{display:flex;gap:4px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.nav a,.language-select{padding:9px 12px;font-size:12px;letter-spacing:.2px;color:#aaa;text-decoration:none;border-radius:8px;transition:.2s;background:transparent;border:1px solid transparent}
+.nav a:hover{color:#fff;background:#1a1a1a}
+.nav .store-link{color:#000;background:#fff;font-weight:700}
+.nav .store-link:hover{background:var(--aqua);color:#000}
+.language-select{color:#eee;background:#151515;border-color:#303030;cursor:pointer;outline:none}\n#google_translate_element{font-size:11px;max-width:150px;overflow:hidden}#google_translate_element select{max-width:145px;padding:8px;border-radius:8px;background:var(--theme-panel,#151515);color:var(--theme-text,#eee);border:1px solid var(--theme-border,#303030)}.goog-te-gadget{font:11px Inter,sans-serif!important;color:var(--theme-nav-text,#eee)!important}.goog-te-gadget img,.goog-te-banner-frame,.skiptranslate iframe{display:none!important}body{top:0!important}
+main{width:min(1120px,calc(100% - 40px));margin:auto;padding:58px 0 82px;position:relative;z-index:5;flex:1}
+.hero{margin-bottom:34px}
+.hero-label{font:500 11px 'JetBrains Mono';letter-spacing:3px;text-transform:uppercase;color:#777;margin-bottom:16px}
+.hero h1{font-size:clamp(38px,6.5vw,76px);font-weight:900;line-height:.98;letter-spacing:-3px;margin-bottom:18px}
+.hero h1 span{display:block}
+.hero h1 em{font-style:normal;color:#555}
+.hero-desc{max-width:640px;font-size:14px;line-height:1.8;color:#888}
+.hero-desc code{font:12px 'JetBrains Mono';color:var(--aqua);background:#1a1a1a;padding:2px 8px;border-radius:6px}
+.panel{background:rgba(15,15,15,.72);backdrop-filter:blur(12px);border:1px solid rgba(10,186,181,.2);border-radius:26px;padding:clamp(22px,4vw,38px);box-shadow:0 25px 50px -12px rgba(0,0,0,.7);position:relative;overflow:hidden}
+.panel:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 30% 10%,rgba(10,186,181,.05),transparent 70%)}
+.panel-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:25px;position:relative;z-index:1}
+.panel-header h2{font-size:15px;font-weight:600;display:flex;gap:10px;align-items:center}
+.badge{font:10px 'JetBrains Mono';background:rgba(10,186,181,.13);color:var(--aqua);padding:4px 9px;border-radius:99px;border:1px solid rgba(10,186,181,.25)}
+.lock-indicator{font:11px 'JetBrains Mono';color:#777;padding:7px 11px;border:1px solid #292929;border-radius:99px}
+.lock-indicator.unlocked{border-color:rgba(10,186,181,.4);color:var(--aqua)}
+.password-gate{position:relative;z-index:2;display:flex;flex-direction:column;gap:14px;max-width:400px;margin:0 auto;padding:18px 0 22px}
+.password-gate.hidden{display:none}
+.password-label{font-size:13px;color:#aaa;display:flex;gap:8px;align-items:center}
+.password-label i{font-style:normal;color:var(--aqua)}
+.password-input-wrap{display:flex;gap:8px}
+.password-input-wrap input{min-width:0;flex:1;background:#111;border:1px solid #303030;border-radius:12px;padding:15px 17px;color:white;font:15px Inter;outline:none}
+.password-input-wrap input:focus{border-color:var(--aqua);box-shadow:0 0 0 3px #0abab51a}
+.unlock-btn{width:54px;border:0;border-radius:12px;background:var(--aqua);color:#000;font-size:22px;font-weight:700;cursor:pointer}
+.unlock-btn:hover{background:#3ecfc9}
+.error-msg{min-height:18px;color:#ff6262;font-size:12px}
+.password-hint{font:10px 'JetBrains Mono';color:#555}
+.function-area{position:relative;z-index:2;opacity:0;transform:translateY(10px);pointer-events:none;user-select:none;transition:opacity .5s,transform .5s}
+.function-area.unlocked,.function-area.open{opacity:1;transform:none;pointer-events:auto;user-select:auto}
+.welcome{padding:8px 0 28px}
+.welcome .eyebrow{font:11px 'JetBrains Mono';letter-spacing:2px;color:var(--aqua);margin-bottom:12px}
+.welcome h2{font-size:clamp(28px,4vw,42px);line-height:1.1;margin-bottom:12px}
+.welcome h2 span{color:var(--aqua)}
+.welcome p{color:#8b95a7;line-height:1.7;max-width:700px;font-size:14px}
+.tools-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:12px 0 20px}
+.tools-head h2{font-size:21px;letter-spacing:.3px}
+.tools-head span{font:10px 'JetBrains Mono';letter-spacing:1px;color:#7f8a9d}
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.tool-card{position:relative;display:block;min-height:170px;padding:23px;text-decoration:none;color:#fff;background:rgba(10,20,38,.7);border:1px solid var(--border);border-radius:19px;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s}
+.tool-card:before{content:"";position:absolute;inset:0;opacity:.08;pointer-events:none;background:var(--card-color,var(--aqua))}
+.tool-card:hover{transform:translateY(-4px);border-color:var(--card-color,var(--aqua));box-shadow:0 12px 32px #0005}
+.tool-icon{font-size:27px;margin-bottom:18px}
+.tool-card h3{font-size:15px;line-height:1.4;margin-bottom:8px}
+.tool-card p{font-size:12px;line-height:1.6;color:#96a0b2}
+.tool-arrow{position:absolute;right:20px;top:20px;color:#778;transition:.2s}
+.tool-card:hover .tool-arrow{color:var(--card-color,var(--aqua));transform:translate(3px,-3px)}
+.search-row{display:flex;gap:10px;margin-bottom:18px}
+.search-row input{width:100%;background:#10131d;border:1px solid #293142;color:#fff;border-radius:12px;padding:13px 15px;outline:none;font:13px Inter}
+.search-row input:focus{border-color:var(--aqua)}
+.empty-state{display:none;color:#888;font-size:13px;padding:18px 0}
+.admin-note{margin-top:28px;font:10px 'JetBrains Mono';color:#555;border-top:1px solid #242424;padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+footer{border-top:1px solid #1a1a1a;padding:28px 20px;text-align:center;font:10px 'JetBrains Mono';letter-spacing:2px;color:#444;position:relative;z-index:5}
+footer span{color:var(--aqua)}
+@media(max-width:650px){.top-inner{width:calc(100% - 24px);padding:12px 0;align-items:flex-start;flex-direction:column}.nav{justify-content:flex-start}.nav a{padding:8px 9px}.language-select{padding:8px}.hero h1{letter-spacing:-1.8px}main{width:calc(100% - 24px);padding-top:38px}.tools-grid{grid-template-columns:1fr}.tool-card{min-height:145px}}
 
-/* Themes: only CONFIG.THEME is needed to choose the initial look. */
-body.theme-midnight{--bg:#0b1220;--panel:rgba(17,27,45,.82);--panel-solid:#111b2d;--text:#edf4ff;--muted:#aab8cc;--accent:#72e5d1;--accent2:#8aa8ff;--line:rgba(255,255,255,.13);--button-text:#07131b}
-body.theme-glass{--bg:#172137;--panel:rgba(255,255,255,.105);--panel-solid:#1c2942;--text:#f7faff;--muted:#c3cde0;--accent:#9ce8ff;--accent2:#d7b4ff;--line:rgba(255,255,255,.22);--blur:24px;--button-text:#172137}
-body.theme-japanese{--bg:#f3efe6;--panel:rgba(255,255,255,.78);--panel-solid:#fffdf7;--text:#282a25;--muted:#72736a;--accent:#527b64;--accent2:#c98e73;--line:rgba(40,42,37,.14);--shadow:0 12px 35px rgba(50,45,35,.08);--button-text:#fff}
-body.theme-apple{--bg:#f5f5f7;--panel:rgba(255,255,255,.82);--panel-solid:#fff;--text:#1d1d1f;--muted:#6e6e73;--accent:#007aff;--accent2:#5e5ce6;--line:rgba(0,0,0,.09);--shadow:0 15px 40px rgba(0,0,0,.07);--radius:22px;--button-text:#fff}
-body.theme-vintage{--bg:#211a16;--panel:rgba(55,41,31,.88);--panel-solid:#37291f;--text:#f5e8d3;--muted:#c5b19a;--accent:#d6a85f;--accent2:#a56d49;--line:rgba(245,232,211,.17);--button-text:#24190f}
-body.theme-sage{--bg:#17231e;--panel:rgba(34,53,44,.86);--panel-solid:#22352c;--text:#eef3e9;--muted:#b7c5b8;--accent:#b9d5a5;--accent2:#7fb7a2;--line:rgba(238,243,233,.15);--button-text:#1b2a22}
-body.theme-burgundy{--bg:#24121c;--panel:rgba(58,27,42,.87);--panel-solid:#3a1b2a;--text:#fff0f4;--muted:#d5b9c4;--accent:#f2b7c8;--accent2:#d5a15f;--line:rgba(255,240,244,.15);--button-text:#321421}
-body.theme-japanese .hero-card,body.theme-japanese .panel,body.theme-japanese .tool-card,body.theme-japanese .stat,body.theme-apple .hero-card,body.theme-apple .panel,body.theme-apple .tool-card,body.theme-apple .stat{backdrop-filter:blur(14px)}
+/* ================================================================
+   THEME PRESETS — 更换整站 UI 只需修改下方 CONFIG.THEME
+   可选：vintage（复古棕/奶油/黄铜）、sage（鼠尾草绿）、
+         burgundy（酒红/奶油）、midnight（深夜蓝）、glass（玻璃拟态）、
+         japanese（日式极简）、apple（苹果风格）
+   ================================================================ */
+:root[data-theme="vintage"]{
+  --aqua:#b28a4b;--bg:#211d19;--muted:#857763;--border:rgba(93,69,43,.22);
+  --theme-page:#211d19;--theme-text:#f0e5d0;--theme-muted:#8e806a;
+  --theme-panel:rgba(238,228,208,.94);--theme-panel-text:#30271e;
+  --theme-card:#e8dcc4;--theme-card-text:#34291e;--theme-border:#c7b28d;
+  --theme-accent:#9b7138;--theme-accent-text:#fff3d8;--theme-nav:rgba(38,31,24,.94);
+  --theme-nav-text:#e9dcc5;--theme-field:#f6eedf;--theme-field-text:#30271e;
+  --theme-shadow:rgba(22,15,9,.2);
+}
+:root[data-theme="sage"]{
+  --aqua:#667a5a;--bg:#e8e8d9;--muted:#727866;--border:rgba(74,91,64,.22);
+  --theme-page:#e8e8d9;--theme-text:#293126;--theme-muted:#747966;
+  --theme-panel:rgba(248,247,233,.95);--theme-panel-text:#293126;
+  --theme-card:#e0e4d4;--theme-card-text:#293126;--theme-border:#b8c1a8;
+  --theme-accent:#667a5a;--theme-accent-text:#fff9e9;--theme-nav:rgba(248,247,233,.94);
+  --theme-nav-text:#293126;--theme-field:#fffdf2;--theme-field-text:#293126;
+  --theme-shadow:rgba(36,45,30,.12);
+}
+:root[data-theme="burgundy"]{
+  --aqua:#984c50;--bg:#2c1e20;--muted:#a78a84;--border:rgba(153,77,80,.25);
+  --theme-page:#2c1e20;--theme-text:#f4e7d8;--theme-muted:#b7a099;
+  --theme-panel:rgba(245,231,216,.96);--theme-panel-text:#392527;
+  --theme-card:#f0dfd0;--theme-card-text:#392527;--theme-border:#d1b3a1;
+  --theme-accent:#984c50;--theme-accent-text:#fff2e4;--theme-nav:rgba(47,31,33,.95);
+  --theme-nav-text:#f4e7d8;--theme-field:#fff5e9;--theme-field-text:#392527;
+  --theme-shadow:rgba(20,9,10,.22);
+}
+:root[data-theme="midnight"]{
+  --aqua:#8b9eb8;--bg:#151d2a;--muted:#8793a6;--border:rgba(139,158,184,.22);
+  --theme-page:#151d2a;--theme-text:#e7edf5;--theme-muted:#929fb2;
+  --theme-panel:rgba(32,43,59,.96);--theme-panel-text:#e7edf5;
+  --theme-card:#263448;--theme-card-text:#e7edf5;--theme-border:#45566e;
+  --theme-accent:#8b9eb8;--theme-accent-text:#101927;--theme-nav:rgba(21,29,42,.95);
+  --theme-nav-text:#e7edf5;--theme-field:#1a2636;--theme-field-text:#e7edf5;
+  --theme-shadow:rgba(0,0,0,.24);
+}
+/* Shared theme surface rules */
+body{background:var(--theme-page);color:var(--theme-text)}
+body:before{opacity:.035}
+.top{background:var(--theme-nav);border-bottom-color:var(--theme-border)}
+.brand,.brand-name{color:var(--theme-nav-text)}
+.brand-mark{border-color:var(--aqua)}
+.brand:hover .brand-mark{border-color:var(--aqua)}
+.nav a,.language-select{color:var(--theme-nav-text)}
+.nav a:hover{background:color-mix(in srgb,var(--aqua) 13%,transparent);color:var(--theme-nav-text)}
+.nav .store-link{background:var(--aqua);color:var(--theme-accent-text)}
+.nav .store-link:hover{background:var(--theme-accent);color:var(--theme-accent-text)}
+.language-select{background:var(--theme-panel);color:var(--theme-panel-text);border-color:var(--theme-border)}
+.hero-label,.hero h1 em{color:var(--theme-muted)}
+.hero h1{color:var(--theme-text)}
+.hero-desc{color:var(--theme-muted)}
+.hero-desc code{color:var(--aqua);background:var(--theme-panel)}
+.panel{background:var(--theme-panel);color:var(--theme-panel-text);border-color:var(--theme-border);box-shadow:0 25px 50px -12px var(--theme-shadow)}
+.panel:before{background:radial-gradient(circle at 30% 10%,color-mix(in srgb,var(--aqua) 9%,transparent),transparent 70%)}
+.panel-header h2,.welcome h2,.tools-head h2{color:var(--theme-panel-text)}
+.badge{background:color-mix(in srgb,var(--aqua) 14%,transparent);color:var(--aqua);border-color:color-mix(in srgb,var(--aqua) 35%,transparent)}
+.lock-indicator{color:var(--theme-muted);border-color:var(--theme-border)}
+.lock-indicator.unlocked,.welcome .eyebrow{color:var(--aqua)}
+.password-label{color:var(--theme-panel-text)}
+.password-label i{color:var(--aqua)}
+.password-input-wrap input,.search-row input{background:var(--theme-field);color:var(--theme-field-text);border-color:var(--theme-border)}
+.password-input-wrap input:focus,.search-row input:focus{border-color:var(--aqua);box-shadow:0 0 0 3px color-mix(in srgb,var(--aqua) 15%,transparent)}
+.password-input-wrap input::placeholder,.search-row input::placeholder{color:var(--theme-muted)}
+.unlock-btn{background:var(--aqua);color:var(--theme-accent-text)}
+.unlock-btn:hover{background:var(--theme-accent)}
+.error-msg{color:#a33}
+.password-hint,.admin-note,footer{color:var(--theme-muted)}
+.function-area .welcome p,.tools-head span{color:var(--theme-muted)}
+.welcome h2 span{color:var(--aqua)}
+.tool-card{background:var(--theme-card);color:var(--theme-card-text);border-color:var(--theme-border);box-shadow:0 8px 24px var(--theme-shadow)}
+.tool-card:before{opacity:.06}
+.tool-card h3{color:var(--theme-card-text)}
+.tool-card p{color:var(--theme-muted)}
+.tool-card:hover{border-color:var(--aqua);box-shadow:0 12px 30px var(--theme-shadow)}
+.tool-arrow{color:var(--theme-muted)}
+.tool-card:hover .tool-arrow{color:var(--aqua)}
+.empty-state{color:var(--theme-muted)}
+.admin-note{border-top-color:var(--theme-border)}
+footer{border-top-color:var(--theme-border)}
+footer span{color:var(--aqua)}
+#cursor-glow{mix-blend-mode:screen;opacity:1}
+
+
+:root[data-theme="glass"]{
+  --aqua:#8bd8d2;--bg:#101a27;--muted:#9fb2c5;--border:rgba(255,255,255,.22);
+  --theme-page:#101a27;--theme-text:#f3f7fb;--theme-muted:#a7b8ca;
+  --theme-panel:rgba(255,255,255,.12);--theme-panel-text:#f3f7fb;
+  --theme-card:rgba(255,255,255,.11);--theme-card-text:#f7fbff;--theme-border:rgba(255,255,255,.22);
+  --theme-accent:#7acbc5;--theme-accent-text:#10232c;--theme-nav:rgba(13,24,38,.68);
+  --theme-nav-text:#f3f7fb;--theme-field:rgba(255,255,255,.12);--theme-field-text:#fff;
+  --theme-shadow:rgba(0,0,0,.18);
+}
+:root[data-theme="japanese"]{
+  --aqua:#a34d3c;--bg:#f5f2eb;--muted:#817b72;--border:rgba(53,47,41,.12);
+  --theme-page:#f5f2eb;--theme-text:#292824;--theme-muted:#817b72;
+  --theme-panel:rgba(255,254,250,.96);--theme-panel-text:#292824;
+  --theme-card:#fffdf8;--theme-card-text:#292824;--theme-border:#e3ddd1;
+  --theme-accent:#a34d3c;--theme-accent-text:#fffaf4;--theme-nav:rgba(250,248,242,.96);
+  --theme-nav-text:#292824;--theme-field:#fffdf8;--theme-field-text:#292824;
+  --theme-shadow:rgba(52,44,34,.06);
+}
+:root[data-theme="apple"]{
+  --aqua:#007aff;--bg:#f5f5f7;--muted:#77777e;--border:rgba(0,0,0,.08);
+  --theme-page:#f5f5f7;--theme-text:#1d1d1f;--theme-muted:#6e6e73;
+  --theme-panel:rgba(255,255,255,.88);--theme-panel-text:#1d1d1f;
+  --theme-card:#fff;--theme-card-text:#1d1d1f;--theme-border:rgba(0,0,0,.08);
+  --theme-accent:#0066cc;--theme-accent-text:#fff;--theme-nav:rgba(250,250,252,.82);
+  --theme-nav-text:#1d1d1f;--theme-field:#f5f5f7;--theme-field-text:#1d1d1f;
+  --theme-shadow:rgba(0,0,0,.07);
+}
+/* Glassmorphism: translucent surfaces, blur, subtle luminous edges */
+:root[data-theme="glass"] body{background:radial-gradient(ellipse at 12% 8%,#284b65 0,transparent 42%),radial-gradient(ellipse at 88% 30%,#35425f 0,transparent 38%),var(--theme-page)}
+:root[data-theme="glass"] .top{backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%)}
+:root[data-theme="glass"] .panel{backdrop-filter:blur(24px) saturate(140%);-webkit-backdrop-filter:blur(24px) saturate(140%);border:1px solid rgba(255,255,255,.22);box-shadow:inset 0 1px rgba(255,255,255,.12),0 24px 60px rgba(0,0,0,.2)}
+:root[data-theme="glass"] .tool-card{backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-color:rgba(255,255,255,.2)}
+:root[data-theme="glass"] .language-select{background:rgba(255,255,255,.12)}
+:root[data-theme="glass"] .nav .store-link{color:#10232c}
+/* Japanese minimal: warm paper, ink, restrained vermilion, quiet geometry */
+:root[data-theme="japanese"] body{font-family:"Hiragino Sans","Yu Gothic",Meiryo,Inter,sans-serif}
+:root[data-theme="japanese"] .top{box-shadow:none;backdrop-filter:none}
+:root[data-theme="japanese"] .brand-mark{border-radius:2px;border-width:1px}
+:root[data-theme="japanese"] .hero h1{font-weight:600;letter-spacing:-1.8px}
+:root[data-theme="japanese"] .panel{border-radius:8px;box-shadow:none}
+:root[data-theme="japanese"] .tool-card{border-radius:5px;box-shadow:none;transition:transform .2s,border-color .2s}
+:root[data-theme="japanese"] .tool-card:hover{transform:translateY(-2px);box-shadow:none}
+:root[data-theme="japanese"] .badge{border-radius:3px}
+:root[data-theme="japanese"] .password-input-wrap input,:root[data-theme="japanese"] .search-row input,:root[data-theme="japanese"] .unlock-btn{border-radius:4px}
+:root[data-theme="japanese"] .hero-label,:root[data-theme="japanese"] .welcome .eyebrow{letter-spacing:3px}
+/* Apple-inspired: San Francisco system typography, soft light, rounded cards */
+:root[data-theme="apple"] body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",sans-serif;letter-spacing:-.01em}
+:root[data-theme="apple"] .top{backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%)}
+:root[data-theme="apple"] .brand-mark{border-radius:10px;border-color:var(--aqua)}
+:root[data-theme="apple"] .hero h1{font-weight:700;letter-spacing:-3.2px}
+:root[data-theme="apple"] .panel{border-radius:24px;box-shadow:0 18px 48px rgba(0,0,0,.055);border-color:rgba(0,0,0,.045)}
+:root[data-theme="apple"] .tool-card{border-radius:18px;box-shadow:0 3px 12px rgba(0,0,0,.035);border-color:rgba(0,0,0,.045)}
+:root[data-theme="apple"] .tool-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(0,0,0,.09)}
+:root[data-theme="apple"] .badge{border:0}
+:root[data-theme="apple"] .password-input-wrap input,:root[data-theme="apple"] .search-row input,:root[data-theme="apple"] .unlock-btn{border-radius:12px}
+:root[data-theme="apple"] .nav a{border-radius:999px}
+
+
+/* Added workspace controls: live background studio */
+.header-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.header-action{border:1px solid var(--theme-border,#303030);background:var(--theme-panel,rgba(20,20,20,.9));color:var(--theme-panel-text,#eee);padding:9px 11px;border-radius:9px;font-size:12px;cursor:pointer}
+.header-action:hover{border-color:var(--aqua)}
+.visual-modal{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.68);display:none;align-items:center;justify-content:center;padding:18px}
+.visual-modal.open{display:flex}
+.visual-dialog{width:min(760px,100%);max-height:90vh;overflow:auto;background:var(--theme-panel,#171717);color:var(--theme-panel-text,#eee);border:1px solid var(--theme-border,#444);border-radius:20px;padding:24px;box-shadow:0 25px 80px #0008}
+.visual-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.visual-dialog-head h2{font-size:20px}
+.visual-close{border:1px solid var(--theme-border,#444);background:transparent;color:inherit;border-radius:9px;padding:8px 11px;cursor:pointer}
+.visual-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.visual-field{display:flex;flex-direction:column;gap:8px;margin:13px 0;font-size:13px}
+.visual-field input[type="text"],.visual-field input[type="url"],.visual-field select{width:100%;padding:11px;border-radius:9px;border:1px solid var(--theme-border,#444);background:var(--theme-field,#111);color:var(--theme-field-text,#eee)}
+.visual-field input[type="range"]{width:100%;accent-color:var(--aqua)}
+.visual-field input[type="file"]{max-width:100%}
+.visual-buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.visual-help{color:var(--theme-muted,#888);font-size:12px;line-height:1.6;margin-top:10px}
+#visualStatus{font-size:12px;color:var(--aqua);min-height:18px;margin-top:12px}
+@media(max-width:800px){.top-inner{flex-wrap:wrap}.header-tools{width:100%}.visual-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
-<div id="backgroundLayer"><img id="backgroundImage" alt=""><video id="backgroundVideo" autoplay muted loop playsinline></video><iframe id="youtubeFrame" title="YouTube background" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
-<div id="glow"></div>
-<div class="shell">
-<header class="topbar">
-  <div class="brand"><div class="brand-mark">IVY</div><div>IVY FUTURE HUB<small>Personal digital workspace</small></div></div>
-  <div class="actions">
-    <button class="btn" id="themeQuick">🎨 Theme</button>
-    <button class="btn" id="openSettings">⚙ Background & Visuals</button>
-  </div>
-</header>
+<div id="bg-layer"></div><div id="cursor-glow"></div>
+<header class="top"><div class="top-inner">
+  <a class="brand" href="index.html"><span class="brand-mark">IV</span><span class="brand-name">IVY FUTURE HUB</span></a>
+  <nav class="nav" id="mainNav" aria-label="Main navigation"></nav>
+  <select class="language-select" id="themeSelect" aria-label="Choose visual theme">
+     <option value="vintage">✦ Vintage</option>
+     <option value="sage">✦ Sage</option>
+     <option value="burgundy">✦ Burgundy</option>
+     <option value="midnight">✦ Midnight</option>
+     <option value="glass">✦ Glass</option>
+     <option value="japanese">✦ Japanese Minimal</option>
+     <option value="apple">✦ Apple</option>
+   </select>
+   <div id="google_translate_element" aria-label="Translate page"></div>
+    <div class="header-tools">
+      <button class="header-action" id="openVisualStudio" type="button">⚙ Background & Visuals</button>
+    </div>
+</div></header>
 <main>
-<section class="hero" id="home">
-  <div>
-    <div class="eyebrow"><span class="pulse"></span> YOUR SPACE · YOUR FLOW</div>
-    <h1>Make room for<br><span class="gradient">what’s next.</span></h1>
-    <p class="lead">A personal launchpad for ideas, learning, productivity, and creativity. Shape the atmosphere, keep your favorite tools close, and make this space your own.</p>
-    <div class="quick-row"><a class="btn primary" href="#tools" style="text-decoration:none">Explore workspace ↗</a><button class="btn" id="translateToggle">🌐 Translate page</button></div>
-    <div id="translateArea"></div>
-  </div>
-  <aside class="hero-card">
-    <div class="clock-label">YOUR LOCAL TIME</div><div id="clock">--:--</div><div class="date-line" id="dateLine">Loading date…</div>
-    <div class="stat-row"><div class="stat"><strong id="dayCount">01</strong><span>DAY OF YEAR</span></div><div class="stat"><strong>∞</strong><span>POSSIBILITIES</span></div><div class="stat"><strong id="greeting">Hi!</strong><span>WELCOME</span></div></div>
-  </aside>
-</section>
-<nav aria-label="Main navigation"><a href="#home">Home</a><a href="#tools">Workspace</a><a href="#visuals">Visual presets</a><a href="#background">Background</a><a href="#about">About</a></nav>
-<section class="section" id="tools">
-  <div class="section-head"><div><h2>Your workspace</h2><p>Useful destinations, gathered in one place. Edit the links in the HTML to personalize these cards.</p></div><input class="search" id="toolSearch" type="search" placeholder="Search tools…"></div>
-  <div class="grid" id="toolGrid">
-    <article class="tool-card" data-search="google search web"><div class="tool-icon">⌕</div><h3>Google Search</h3><p>Explore the web, research a topic, or find a useful resource.</p><a class="card-link" href="https://www.google.com/" target="_blank" rel="noopener">Open search ↗</a></article>
-    <article class="tool-card" data-search="youtube video music learning"><div class="tool-icon">▶</div><h3>YouTube</h3><p>Watch tutorials, discover music, and learn from creators.</p><a class="card-link" href="https://www.youtube.com/" target="_blank" rel="noopener">Open YouTube ↗</a></article>
-    <article class="tool-card" data-search="gmail email communication"><div class="tool-icon">✉</div><h3>Gmail</h3><p>Keep up with messages, updates, and important conversations.</p><a class="card-link" href="https://mail.google.com/" target="_blank" rel="noopener">Open Gmail ↗</a></article>
-    <article class="tool-card" data-search="drive documents files storage"><div class="tool-icon">▤</div><h3>Google Drive</h3><p>Organize files, documents, notes, and shared projects.</p><a class="card-link" href="https://drive.google.com/" target="_blank" rel="noopener">Open Drive ↗</a></article>
-    <article class="tool-card" data-search="calendar schedule planning"><div class="tool-icon">▦</div><h3>Google Calendar</h3><p>Plan your week, track events, and protect time for what matters.</p><a class="card-link" href="https://calendar.google.com/" target="_blank" rel="noopener">Open Calendar ↗</a></article>
-    <article class="tool-card" data-search="translate language translation"><div class="tool-icon">文</div><h3>Google Translate</h3><p>Translate text and explore languages in a separate tab.</p><a class="card-link" href="https://translate.google.com/" target="_blank" rel="noopener">Open Translate ↗</a></article>
-    <article class="tool-card" data-search="chatgpt ai ideas writing"><div class="tool-icon">✳</div><h3>ChatGPT</h3><p>Brainstorm, write, plan, learn, and work through ideas.</p><a class="card-link" href="https://chatgpt.com/" target="_blank" rel="noopener">Open ChatGPT ↗</a></article>
-    <article class="tool-card" data-search="notion notes knowledge project"><div class="tool-icon">▧</div><h3>Notion</h3><p>Build a personal knowledge base, project board, or notes hub.</p><a class="card-link" href="https://www.notion.so/" target="_blank" rel="noopener">Open Notion ↗</a></article>
-    <article class="tool-card" data-search="spotify music focus"><div class="tool-icon">♫</div><h3>Spotify</h3><p>Find a soundtrack for focus, creative work, or downtime.</p><a class="card-link" href="https://open.spotify.com/" target="_blank" rel="noopener">Open Spotify ↗</a></article>
-  </div>
-</section>
-<section class="section" id="visuals">
-  <div class="section-head"><div><h2>Visual presets</h2><p>Switch the whole interface in one click. Your choice is saved in this browser.</p></div></div>
-  <div class="preset-grid">
-    <button class="preset" data-theme="midnight"><strong>🌌 Midnight</strong><span>Deep navy · mint glow</span></button>
-    <button class="preset" data-theme="glass"><strong>🫧 Glassmorphism</strong><span>Frosted translucent panels</span></button>
-    <button class="preset" data-theme="japanese"><strong>🍵 Japanese minimal</strong><span>Warm paper · quiet green</span></button>
-    <button class="preset" data-theme="apple"><strong>◉ Apple-inspired</strong><span>Clean light · soft shadows</span></button>
-    <button class="preset" data-theme="vintage"><strong>☕ Vintage</strong><span>Warm brown · brass</span></button>
-    <button class="preset" data-theme="sage"><strong>🌿 Sage</strong><span>Forest · soft botanical</span></button>
-    <button class="preset" data-theme="burgundy"><strong>🍷 Burgundy</strong><span>Deep wine · rose gold</span></button>
-  </div>
-</section>
-<section class="section" id="background">
-  <div class="section-head"><div><h2>Background studio</h2><p>Set a photo, looping video, YouTube ambience, or a built-in scene. Open the full panel for more controls.</p></div><button class="btn primary" id="openSettings2">Open background settings ↗</button></div>
-  <div class="two-col">
-    <div class="panel"><h3>Quick scenes</h3><p>Choose a built-in gradient background without uploading a file.</p><div class="swatches">
-      <button class="swatch" aria-label="Midnight blue" title="Midnight blue" data-bg="midnight" style="background:linear-gradient(135deg,#101a32,#37617b)"></button>
-      <button class="swatch" aria-label="Aurora" title="Aurora" data-bg="aurora" style="background:linear-gradient(135deg,#102d2c,#386d71,#765e9d)"></button>
-      <button class="swatch" aria-label="Sunset" title="Sunset" data-bg="sunset" style="background:linear-gradient(135deg,#4b2545,#d07862,#e5b77b)"></button>
-      <button class="swatch" aria-label="Forest" title="Forest" data-bg="forest" style="background:linear-gradient(135deg,#101d19,#2f6049)"></button>
-      <button class="swatch" aria-label="Paper" title="Paper" data-bg="paper" style="background:linear-gradient(135deg,#e7dfce,#fff9e9)"></button>
-      <button class="swatch" aria-label="Rose" title="Rose" data-bg="rose" style="background:linear-gradient(135deg,#351d2c,#a45d79)"></button>
-    </div><div class="quick-row"><button class="btn" id="resetBg">Reset background</button></div></div>
-    <div class="panel"><h3>Mouse light effect</h3><p>Move your pointer to see a soft accent glow. Tune its strength or turn it off.</p><div class="field"><label for="glowRange">Glow intensity <span id="glowValue">65%</span></label><input id="glowRange" type="range" min="0" max="100" value="65"></div><div class="field"><label><input id="glowToggle" type="checkbox" checked> Enable high-contrast mouse glow</label></div><div class="field"><label for="overlayRange">Background overlay <span id="overlayValue">38%</span></label><input id="overlayRange" type="range" min="0" max="90" value="38"></div></div>
-  </div>
-</section>
-<section class="section" id="about"><div class="panel"><h2 style="margin-top:0">Made to be yours.</h2><p class="lead" style="font-size:1rem">IVY Future Hub is a single-file personal dashboard. Your theme, overlay, glow, and basic preferences are stored locally in this browser. Uploaded background files are used in the current page session and may need to be selected again after reopening the file.</p><div class="notice">Tip: To change the default theme in the source code, find <code>CONFIG.THEME</code> near the bottom of this file and set it to <code>"glass"</code>, <code>"japanese"</code>, <code>"apple"</code>, <code>"vintage"</code>, <code>"sage"</code>, <code>"burgundy"</code>, or <code>"midnight"</code>.</div></div></section>
+  <section class="hero">
+    <div class="hero-label" data-i18n="eyebrow">IVY · HOME</div>
+    <h1><span>My Space.</span><span><em>My Tools.</em></span></h1>
+    <p class="hero-desc" data-i18n="heroDesc">Password protected · Modular · Ready to expand. Manage your navigation and tool cards in the <code>CONFIG</code> at the top of this file.</p>
+  </section>
+  <section class="panel">
+    <div class="panel-header">
+      <h2><span data-i18n="panelTitle">Your tools</span><span class="badge" data-i18n="panelBadge">FUTURE HUB</span></h2>
+      <div class="lock-indicator" id="lockIndicator">🔒 <span data-i18n="locked">Locked</span></div>
+    </div>
+    <div class="password-gate" id="passwordGate">
+      <div class="password-label"><i>🔑</i><span data-i18n="passwordLabel">Enter access password</span></div>
+      <div class="password-input-wrap">
+        <input type="password" id="passwordInput" placeholder="••••••••" autocomplete="current-password" aria-label="Password">
+        <button class="unlock-btn" id="unlockBtn" aria-label="Unlock">→</button>
+      </div>
+      <div class="error-msg" id="errorMsg" aria-live="polite"></div>
+      <div class="password-hint" data-i18n="passwordHint">Password can be changed in CONFIG · Shortcut: /</div>
+    </div>
+    <div class="function-area" id="functionArea">
+      <section class="welcome">
+        <div class="eyebrow" data-i18n="welcomeEyebrow">YOUR DIGITAL WORKSPACE</div>
+        <h2 data-i18n="welcomeTitle">Welcome to the <span>IVY Future Hub</span></h2>
+        <p data-i18n="welcomeDesc">A modern collection of smart calculators, useful tools, calendars and interactive experiences — designed for the future.</p>
+      </section>
+      <div class="tools-head"><h2 data-i18n="toolsTitle">⚡ IVY Tools</h2><span data-i18n="quickAccess">QUICK ACCESS</span></div>
+      <div class="search-row"><input type="search" id="toolSearch" data-i18n-placeholder="searchPlaceholder" placeholder="Search tools..." autocomplete="off"></div>
+      <div class="tools-grid" id="toolsGrid"></div>
+      <div class="empty-state" id="emptyState" data-i18n="noResults">No matching tools found.</div>
+    </div>
+    <div class="admin-note">
+      <span>🔧 IVY SHELL · <span data-i18n="configNote">2026</span></span>
+      <span><span data-i18n="toolCountLabel">Tools</span>: <span id="toolCount">0</span></span>
+    </div>
+  </section>
 </main>
-<footer><span>© <span id="year"></span> IVY Future Hub · Visual Studio Edition</span><span>Designed for productivity, built for flexibility.</span></footer>
-</div>
-<div class="modal-backdrop" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-<div class="modal">
-  <div class="modal-head"><h2 id="settingsTitle">⚙ Background & Visual Studio</h2><button class="icon-btn" id="closeSettings" aria-label="Close settings">✕</button></div>
-  <p class="hint">Customize the page without editing the code. Changes apply immediately.</p>
-  <div class="modal-grid">
-    <div>
-      <h3>Background source</h3>
-      <div class="field"><label for="photoFile">Upload a photo (JPG, PNG, WEBP)</label><input id="photoFile" type="file" accept="image/*"></div>
-      <div class="field"><label for="videoFile">Choose a looping video (MP4, WEBM)</label><input id="videoFile" type="file" accept="video/mp4,video/webm,video/*"></div>
-      <div class="field"><label for="youtubeUrl">YouTube video URL</label><input id="youtubeUrl" type="url" placeholder="https://www.youtube.com/watch?v=..."></div>
-      <div class="quick-row"><button class="btn primary" id="applyYoutube">Use YouTube background</button><button class="btn" id="clearMedia">Clear uploaded media</button></div>
-      <p class="hint">YouTube embeds must allow embedding. Some videos disable embeds or autoplay; browser autoplay policies may also prevent playback.</p>
+<footer>IVY — <span>FUTURE HUB</span> · BUILT TO EXPAND</footer>
+
+
+<div class="visual-modal" id="visualModal" role="dialog" aria-modal="true" aria-labelledby="visualTitle">
+  <div class="visual-dialog">
+    <div class="visual-dialog-head"><h2 id="visualTitle">⚙ Background & Visual Studio</h2><button class="visual-close" id="closeVisualStudio" type="button">✕ Close</button></div>
+    <p class="visual-help">Changes apply immediately. Appearance and selected background settings are remembered in this browser. Put shared media in the GitHub <code>source/</code> folder to make it available across devices.</p>
+    <div class="visual-grid">
+      <div>
+        <h3>Background source</h3>
+        <label class="visual-field">Use a file from GitHub source/ <select id="sourceMediaChoice"><option value="none">No source media</option><option value="image">source/background.jpg</option><option value="video">source/background.mp4</option><option value="webm">source/background.webm</option></select></label>
+        <button class="header-action" id="applySourceMedia" type="button">Use source/ media</button>
+        <label class="visual-field">Upload photo<input id="liveBackgroundImage" type="file" accept="image/*"></label>
+        <label class="visual-field">Choose background video<input id="liveBackgroundVideo" type="file" accept="video/*"></label>
+        <label class="visual-field">YouTube URL<input id="liveYouTubeUrl" type="url" placeholder="https://www.youtube.com/watch?v=..."></label>
+        <div class="visual-buttons"><button class="header-action" id="applyLiveYouTube" type="button">Use YouTube</button><button class="header-action" id="clearLiveBackground" type="button">Clear media</button></div>
+        <p class="visual-help">YouTube must allow embedding. Video backgrounds are muted to comply with browser autoplay rules.</p>
+      </div>
+      <div>
+        <h3>Visual controls</h3>
+        <label class="visual-field">Background opacity <span id="liveOpacityValue">28%</span><input id="liveOpacity" type="range" min="0" max="100" value="28"></label>
+        <label class="visual-field">Background blur <span id="liveBlurValue">1 px</span><input id="liveBlur" type="range" min="0" max="20" value="1"></label>
+        <label class="visual-field">Mouse glow strength <span id="liveGlowValue">100%</span><input id="liveGlow" type="range" min="0" max="100" value="100"></label>
+        <div class="visual-buttons"><button class="header-action" data-live-scene="aurora" type="button">Aurora</button><button class="header-action" data-live-scene="sunset" type="button">Sunset</button><button class="header-action" data-live-scene="forest" type="button">Forest</button><button class="header-action" data-live-scene="paper" type="button">Paper</button><button class="header-action" id="resetVisuals" type="button">Reset visuals</button></div>
+      </div>
     </div>
-    <div>
-      <h3>Appearance</h3>
-      <div class="field"><label for="themeSelect">Interface theme</label><select id="themeSelect"><option value="midnight">Midnight</option><option value="glass">Glassmorphism</option><option value="japanese">Japanese minimal</option><option value="apple">Apple-inspired</option><option value="vintage">Vintage</option><option value="sage">Sage</option><option value="burgundy">Burgundy</option></select></div>
-      <div class="field"><label for="modalOverlay">Background overlay <span id="modalOverlayValue">38%</span></label><input id="modalOverlay" type="range" min="0" max="90" value="38"></div>
-      <div class="field"><label for="modalGlow">Mouse glow <span id="modalGlowValue">65%</span></label><input id="modalGlow" type="range" min="0" max="100" value="65"></div>
-      <div class="field"><label><input id="modalGlowToggle" type="checkbox" checked> Enable mouse glow</label></div>
-      <div class="quick-row"><button class="btn" id="resetAll">Reset visual settings</button></div>
-    </div>
+    <div id="visualStatus" role="status" aria-live="polite"></div>
   </div>
-  <p id="status" role="status" aria-live="polite"></p>
 </div>
-</div>
+
 <script>
-/* =================== EASY CONFIGURATION ===================
-   Change only THEME to choose the initial theme.
-   Options: "midnight", "glass", "japanese", "apple",
-            "vintage", "sage", "burgundy"
-   ========================================================== */
+/* ================================================================
+   ██ 1. CONFIG  ██  只改这一块就能更新整个站点
+   ================================================================ */
 const CONFIG = {
-  THEME: "midnight",
-  MOUSE_GLOW: true,
-  GLOW_INTENSITY: 65,
-  OVERLAY_OPACITY: 38
+  /* ---- UI 主题：只改这里即可切换整站风格 ----
+     vintage / sage / burgundy / midnight / glass / japanese / apple ---- */
+  THEME: "vintage", // Default theme. You can also switch themes from the top-right menu.
+
+  /* ---- BACKGROUND MEDIA ----
+     MODE: "none" | "image" | "video" | "youtube"
+     SOURCE:
+       image: "images/your-photo.jpg" (or a full image URL)
+       video: "videos/your-background.mp4" (MP4 recommended)
+       youtube: paste a normal YouTube URL, e.g. "https://www.youtube.com/watch?v=VIDEO_ID"
+     GitHub Pages: put shared files in ./source/ (background.jpg, background.mp4, or background.webm).
+     YouTube background uses an embed URL; use a video you have permission to embed.
+  */
+  BACKGROUND: {
+    MODE: "none",
+    SOURCE: "./source/background.jpg",
+    OVERLAY: 0.28,
+    BLUR: 1
+  },
+
+  /* ---- 基本设置 ---- */
+  SITE_NAME:   "IVY . SHARE INFO",
+
+
+  /* ---- 密码开关 ---- */
+  USE_PASSWORD: true,          // ← false = 完全不需要密码，直接进入 or true
+  PASSWORD:     "ivy2026",     // ← 只有 USE_PASSWORD:true 时才生效
+
+  /* ---- 顶部导航 ---- */
+  NAVIGATION: [
+    { icon: "🏠", label: "Home",     href: "index.html" },
+    { icon: "🏡", label: "House",    href: "1/housing loan.html" },
+    { icon: "🚗", label: "Car",      href: "1/car loan.html" },
+    { icon: "💰", label: "CalcHub",  href: "1/calchub.html" },
+    { icon: "📅", label: "Calendar", href: "1/chinesecalendar.html" },
+    { icon: "🎮", label: "Play",     href: "1/play.html" },
+    { icon: "🛒", label: "Store ↗",  href: "https://qqshop.byethost12.com/wp", external: true, store: true }
+  ],
+
+  /* ---- 工具卡片 ---- */
+  /* color 可选: cyan / green / orange / purple / pink / blue */
+  TOOLS: [
+    { icon: "🏡", title: "Capital & Profit Calculator",       description: "Calculator", href: "1/Capital & Profit Calculator with password.html", color: "green" },
+    { icon: "🏡", title: "Malaysia Business Calculator Pro",  description: "Calculator", href: "1/Malaysia Business Calculator Pro.html",            color: "green" },
+    { icon: "🏡", title: "Profit & Loss Statement",           description: "Calculator", href: "1/Profit & Loss Statement.html",                    color: "green" },
+    { icon: "🏡", title: "Quick Check Tax Computation",       description: "Calculator", href: "1/Quick Check Tax Computation.html",                color: "green" },
+    { icon: "🏡", title: "House Calculator",                  description: "Calculate house purchase costs and explore property financing.", href: "1/house.html", color: "green" },
+    { icon: "🚗", title: "Car Loan Calculator",               description: "Calculate vehicle loan payments and financing costs.",            href: "1/car.html",   color: "orange" },
+    { icon: "💰", title: "CalcHub",                           description: "Your central hub for useful calculations and financial tools.",  href: "1/calchub.html", color: "purple" },
+    { icon: "📅", title: "Chinese Calendar",                  description: "Explore dates and information from the Chinese calendar.",        href: "1/chinesecalendar.html", color: "pink" },
+    { icon: "🎮", title: "Play",                              description: "Enter the interactive area and explore something fun.",           href: "1/play.html",  color: "blue" },
+    { icon: "🧮", title: "BMI Calculator",                    description: "Calculate BMI quickly and easily.",                              href: "1/bmi.html",   color: "cyan" },
+    { icon: "🏡", title: "Excel Combined",                    description: "Tool", href: "1/Excelcombined.html",                                        color: "green" },
+    { icon: "🏡", title: "Image to Excel",                    description: "Tool", href: "1/image2excel.html",                                        color: "green" },
+    { icon: "🏡", title: "Shop8",                             description: "Tool", href: "1/shop8.html",                                        color: "green" },
+    { icon: "🏡", title: "2",                                 description: "Calculator", href: "1/4.html",                                        color: "green" },
+    { icon: "🏡", title: "2",                                 description: "Calculator", href: "1/4.html",                                        color: "green" },
+    { icon: "🏡", title: "2",                                 description: "Calculator", href: "1/4.html",                                        color: "green" },
+
+
+
+  ],
+
+  /* ---- 光标光晕 ---- */
+  GLOW: {
+    COLOR_1: "rgba(10,186,181,.20)",
+    COLOR_2: "rgba(0,168,150,.08)",
+    COLOR_3: "rgba(129,216,208,.03)",
+    SIZE:    640,
+    SMOOTH:  .13
+  }
 };
-const $ = (s) => document.querySelector(s);
-const $$ = (s) => [...document.querySelectorAll(s)];
-const themes = ["midnight","glass","japanese","apple","vintage","sage","burgundy"];
-const body = document.body;
-function setTheme(theme, save=true){
-  if(!themes.includes(theme)) theme = "midnight";
-  themes.forEach(t=>body.classList.remove("theme-"+t));
-  body.classList.add("theme-"+theme);
-  $("#themeSelect").value = theme;
-  if(save) localStorage.setItem("ivyTheme",theme);
-}
-function setOverlay(value){
-  const v = Math.max(0,Math.min(90,Number(value)||0));
-  document.documentElement.style.setProperty("--overlay",`rgba(5,10,20,${v/100})`);
-  $("#overlayRange").value = v; $("#modalOverlay").value = v;
-  $("#overlayValue").textContent = v+"%"; $("#modalOverlayValue").textContent = v+"%";
-  localStorage.setItem("ivyOverlay",v);
-}
-function setGlow(value){
-  const v=Math.max(0,Math.min(100,Number(value)||0));
-  $("#glow").style.opacity=v/100; $("#glowRange").value=v; $("#modalGlow").value=v;
-  $("#glowValue").textContent=v+"%"; $("#modalGlowValue").textContent=v+"%";
-  localStorage.setItem("ivyGlow",v);
-}
-function setGlowEnabled(enabled){
-  $("#glowToggle").checked=!!enabled; $("#modalGlowToggle").checked=!!enabled;
-  $("#glow").style.display=enabled?"block":"none";
-  localStorage.setItem("ivyGlowEnabled",enabled?"1":"0");
-}
-function status(msg){$("#status").textContent=msg;setTimeout(()=>{if($("#status").textContent===msg)$("#status").textContent=""},4500)}
-function openModal(){$("#settingsModal").classList.add("open")}
-function closeModal(){$("#settingsModal").classList.remove("open")}
-$("#openSettings").addEventListener("click",openModal);
-$("#openSettings2").addEventListener("click",openModal);
-$("#closeSettings").addEventListener("click",closeModal);
-$("#settingsModal").addEventListener("click",e=>{if(e.target.id==="settingsModal")closeModal()});
-document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
-$("#themeQuick").addEventListener("click",()=>{const i=themes.indexOf(body.className.match(/theme-([a-z]+)/)?.[1]||"midnight");setTheme(themes[(i+1)%themes.length]);status("Theme changed to "+themes[(i+1)%themes.length]+".")});
-$$("[data-theme]").forEach(b=>b.addEventListener("click",()=>{setTheme(b.dataset.theme);status("Theme set to "+b.dataset.theme+".")}));
-$("#themeSelect").addEventListener("change",e=>{setTheme(e.target.value);status("Theme updated.")});
-$("#overlayRange").addEventListener("input",e=>setOverlay(e.target.value));
-$("#modalOverlay").addEventListener("input",e=>setOverlay(e.target.value));
-$("#glowRange").addEventListener("input",e=>setGlow(e.target.value));
-$("#modalGlow").addEventListener("input",e=>setGlow(e.target.value));
-$("#glowToggle").addEventListener("change",e=>setGlowEnabled(e.target.checked));
-$("#modalGlowToggle").addEventListener("change",e=>setGlowEnabled(e.target.checked));
-document.addEventListener("mousemove",e=>{$("#glow").style.left=e.clientX+"px";$("#glow").style.top=e.clientY+"px"});
-const bgLayer=$("#backgroundLayer"), img=$("#backgroundImage"), video=$("#backgroundVideo"), yt=$("#youtubeFrame");
-const scenes={
- midnight:"radial-gradient(ellipse at 18% 12%,#244267 0%,transparent 45%),linear-gradient(135deg,#0a1020,#17243a)",
- aurora:"radial-gradient(ellipse at 18% 18%,#3c8b7c 0%,transparent 42%),radial-gradient(ellipse at 82% 78%,#6b4c91 0%,transparent 48%),linear-gradient(135deg,#0c242a,#16263a)",
- sunset:"radial-gradient(ellipse at 80% 15%,#e4a26d 0%,transparent 40%),linear-gradient(135deg,#422442,#8e4e64,#392c45)",
- forest:"radial-gradient(ellipse at 20% 20%,#376c4c 0%,transparent 48%),linear-gradient(135deg,#0e1b17,#172c23)",
- paper:"linear-gradient(135deg,#e6ddc9,#fff9eb)",
- rose:"radial-gradient(ellipse at 20% 20%,#a45d79 0%,transparent 45%),linear-gradient(135deg,#271725,#4e263d)"
+
+/* ================================================================
+   ██ 2. I18N  ██  多语言文案（只改这一块就能翻译）
+   ================================================================ */
+const I18N = {
+  en: {
+    openAccess:"Open access", unlocked:"Unlocked", locked:"Locked",
+    success:"✓ Verified. Tools unlocked.",
+    wrongPassword:"Incorrect password. Please try again."
+  }
 };
-function clearMedia(){img.style.display="none";img.removeAttribute("src");video.pause();video.removeAttribute("src");video.load();video.style.display="none";yt.style.display="none";yt.src="";localStorage.removeItem("ivyScene");}
-function setScene(name){clearMedia();bgLayer.style.background=scenes[name]||scenes.midnight;localStorage.setItem("ivyScene",name);status("Background scene updated.");}
-$$("[data-bg]").forEach(b=>b.addEventListener("click",()=>setScene(b.dataset.bg)));
-$("#resetBg").addEventListener("click",()=>{clearMedia();bgLayer.style.background="";setOverlay(CONFIG.OVERLAY_OPACITY);localStorage.removeItem("ivyScene");status("Background reset.");});
-$("#photoFile").addEventListener("change",e=>{
- const file=e.target.files?.[0];if(!file)return;
- if(!file.type.startsWith("image/")){status("Please select an image file.");return}
- const reader=new FileReader();reader.onload=()=>{clearMedia();img.src=reader.result;img.style.display="block";bgLayer.style.background="";localStorage.removeItem("ivyScene");status("Photo background applied for this session.")};reader.readAsDataURL(file);
-});
-$("#videoFile").addEventListener("change",e=>{
- const file=e.target.files?.[0];if(!file)return;
- if(!file.type.startsWith("video/")){status("Please select a video file.");return}
- clearMedia();video.src=URL.createObjectURL(file);video.style.display="block";video.play().catch(()=>{});bgLayer.style.background="";localStorage.removeItem("ivyScene");status("Video background applied for this session.");
-});
-function youtubeId(value){
- try{const u=new URL(value);if(u.hostname.includes("youtu.be"))return u.pathname.slice(1).split("/")[0];if(u.hostname.includes("youtube.com")){if(u.pathname==="/watch")return u.searchParams.get("v");const m=u.pathname.match(/\/(embed|shorts|live)\/([^/?]+)/);if(m)return m[2]}}catch(e){}return null;
+const t = key => I18N.en[key] || key;
+
+/* 颜色表 */
+const COLOR_MAP = {
+  cyan:"#00eaff", green:"#22c55e", orange:"#f59e0b",
+  purple:"#8b5cf6", pink:"#ec4899", blue:"#06b6d4"
+};
+
+/* ================================================================
+   ██ 3. 核心逻辑  ██  一般不需要改
+   ================================================================ */
+let isUnlocked = false;
+
+const $ = id => document.getElementById(id);
+
+/* ---------- 3.1 渲染导航 ---------- */
+function renderNavigation(){
+  const nav = $('mainNav');
+  nav.innerHTML = '';
+  CONFIG.NAVIGATION.forEach(item => {
+    const a = document.createElement('a');
+    a.href = item.href;
+    a.textContent = item.icon + ' ' + item.label;
+    if (item.external) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+    if (item.store) a.className = 'store-link';
+    nav.appendChild(a);
+  });
 }
-$("#applyYoutube").addEventListener("click",()=>{
- const id=youtubeId($("#youtubeUrl").value.trim());
- if(!id){status("Enter a valid YouTube video URL first.");return}
- clearMedia();yt.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id)+"?autoplay=1&mute=1&controls=0&loop=1&playlist="+encodeURIComponent(id)+"&playsinline=1&modestbranding=1";yt.style.display="block";bgLayer.style.background="";localStorage.removeItem("ivyScene");status("YouTube background applied. If it stays blank, embedding may be disabled.");
-});
-$("#clearMedia").addEventListener("click",()=>{clearMedia();bgLayer.style.background="";status("Uploaded media cleared.")});
-$("#resetAll").addEventListener("click",()=>{
- setTheme(CONFIG.THEME);setOverlay(CONFIG.OVERLAY_OPACITY);setGlow(CONFIG.GLOW_INTENSITY);setGlowEnabled(CONFIG.MOUSE_GLOW);
- clearMedia();bgLayer.style.background="";localStorage.removeItem("ivyScene");status("Visual settings restored to defaults.");
-});
-$("#toolSearch").addEventListener("input",e=>{
- const q=e.target.value.trim().toLowerCase();
- $$(".tool-card").forEach(card=>card.classList.toggle("hidden",!((card.innerText+" "+card.dataset.search).toLowerCase().includes(q))));
-});
-$("#translateToggle").addEventListener("click",()=>{
- const area=$("#translateArea");
- if(area.dataset.loaded==="1"){area.innerHTML="";area.dataset.loaded="0";return}
- area.dataset.loaded="1";
- area.innerHTML='<div id="google_translate_element" style="margin-top:14px"></div><p class="hint">Google Translate may require an internet connection.</p>';
- const s=document.createElement("script");s.src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";s.onerror=()=>{area.insertAdjacentHTML("beforeend","<p class='hint'>Could not load Google Translate. Use the Google Translate card below instead.</p>")};document.body.appendChild(s);
-});
-window.googleTranslateElementInit=function(){if(window.google?.translate?.TranslateElement)new google.translate.TranslateElement({pageLanguage:"en",layout:google.translate.TranslateElement.InlineLayout.SIMPLE,autoDisplay:false},"google_translate_element")};
-function updateClock(){
- const d=new Date();$("#clock").textContent=d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
- $("#dateLine").textContent=d.toLocaleDateString([], {weekday:"long",year:"numeric",month:"long",day:"numeric"});
- const start=new Date(d.getFullYear(),0,0);$("#dayCount").textContent=String(Math.floor((d-start)/86400000)).padStart(3,"0");
- const h=d.getHours();$("#greeting").textContent=h<12?"Morning":h<18?"Hello":"Evening";$("#year").textContent=d.getFullYear();
+
+/* ---------- 3.2 渲染工具卡 ---------- */
+function renderTools(){
+  const grid = $('toolsGrid');
+  grid.innerHTML = '';
+  const q = $('toolSearch').value.trim().toLowerCase();
+  let count = 0;
+
+  CONFIG.TOOLS.forEach(tool => {
+    const hay = [tool.title, tool.description, tool.href].join(' ').toLowerCase();
+    if (q && !hay.includes(q)) return;
+    count++;
+
+    const a = document.createElement('a');
+    a.className = 'tool-card';
+    a.href = tool.href;
+    a.style.setProperty('--card-color', COLOR_MAP[tool.color] || 'var(--aqua)');
+
+    const icon = document.createElement('div');
+    icon.className = 'tool-icon'; icon.textContent = tool.icon;
+
+    const title = document.createElement('h3');
+    title.textContent = tool.title;
+
+    const desc = document.createElement('p');
+    desc.textContent = tool.description;
+
+    const arrow = document.createElement('span');
+    arrow.className = 'tool-arrow'; arrow.textContent = '↗';
+
+    a.append(icon, title, desc, arrow);
+    grid.appendChild(a);
+  });
+
+  $('toolCount').textContent = count;
+  $('emptyState').style.display = count ? 'none' : 'block';
 }
-updateClock();setInterval(updateClock,1000);
-const savedTheme=localStorage.getItem("ivyTheme")||CONFIG.THEME;
-setTheme(savedTheme,false);
-setOverlay(localStorage.getItem("ivyOverlay")??CONFIG.OVERLAY_OPACITY);
-setGlow(localStorage.getItem("ivyGlow")??CONFIG.GLOW_INTENSITY);
-setGlowEnabled(localStorage.getItem("ivyGlowEnabled")===null?CONFIG.MOUSE_GLOW:localStorage.getItem("ivyGlowEnabled")==="1");
-const savedScene=localStorage.getItem("ivyScene");if(savedScene&&scenes[savedScene])bgLayer.style.background=scenes[savedScene];
+
+/* ---------- 3.4 密码锁定 UI ---------- */
+function refreshLockUI(){
+  const indicator = $('lockIndicator');
+
+  if (!CONFIG.USE_PASSWORD){
+    indicator.classList.add('unlocked');
+    indicator.innerHTML = '🔓 <span>' + t('openAccess') + '</span>';
+    return;
+  }
+  indicator.classList.toggle('unlocked', isUnlocked);
+  indicator.innerHTML = (isUnlocked ? '🔓 ' : '🔒 ') +
+    '<span>' + t(isUnlocked ? 'unlocked' : 'locked') + '</span>';
+}
+
+/* ---------- 3.5 密码门初始化 ---------- */
+function initPasswordGate(){
+  const gate  = $('passwordGate');
+  const area  = $('functionArea');
+  const input = $('passwordInput');
+  const btn   = $('unlockBtn');
+  const err   = $('errorMsg');
+
+  /* 若不需要密码：隐藏门，直接展示功能区 */
+  if (!CONFIG.USE_PASSWORD){
+    gate.classList.add('hidden');
+    area.classList.add('open');
+    isUnlocked = true;
+    refreshLockUI();
+    return;
+  }
+
+  /* 需要密码：绑定事件 */
+  function unlock(){
+    if (input.value === CONFIG.PASSWORD){
+      isUnlocked = true;
+      err.style.color = 'var(--aqua)';
+      err.textContent = t('success');
+      gate.style.opacity = '0';
+      gate.style.transform = 'translateY(-8px)';
+      setTimeout(() => gate.classList.add('hidden'), 350);
+      area.classList.add('unlocked');
+      refreshLockUI();
+    } else {
+      err.textContent = t('wrongPassword');
+      input.value = '';
+      input.focus();
+      input.animate(
+        [{transform:'translateX(0)'},{transform:'translateX(5px)'},
+         {transform:'translateX(-5px)'},{transform:'translateX(0)'}],
+        {duration:180});
+    }
+  }
+
+  btn.addEventListener('click', unlock);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
+  window.addEventListener('load', () => input.focus());
+  window.addEventListener('keydown', e => {
+    if (e.key === '/' && document.activeElement !== input &&
+        !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)){
+      e.preventDefault(); input.focus();
+    }
+  });
+
+  refreshLockUI();
+}
+
+/* ---------- 3.6 光标光晕 ---------- */
+function initCursorGlow(){
+  const glow = $('cursor-glow');
+  const g = CONFIG.GLOW;
+  glow.style.width  = g.SIZE + 'px';
+  glow.style.height = g.SIZE + 'px';
+  glow.style.background =
+    'radial-gradient(circle,' + g.COLOR_1 + ' 0%,' +
+    g.COLOR_2 + ' 30%,' + g.COLOR_3 + ' 55%,transparent 80%)';
+
+  let tx = innerWidth/2, ty = innerHeight/2, cx = tx, cy = ty;
+  addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+  addEventListener('mouseleave', () => glow.style.opacity = '.3');
+  addEventListener('mouseenter', () => glow.style.opacity = '.9');
+
+  (function loop(){
+    cx += (tx - cx) * g.SMOOTH;
+    cy += (ty - cy) * g.SMOOTH;
+    glow.style.transform = 'translate(' + cx + 'px,' + cy + 'px) translate(-50%,-50%)';
+    requestAnimationFrame(loop);
+  })();
+}
+
+/* ================================================================
+   ██ 4. 启动  ██
+   ================================================================ */
+/* ---------- Background media: image / video / YouTube ---------- */
+function initBackgroundMedia(){
+  const layer = $('bg-layer');
+  const cfg = CONFIG.BACKGROUND || {};
+  const mode = String(cfg.MODE || 'none').toLowerCase();
+  const source = String(cfg.SOURCE || '').trim();
+  layer.style.setProperty('--bg-opacity', String(Math.max(0, Math.min(1, Number(cfg.OVERLAY ?? .28)))));
+  layer.style.setProperty('--bg-blur', Math.max(0, Number(cfg.BLUR ?? 1)) + 'px');
+  if (!source || mode === 'none') return;
+  if (mode === 'image') {
+    const img = document.createElement('img'); img.src = source; img.alt = '';
+    layer.appendChild(img);
+  } else if (mode === 'video') {
+    const video = document.createElement('video');
+    video.src = source; video.autoplay = true; video.muted = true;
+    video.loop = true; video.playsInline = true; layer.appendChild(video);
+  } else if (mode === 'youtube') {
+    const id = getYouTubeId(source);
+    if (!id) { console.warn('Background YouTube URL was not recognized.'); return; }
+    const frame = document.createElement('iframe');
+    frame.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + encodeURIComponent(id) + '&playsinline=1&rel=0';
+    frame.title = 'Decorative YouTube background';
+    frame.allow = 'autoplay; encrypted-media';
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    layer.appendChild(frame);
+  }
+}
+function getYouTubeId(value){
+  try {
+    const u = new URL(value);
+    if (u.hostname.includes('youtu.be')) return u.pathname.split('/').filter(Boolean)[0] || '';
+    if (u.hostname.includes('youtube.com')) {
+      if (u.pathname === '/watch') return u.searchParams.get('v') || '';
+      const parts = u.pathname.split('/').filter(Boolean);
+      if (['embed','shorts','live'].includes(parts[0])) return parts[1] || '';
+    }
+  } catch (_) {}
+  return '';
+}
+
+/* Google Translate: English is the source language; visitors choose a translation. */
+function loadGoogleTranslate(){
+  window.googleTranslateElementInit = function(){
+    if (window.google && google.translate && google.translate.TranslateElement) {
+      new google.translate.TranslateElement({
+        pageLanguage:'en',
+        includedLanguages:'en,zh-CN,zh-TW,ms,ja,ko,fr,de,es,ta,hi',
+        autoDisplay:false,
+        layout:google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+    }
+  };
+  const script = document.createElement('script');
+  script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+  script.async = true;
+  script.onerror = () => {
+    const el = $('google_translate_element');
+    if (el) el.title = 'Google Translate could not load. Check your internet connection.';
+  };
+  document.head.appendChild(script);
+}
+
+
+/* ---------- Live visual studio ---------- */
+let liveBackgroundObjectURL = null;
+const IVY_VISUAL_SETTINGS_KEY = 'ivy-visual-settings-v1';
+function readVisualSettings(){try{return JSON.parse(localStorage.getItem(IVY_VISUAL_SETTINGS_KEY)||'{}')}catch(_){return {}}}
+function saveVisualSettings(patch){try{const current=readVisualSettings();localStorage.setItem(IVY_VISUAL_SETTINGS_KEY,JSON.stringify({...current,...patch}))}catch(_){visualStatus('Could not save settings in this browser.')}}
+function visualStatus(message){const el=$('visualStatus');if(el)el.textContent=message;}
+function liveBackgroundElements(){return [...$('bg-layer').querySelectorAll('img,video,iframe')];}
+function clearLiveBackground(){
+  liveBackgroundElements().forEach(el=>{if(el.tagName==='VIDEO'){try{el.pause()}catch(_){}}el.remove()});
+  if(liveBackgroundObjectURL){try{URL.revokeObjectURL(liveBackgroundObjectURL)}catch(_){}liveBackgroundObjectURL=null;}
+  $('bg-layer').style.background='';visualStatus('Background media cleared.');
+}
+function setLiveScene(name){
+  clearLiveBackground();
+  const map={
+    aurora:'radial-gradient(ellipse at 15% 20%,#2d8b82 0%,transparent 45%),radial-gradient(ellipse at 85% 75%,#7556a6 0%,transparent 45%),linear-gradient(135deg,#0c1725,#152b38)',
+    sunset:'radial-gradient(ellipse at 80% 15%,#e4a26d 0%,transparent 40%),linear-gradient(135deg,#422442,#8e4e64,#392c45)',
+    forest:'radial-gradient(ellipse at 20% 20%,#376c4c 0%,transparent 48%),linear-gradient(135deg,#0e1b17,#172c23)',
+    paper:'linear-gradient(135deg,#e6ddc9,#fff9eb)'
+  };
+  $('bg-layer').style.background=map[name]||'';saveVisualSettings({mediaMode:'scene',scene:name});visualStatus(name+' scene applied.');
+}
+function setLiveOpacity(value){const n=Math.max(0,Math.min(100,Number(value)||0));$('bg-layer').style.setProperty('--bg-opacity',String(n/100));$('liveOpacity').value=n;$('liveOpacityValue').textContent=n+'%';saveVisualSettings({opacity:n});}
+function setLiveBlur(value){const n=Math.max(0,Math.min(20,Number(value)||0));$('bg-layer').style.setProperty('--bg-blur',n+'px');$('liveBlur').value=n;$('liveBlurValue').textContent=n+' px';saveVisualSettings({blur:n});}
+function setLiveGlow(value){const n=Math.max(0,Math.min(100,Number(value)||0));$('cursor-glow').style.opacity=String(n/100);$('liveGlow').value=n;$('liveGlowValue').textContent=n+'%';saveVisualSettings({glow:n});}
+function liveYoutubeId(value){
+  try{const u=new URL(value);if(u.hostname.includes('youtu.be'))return u.pathname.split('/').filter(Boolean)[0]||'';if(u.hostname.includes('youtube.com')){if(u.pathname==='/watch')return u.searchParams.get('v')||'';const p=u.pathname.split('/').filter(Boolean);if(['embed','shorts','live'].includes(p[0]))return p[1]||'';}}catch(_){}return '';
+}
+function initVisualStudio(){
+  const modal=$('visualModal');
+  $('openVisualStudio').addEventListener('click',()=>modal.classList.add('open'));
+  $('closeVisualStudio').addEventListener('click',()=>modal.classList.remove('open'));
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')modal.classList.remove('open')});
+  $('liveOpacity').addEventListener('input',e=>setLiveOpacity(e.target.value));
+  $('applySourceMedia').addEventListener('click',()=>{const choice=$('sourceMediaChoice').value;if(choice==='none'){clearLiveBackground();saveVisualSettings({mediaMode:'none',mediaSource:''});return;}const source=choice==='image'?'./source/background.jpg':choice==='video'?'./source/background.mp4':'./source/background.webm';clearLiveBackground();const el=document.createElement(choice==='image'?'img':'video');el.src=source;if(choice==='image')el.alt='';else{el.autoplay=true;el.muted=true;el.loop=true;el.playsInline=true;el.play().catch(()=>{});} $('bg-layer').appendChild(el);saveVisualSettings({mediaMode:choice,mediaSource:source});visualStatus('Loaded '+source+'. Ensure the file exists in your repository source/ folder.');});
+  $('liveBlur').addEventListener('input',e=>setLiveBlur(e.target.value));
+  $('liveGlow').addEventListener('input',e=>setLiveGlow(e.target.value));
+  $('liveBackgroundImage').addEventListener('change',e=>{
+    const file=e.target.files&&e.target.files[0];if(!file)return;
+    if(!file.type.startsWith('image/')){visualStatus('Please choose an image file.');return;}
+    clearLiveBackground();const img=document.createElement('img');liveBackgroundObjectURL=URL.createObjectURL(file);img.src=liveBackgroundObjectURL;img.alt='';$('bg-layer').appendChild(img);saveVisualSettings({mediaMode:'uploaded-image'});visualStatus('Photo background applied for this session. Upload it to source/ for cross-device use.');
+  });
+  $('liveBackgroundVideo').addEventListener('change',e=>{
+    const file=e.target.files&&e.target.files[0];if(!file)return;
+    if(!file.type.startsWith('video/')){visualStatus('Please choose a video file.');return;}
+    clearLiveBackground();const video=document.createElement('video');liveBackgroundObjectURL=URL.createObjectURL(file);video.src=liveBackgroundObjectURL;video.autoplay=true;video.muted=true;video.loop=true;video.playsInline=true;$('bg-layer').appendChild(video);video.play().catch(()=>{});saveVisualSettings({mediaMode:'uploaded-video'});visualStatus('Video background applied for this session. Upload it to source/ for cross-device use.');
+  });
+  $('applyLiveYouTube').addEventListener('click',()=>{
+    const id=liveYoutubeId($('liveYouTubeUrl').value.trim());if(!id){visualStatus('Enter a valid YouTube video URL.');return;}
+    clearLiveBackground();const frame=document.createElement('iframe');frame.src='https://www.youtube-nocookie.com/embed/'+encodeURIComponent(id)+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+encodeURIComponent(id)+'&playsinline=1&rel=0';frame.title='Decorative YouTube background';frame.allow='autoplay; encrypted-media';frame.referrerPolicy='strict-origin-when-cross-origin';$('bg-layer').appendChild(frame);saveVisualSettings({mediaMode:'youtube',youtubeUrl:$('liveYouTubeUrl').value.trim()});visualStatus('YouTube background applied and URL saved in this browser.');
+  });
+  $('clearLiveBackground').addEventListener('click',clearLiveBackground);
+  document.querySelectorAll('[data-live-scene]').forEach(b=>b.addEventListener('click',()=>setLiveScene(b.dataset.liveScene)));
+  $('resetVisuals').addEventListener('click',()=>{
+    clearLiveBackground();setLiveOpacity(Number(CONFIG.BACKGROUND?.OVERLAY??.28)*100);setLiveBlur(CONFIG.BACKGROUND?.BLUR??1);setLiveGlow(100);
+    document.documentElement.dataset.theme=CONFIG.THEME;$('themeSelect').value=CONFIG.THEME;
+    try{localStorage.removeItem('ivy-theme');localStorage.removeItem(IVY_VISUAL_SETTINGS_KEY)}catch(_){}visualStatus('Visual settings reset to CONFIG defaults.');
+  });
+  const saved=readVisualSettings();setLiveOpacity(saved.opacity??Number(CONFIG.BACKGROUND?.OVERLAY??.28)*100);setLiveBlur(saved.blur??CONFIG.BACKGROUND?.BLUR??1);setLiveGlow(saved.glow??100);if(saved.youtubeUrl)$('liveYouTubeUrl').value=saved.youtubeUrl;if(saved.mediaMode==='image'||saved.mediaMode==='video'||saved.mediaMode==='webm')$('sourceMediaChoice').value=saved.mediaMode;
+  if(saved.mediaMode==='youtube'&&saved.youtubeUrl){const id=liveYoutubeId(saved.youtubeUrl);if(id){const frame=document.createElement('iframe');frame.src='https://www.youtube-nocookie.com/embed/'+encodeURIComponent(id)+'?autoplay=1&mute=1&controls=0&loop=1&playlist='+encodeURIComponent(id)+'&playsinline=1&rel=0';frame.title='Decorative YouTube background';frame.allow='autoplay; encrypted-media';$('bg-layer').appendChild(frame);}}else if(saved.mediaMode==='image'||saved.mediaMode==='video'||saved.mediaMode==='webm'){const src=saved.mediaSource||(saved.mediaMode==='image'?'./source/background.jpg':saved.mediaMode==='video'?'./source/background.mp4':'./source/background.webm');const el=document.createElement(saved.mediaMode==='image'?'img':'video');el.src=src;if(saved.mediaMode==='image')el.alt='';else{el.autoplay=true;el.muted=true;el.loop=true;el.playsInline=true;} $('bg-layer').appendChild(el);}
+}
+
+/* ================================================================
+   ██ 4. STARTUP
+   ================================================================ */
+(function boot(){
+  document.documentElement.dataset.theme =
+    ['vintage','sage','burgundy','midnight','glass','japanese','apple'].includes(CONFIG.THEME)
+      ? CONFIG.THEME : 'vintage';
+
+  const themeSelect = $('themeSelect');
+  themeSelect.value = document.documentElement.dataset.theme;
+  themeSelect.addEventListener('change', e => {
+    const theme = e.target.value;
+    if (['vintage','sage','burgundy','midnight','glass','japanese','apple'].includes(theme)) {
+      document.documentElement.dataset.theme = theme;
+      try { localStorage.setItem('ivy-theme', theme); } catch (_) {}
+      saveVisualSettings({theme});
+    }
+  });
+  try {
+    const savedTheme = localStorage.getItem('ivy-theme');
+    if (savedTheme && ['vintage','sage','burgundy','midnight','glass','japanese','apple'].includes(savedTheme)) {
+      document.documentElement.dataset.theme = savedTheme;
+      themeSelect.value = savedTheme;
+    }
+  } catch (_) {}
+  const savedVisualTheme=readVisualSettings().theme;if(savedVisualTheme&&['vintage','sage','burgundy','midnight','glass','japanese','apple'].includes(savedVisualTheme)){document.documentElement.dataset.theme=savedVisualTheme;themeSelect.value=savedVisualTheme;}
+
+  $('toolSearch').addEventListener('input', renderTools);
+  renderNavigation();
+  renderTools();
+  initPasswordGate();
+  initCursorGlow();
+  initBackgroundMedia();
+  loadGoogleTranslate();
+  initVisualStudio();
+})();
 </script>
-</body>
-</html>
+</body></html>

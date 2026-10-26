@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101827">
+<title>IVY Future Hub — Visual Studio Edition</title>
+<style>
+/* =========================================================
+   IVY FUTURE HUB — VISUAL STUDIO EDITION
+   Change CONFIG.THEME in the script to switch the default theme.
+   Available: midnight, glass, japanese, apple, vintage, sage, burgundy
+   ========================================================= */
+:root{
+  --bg:#0b1220; --panel:rgba(17,27,45,.82); --panel-solid:#111b2d;
+  --text:#edf4ff; --muted:#aab8cc; --accent:#72e5d1; --accent2:#8aa8ff;
+  --line:rgba(255,255,255,.13); --shadow:0 18px 60px rgba(0,0,0,.25);
+  --radius:22px; --blur:18px; --button-text:#07131b;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:var(--bg);overflow-x:hidden;transition:background .3s,color .3s}
+button,input,select{font:inherit}
+button{cursor:pointer}
+#backgroundLayer{position:fixed;inset:0;z-index:-5;background:radial-gradient(ellipse at 15% 10%,rgba(68,111,180,.24),transparent 45%),radial-gradient(ellipse at 85% 75%,rgba(43,191,168,.15),transparent 42%),var(--bg);background-size:cover;background-position:center;transition:opacity .25s}
+#backgroundVideo,#backgroundImage{position:absolute;width:100%;height:100%;inset:0;object-fit:cover;display:none}
+#backgroundLayer:after{content:"";position:absolute;inset:0;background:var(--overlay,rgba(5,10,20,.38));pointer-events:none}
+#youtubeFrame{position:absolute;width:100%;height:100%;inset:0;display:none;border:0;transform:scale(1.25);pointer-events:none}
+#glow{position:fixed;z-index:10;pointer-events:none;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(114,229,209,.16),rgba(138,168,255,.07) 35%,transparent 70%);transform:translate(-50%,-50%);left:-500px;top:-500px;mix-blend-mode:screen}
+.shell{width:min(1240px,calc(100% - 32px));margin:0 auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 0;position:relative;z-index:2}
+.brand{display:flex;align-items:center;gap:12px;font-weight:850;letter-spacing:.12em}
+.brand-mark{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--button-text);font-weight:950;box-shadow:0 8px 25px #0002}
+.brand small{display:block;color:var(--muted);font-weight:500;letter-spacing:.04em;margin-top:3px}
+.actions{display:flex;gap:9px;flex-wrap:wrap}
+.btn,.icon-btn{border:1px solid var(--line);color:var(--text);background:var(--panel);backdrop-filter:blur(var(--blur));border-radius:12px;padding:10px 14px;transition:transform .2s,border-color .2s,background .2s}
+.btn:hover,.icon-btn:hover{transform:translateY(-2px);border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--button-text);border-color:transparent;font-weight:750}
+.hero{padding:52px 0 32px;display:grid;grid-template-columns:1.25fr .75fr;gap:30px;align-items:center}
+.eyebrow{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:99px;padding:7px 12px;color:var(--accent);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;background:var(--panel)}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px var(--accent)}
+h1{font-size:clamp(2.7rem,6vw,5.5rem);line-height:.98;letter-spacing:-.065em;margin:22px 0}
+.gradient{background:linear-gradient(100deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{max-width:650px;color:var(--muted);font-size:1.08rem;line-height:1.8}
+.hero-card,.panel,.tool-card,.stat{background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(var(--blur));box-shadow:var(--shadow);border-radius:var(--radius)}
+.hero-card{padding:24px;position:relative;overflow:hidden}
+.hero-card:before{content:"";position:absolute;width:210px;height:210px;right:-90px;top:-95px;border-radius:50%;background:var(--accent);filter:blur(75px);opacity:.18}
+.clock-label{color:var(--muted);font-size:.85rem}
+#clock{font-size:clamp(2.5rem,5vw,4.4rem);font-weight:800;letter-spacing:-.06em;margin:8px 0}
+.date-line{color:var(--muted)}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}
+.stat{padding:14px;border-radius:16px;box-shadow:none}
+.stat strong{display:block;font-size:1.2rem}
+.stat span{font-size:.76rem;color:var(--muted)}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px 0 26px;border-bottom:1px solid var(--line)}
+nav a{color:var(--muted);text-decoration:none;padding:10px 13px;border-radius:11px;border:1px solid transparent}
+nav a:hover{color:var(--text);background:var(--panel);border-color:var(--line)}
+.section{padding:38px 0}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:18px}
+.section-head h2{margin:0;font-size:clamp(1.5rem,3vw,2.15rem);letter-spacing:-.04em}
+.section-head p{color:var(--muted);margin:8px 0 0;line-height:1.6}
+.search{width:min(290px,100%);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--text);outline:none}
+.search:focus,input:focus,select:focus{border-color:var(--accent);outline:2px solid color-mix(in srgb,var(--accent) 24%,transparent)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.tool-card{padding:20px;transition:transform .22s,border-color .22s;box-shadow:none;min-height:190px;display:flex;flex-direction:column}
+.tool-card:hover{transform:translateY(-4px);border-color:var(--accent)}
+.tool-icon{width:44px;height:44px;border-radius:14px;background:color-mix(in srgb,var(--accent) 16%,transparent);display:grid;place-items:center;font-size:1.35rem;margin-bottom:16px}
+.tool-card h3{margin:0 0 8px;font-size:1.05rem}
+.tool-card p{margin:0 0 18px;color:var(--muted);font-size:.9rem;line-height:1.6;flex:1}
+.card-link{color:var(--accent);text-decoration:none;font-weight:700;font-size:.9rem}
+.panel{padding:22px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.panel h3{margin:0 0 8px}
+.panel p,.hint{color:var(--muted);font-size:.9rem;line-height:1.65}
+.quick-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+.quick-row .btn{padding:9px 12px}
+.field{display:flex;flex-direction:column;gap:7px;margin:13px 0}
+.field label{font-size:.84rem;color:var(--muted)}
+.field input[type="text"],.field input[type="url"],.field select{width:100%;background:rgba(0,0,0,.13);color:var(--text);border:1px solid var(--line);border-radius:11px;padding:11px 12px}
+.field input[type="range"]{width:100%;accent-color:var(--accent)}
+.field input[type="file"]{max-width:100%;color:var(--muted)}
+.field select option{background:var(--panel-solid);color:var(--text)}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.swatch{width:31px;height:31px;border-radius:50%;border:2px solid #ffffff55;box-shadow:0 0 0 2px transparent}
+.swatch:focus,.swatch:hover{box-shadow:0 0 0 2px var(--accent)}
+.preset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.preset{border:1px solid var(--line);border-radius:15px;min-height:78px;padding:12px;color:var(--text);background:var(--panel);text-align:left}
+.preset strong{display:block;margin-bottom:5px}
+.preset span{font-size:.78rem;color:var(--muted)}
+#status{min-height:20px;color:var(--accent);font-size:.85rem}
+footer{border-top:1px solid var(--line);margin-top:30px;padding:26px 0 40px;color:var(--muted);font-size:.85rem;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.58);z-index:1000;display:none;align-items:center;justify-content:center;padding:18px}
+.modal-backdrop.open{display:flex}
+.modal{width:min(800px,100%);max-height:88vh;overflow:auto;background:var(--panel-solid);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:var(--shadow)}
+.modal-head{display:flex;justify-content:space-between;gap:16px;align-items:center}
+.modal-head h2{margin:0}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.notice{border:1px solid var(--line);border-radius:13px;padding:12px;background:rgba(255,255,255,.035);font-size:.85rem;line-height:1.6;color:var(--muted)}
+.hidden{display:none!important}
+#translateArea{min-height:30px}
+@media(max-width:850px){.hero{grid-template-columns:1fr;padding-top:30px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two-col{grid-template-columns:1fr}.modal-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.shell{width:min(100% - 22px,1240px)}.topbar{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:1fr}.section-head{align-items:stretch;flex-direction:column}.search{width:100%}.preset-grid{grid-template-columns:1fr 1fr}.stat-row{grid-template-columns:1fr 1fr 1fr}.hero{padding-top:20px}}
+
+/* Themes: only CONFIG.THEME is needed to choose the initial look. */
+body.theme-midnight{--bg:#0b1220;--panel:rgba(17,27,45,.82);--panel-solid:#111b2d;--text:#edf4ff;--muted:#aab8cc;--accent:#72e5d1;--accent2:#8aa8ff;--line:rgba(255,255,255,.13);--button-text:#07131b}
+body.theme-glass{--bg:#172137;--panel:rgba(255,255,255,.105);--panel-solid:#1c2942;--text:#f7faff;--muted:#c3cde0;--accent:#9ce8ff;--accent2:#d7b4ff;--line:rgba(255,255,255,.22);--blur:24px;--button-text:#172137}
+body.theme-japanese{--bg:#f3efe6;--panel:rgba(255,255,255,.78);--panel-solid:#fffdf7;--text:#282a25;--muted:#72736a;--accent:#527b64;--accent2:#c98e73;--line:rgba(40,42,37,.14);--shadow:0 12px 35px rgba(50,45,35,.08);--button-text:#fff}
+body.theme-apple{--bg:#f5f5f7;--panel:rgba(255,255,255,.82);--panel-solid:#fff;--text:#1d1d1f;--muted:#6e6e73;--accent:#007aff;--accent2:#5e5ce6;--line:rgba(0,0,0,.09);--shadow:0 15px 40px rgba(0,0,0,.07);--radius:22px;--button-text:#fff}
+body.theme-vintage{--bg:#211a16;--panel:rgba(55,41,31,.88);--panel-solid:#37291f;--text:#f5e8d3;--muted:#c5b19a;--accent:#d6a85f;--accent2:#a56d49;--line:rgba(245,232,211,.17);--button-text:#24190f}
+body.theme-sage{--bg:#17231e;--panel:rgba(34,53,44,.86);--panel-solid:#22352c;--text:#eef3e9;--muted:#b7c5b8;--accent:#b9d5a5;--accent2:#7fb7a2;--line:rgba(238,243,233,.15);--button-text:#1b2a22}
+body.theme-burgundy{--bg:#24121c;--panel:rgba(58,27,42,.87);--panel-solid:#3a1b2a;--text:#fff0f4;--muted:#d5b9c4;--accent:#f2b7c8;--accent2:#d5a15f;--line:rgba(255,240,244,.15);--button-text:#321421}
+body.theme-japanese .hero-card,body.theme-japanese .panel,body.theme-japanese .tool-card,body.theme-japanese .stat,body.theme-apple .hero-card,body.theme-apple .panel,body.theme-apple .tool-card,body.theme-apple .stat{backdrop-filter:blur(14px)}
+</style>
+</head>
+<body>
+<div id="backgroundLayer"><img id="backgroundImage" alt=""><video id="backgroundVideo" autoplay muted loop playsinline></video><iframe id="youtubeFrame" title="YouTube background" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+<div id="glow"></div>
+<div class="shell">
+<header class="topbar">
+  <div class="brand"><div class="brand-mark">IVY</div><div>IVY FUTURE HUB<small>Personal digital workspace</small></div></div>
+  <div class="actions">
+    <button class="btn" id="themeQuick">🎨 Theme</button>
+    <button class="btn" id="openSettings">⚙ Background & Visuals</button>
+  </div>
+</header>
+<main>
+<section class="hero" id="home">
+  <div>
+    <div class="eyebrow"><span class="pulse"></span> YOUR SPACE · YOUR FLOW</div>
+    <h1>Make room for<br><span class="gradient">what’s next.</span></h1>
+    <p class="lead">A personal launchpad for ideas, learning, productivity, and creativity. Shape the atmosphere, keep your favorite tools close, and make this space your own.</p>
+    <div class="quick-row"><a class="btn primary" href="#tools" style="text-decoration:none">Explore workspace ↗</a><button class="btn" id="translateToggle">🌐 Translate page</button></div>
+    <div id="translateArea"></div>
+  </div>
+  <aside class="hero-card">
+    <div class="clock-label">YOUR LOCAL TIME</div><div id="clock">--:--</div><div class="date-line" id="dateLine">Loading date…</div>
+    <div class="stat-row"><div class="stat"><strong id="dayCount">01</strong><span>DAY OF YEAR</span></div><div class="stat"><strong>∞</strong><span>POSSIBILITIES</span></div><div class="stat"><strong id="greeting">Hi!</strong><span>WELCOME</span></div></div>
+  </aside>
+</section>
+<nav aria-label="Main navigation"><a href="#home">Home</a><a href="#tools">Workspace</a><a href="#visuals">Visual presets</a><a href="#background">Background</a><a href="#about">About</a></nav>
+<section class="section" id="tools">
+  <div class="section-head"><div><h2>Your workspace</h2><p>Useful destinations, gathered in one place. Edit the links in the HTML to personalize these cards.</p></div><input class="search" id="toolSearch" type="search" placeholder="Search tools…"></div>
+  <div class="grid" id="toolGrid">
+    <article class="tool-card" data-search="google search web"><div class="tool-icon">⌕</div><h3>Google Search</h3><p>Explore the web, research a topic, or find a useful resource.</p><a class="card-link" href="https://www.google.com/" target="_blank" rel="noopener">Open search ↗</a></article>
+    <article class="tool-card" data-search="youtube video music learning"><div class="tool-icon">▶</div><h3>YouTube</h3><p>Watch tutorials, discover music, and learn from creators.</p><a class="card-link" href="https://www.youtube.com/" target="_blank" rel="noopener">Open YouTube ↗</a></article>
+    <article class="tool-card" data-search="gmail email communication"><div class="tool-icon">✉</div><h3>Gmail</h3><p>Keep up with messages, updates, and important conversations.</p><a class="card-link" href="https://mail.google.com/" target="_blank" rel="noopener">Open Gmail ↗</a></article>
+    <article class="tool-card" data-search="drive documents files storage"><div class="tool-icon">▤</div><h3>Google Drive</h3><p>Organize files, documents, notes, and shared projects.</p><a class="card-link" href="https://drive.google.com/" target="_blank" rel="noopener">Open Drive ↗</a></article>
+    <article class="tool-card" data-search="calendar schedule planning"><div class="tool-icon">▦</div><h3>Google Calendar</h3><p>Plan your week, track events, and protect time for what matters.</p><a class="card-link" href="https://calendar.google.com/" target="_blank" rel="noopener">Open Calendar ↗</a></article>
+    <article class="tool-card" data-search="translate language translation"><div class="tool-icon">文</div><h3>Google Translate</h3><p>Translate text and explore languages in a separate tab.</p><a class="card-link" href="https://translate.google.com/" target="_blank" rel="noopener">Open Translate ↗</a></article>
+    <article class="tool-card" data-search="chatgpt ai ideas writing"><div class="tool-icon">✳</div><h3>ChatGPT</h3><p>Brainstorm, write, plan, learn, and work through ideas.</p><a class="card-link" href="https://chatgpt.com/" target="_blank" rel="noopener">Open ChatGPT ↗</a></article>
+    <article class="tool-card" data-search="notion notes knowledge project"><div class="tool-icon">▧</div><h3>Notion</h3><p>Build a personal knowledge base, project board, or notes hub.</p><a class="card-link" href="https://www.notion.so/" target="_blank" rel="noopener">Open Notion ↗</a></article>
+    <article class="tool-card" data-search="spotify music focus"><div class="tool-icon">♫</div><h3>Spotify</h3><p>Find a soundtrack for focus, creative work, or downtime.</p><a class="card-link" href="https://open.spotify.com/" target="_blank" rel="noopener">Open Spotify ↗</a></article>
+  </div>
+</section>
+<section class="section" id="visuals">
+  <div class="section-head"><div><h2>Visual presets</h2><p>Switch the whole interface in one click. Your choice is saved in this browser.</p></div></div>
+  <div class="preset-grid">
+    <button class="preset" data-theme="midnight"><strong>🌌 Midnight</strong><span>Deep navy · mint glow</span></button>
+    <button class="preset" data-theme="glass"><strong>🫧 Glassmorphism</strong><span>Frosted translucent panels</span></button>
+    <button class="preset" data-theme="japanese"><strong>🍵 Japanese minimal</strong><span>Warm paper · quiet green</span></button>
+    <button class="preset" data-theme="apple"><strong>◉ Apple-inspired</strong><span>Clean light · soft shadows</span></button>
+    <button class="preset" data-theme="vintage"><strong>☕ Vintage</strong><span>Warm brown · brass</span></button>
+    <button class="preset" data-theme="sage"><strong>🌿 Sage</strong><span>Forest · soft botanical</span></button>
+    <button class="preset" data-theme="burgundy"><strong>🍷 Burgundy</strong><span>Deep wine · rose gold</span></button>
+  </div>
+</section>
+<section class="section" id="background">
+  <div class="section-head"><div><h2>Background studio</h2><p>Set a photo, looping video, YouTube ambience, or a built-in scene. Open the full panel for more controls.</p></div><button class="btn primary" id="openSettings2">Open background settings ↗</button></div>
+  <div class="two-col">
+    <div class="panel"><h3>Quick scenes</h3><p>Choose a built-in gradient background without uploading a file.</p><div class="swatches">
+      <button class="swatch" aria-label="Midnight blue" title="Midnight blue" data-bg="midnight" style="background:linear-gradient(135deg,#101a32,#37617b)"></button>
+      <button class="swatch" aria-label="Aurora" title="Aurora" data-bg="aurora" style="background:linear-gradient(135deg,#102d2c,#386d71,#765e9d)"></button>
+      <button class="swatch" aria-label="Sunset" title="Sunset" data-bg="sunset" style="background:linear-gradient(135deg,#4b2545,#d07862,#e5b77b)"></button>
+      <button class="swatch" aria-label="Forest" title="Forest" data-bg="forest" style="background:linear-gradient(135deg,#101d19,#2f6049)"></button>
+      <button class="swatch" aria-label="Paper" title="Paper" data-bg="paper" style="background:linear-gradient(135deg,#e7dfce,#fff9e9)"></button>
+      <button class="swatch" aria-label="Rose" title="Rose" data-bg="rose" style="background:linear-gradient(135deg,#351d2c,#a45d79)"></button>
+    </div><div class="quick-row"><button class="btn" id="resetBg">Reset background</button></div></div>
+    <div class="panel"><h3>Mouse light effect</h3><p>Move your pointer to see a soft accent glow. Tune its strength or turn it off.</p><div class="field"><label for="glowRange">Glow intensity <span id="glowValue">65%</span></label><input id="glowRange" type="range" min="0" max="100" value="65"></div><div class="field"><label><input id="glowToggle" type="checkbox" checked> Enable high-contrast mouse glow</label></div><div class="field"><label for="overlayRange">Background overlay <span id="overlayValue">38%</span></label><input id="overlayRange" type="range" min="0" max="90" value="38"></div></div>
+  </div>
+</section>
+<section class="section" id="about"><div class="panel"><h2 style="margin-top:0">Made to be yours.</h2><p class="lead" style="font-size:1rem">IVY Future Hub is a single-file personal dashboard. Your theme, overlay, glow, and basic preferences are stored locally in this browser. Uploaded background files are used in the current page session and may need to be selected again after reopening the file.</p><div class="notice">Tip: To change the default theme in the source code, find <code>CONFIG.THEME</code> near the bottom of this file and set it to <code>"glass"</code>, <code>"japanese"</code>, <code>"apple"</code>, <code>"vintage"</code>, <code>"sage"</code>, <code>"burgundy"</code>, or <code>"midnight"</code>.</div></div></section>
+</main>
+<footer><span>© <span id="year"></span> IVY Future Hub · Visual Studio Edition</span><span>Designed for productivity, built for flexibility.</span></footer>
+</div>
+<div class="modal-backdrop" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+<div class="modal">
+  <div class="modal-head"><h2 id="settingsTitle">⚙ Background & Visual Studio</h2><button class="icon-btn" id="closeSettings" aria-label="Close settings">✕</button></div>
+  <p class="hint">Customize the page without editing the code. Changes apply immediately.</p>
+  <div class="modal-grid">
+    <div>
+      <h3>Background source</h3>
+      <div class="field"><label for="photoFile">Upload a photo (JPG, PNG, WEBP)</label><input id="photoFile" type="file" accept="image/*"></div>
+      <div class="field"><label for="videoFile">Choose a looping video (MP4, WEBM)</label><input id="videoFile" type="file" accept="video/mp4,video/webm,video/*"></div>
+      <div class="field"><label for="youtubeUrl">YouTube video URL</label><input id="youtubeUrl" type="url" placeholder="https://www.youtube.com/watch?v=..."></div>
+      <div class="quick-row"><button class="btn primary" id="applyYoutube">Use YouTube background</button><button class="btn" id="clearMedia">Clear uploaded media</button></div>
+      <p class="hint">YouTube embeds must allow embedding. Some videos disable embeds or autoplay; browser autoplay policies may also prevent playback.</p>
+    </div>
+    <div>
+      <h3>Appearance</h3>
+      <div class="field"><label for="themeSelect">Interface theme</label><select id="themeSelect"><option value="midnight">Midnight</option><option value="glass">Glassmorphism</option><option value="japanese">Japanese minimal</option><option value="apple">Apple-inspired</option><option value="vintage">Vintage</option><option value="sage">Sage</option><option value="burgundy">Burgundy</option></select></div>
+      <div class="field"><label for="modalOverlay">Background overlay <span id="modalOverlayValue">38%</span></label><input id="modalOverlay" type="range" min="0" max="90" value="38"></div>
+      <div class="field"><label for="modalGlow">Mouse glow <span id="modalGlowValue">65%</span></label><input id="modalGlow" type="range" min="0" max="100" value="65"></div>
+      <div class="field"><label><input id="modalGlowToggle" type="checkbox" checked> Enable mouse glow</label></div>
+      <div class="quick-row"><button class="btn" id="resetAll">Reset visual settings</button></div>
+    </div>
+  </div>
+  <p id="status" role="status" aria-live="polite"></p>
+</div>
+</div>
+<script>
+/* =================== EASY CONFIGURATION ===================
+   Change only THEME to choose the initial theme.
+   Options: "midnight", "glass", "japanese", "apple",
+            "vintage", "sage", "burgundy"
+   ========================================================== */
+const CONFIG = {
+  THEME: "midnight",
+  MOUSE_GLOW: true,
+  GLOW_INTENSITY: 65,
+  OVERLAY_OPACITY: 38
+};
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const themes = ["midnight","glass","japanese","apple","vintage","sage","burgundy"];
+const body = document.body;
+function setTheme(theme, save=true){
+  if(!themes.includes(theme)) theme = "midnight";
+  themes.forEach(t=>body.classList.remove("theme-"+t));
+  body.classList.add("theme-"+theme);
+  $("#themeSelect").value = theme;
+  if(save) localStorage.setItem("ivyTheme",theme);
+}
+function setOverlay(value){
+  const v = Math.max(0,Math.min(90,Number(value)||0));
+  document.documentElement.style.setProperty("--overlay",`rgba(5,10,20,${v/100})`);
+  $("#overlayRange").value = v; $("#modalOverlay").value = v;
+  $("#overlayValue").textContent = v+"%"; $("#modalOverlayValue").textContent = v+"%";
+  localStorage.setItem("ivyOverlay",v);
+}
+function setGlow(value){
+  const v=Math.max(0,Math.min(100,Number(value)||0));
+  $("#glow").style.opacity=v/100; $("#glowRange").value=v; $("#modalGlow").value=v;
+  $("#glowValue").textContent=v+"%"; $("#modalGlowValue").textContent=v+"%";
+  localStorage.setItem("ivyGlow",v);
+}
+function setGlowEnabled(enabled){
+  $("#glowToggle").checked=!!enabled; $("#modalGlowToggle").checked=!!enabled;
+  $("#glow").style.display=enabled?"block":"none";
+  localStorage.setItem("ivyGlowEnabled",enabled?"1":"0");
+}
+function status(msg){$("#status").textContent=msg;setTimeout(()=>{if($("#status").textContent===msg)$("#status").textContent=""},4500)}
+function openModal(){$("#settingsModal").classList.add("open")}
+function closeModal(){$("#settingsModal").classList.remove("open")}
+$("#openSettings").addEventListener("click",openModal);
+$("#openSettings2").addEventListener("click",openModal);
+$("#closeSettings").addEventListener("click",closeModal);
+$("#settingsModal").addEventListener("click",e=>{if(e.target.id==="settingsModal")closeModal()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+$("#themeQuick").addEventListener("click",()=>{const i=themes.indexOf(body.className.match(/theme-([a-z]+)/)?.[1]||"midnight");setTheme(themes[(i+1)%themes.length]);status("Theme changed to "+themes[(i+1)%themes.length]+".")});
+$$("[data-theme]").forEach(b=>b.addEventListener("click",()=>{setTheme(b.dataset.theme);status("Theme set to "+b.dataset.theme+".")}));
+$("#themeSelect").addEventListener("change",e=>{setTheme(e.target.value);status("Theme updated.")});
+$("#overlayRange").addEventListener("input",e=>setOverlay(e.target.value));
+$("#modalOverlay").addEventListener("input",e=>setOverlay(e.target.value));
+$("#glowRange").addEventListener("input",e=>setGlow(e.target.value));
+$("#modalGlow").addEventListener("input",e=>setGlow(e.target.value));
+$("#glowToggle").addEventListener("change",e=>setGlowEnabled(e.target.checked));
+$("#modalGlowToggle").addEventListener("change",e=>setGlowEnabled(e.target.checked));
+document.addEventListener("mousemove",e=>{$("#glow").style.left=e.clientX+"px";$("#glow").style.top=e.clientY+"px"});
+const bgLayer=$("#backgroundLayer"), img=$("#backgroundImage"), video=$("#backgroundVideo"), yt=$("#youtubeFrame");
+const scenes={
+ midnight:"radial-gradient(ellipse at 18% 12%,#244267 0%,transparent 45%),linear-gradient(135deg,#0a1020,#17243a)",
+ aurora:"radial-gradient(ellipse at 18% 18%,#3c8b7c 0%,transparent 42%),radial-gradient(ellipse at 82% 78%,#6b4c91 0%,transparent 48%),linear-gradient(135deg,#0c242a,#16263a)",
+ sunset:"radial-gradient(ellipse at 80% 15%,#e4a26d 0%,transparent 40%),linear-gradient(135deg,#422442,#8e4e64,#392c45)",
+ forest:"radial-gradient(ellipse at 20% 20%,#376c4c 0%,transparent 48%),linear-gradient(135deg,#0e1b17,#172c23)",
+ paper:"linear-gradient(135deg,#e6ddc9,#fff9eb)",
+ rose:"radial-gradient(ellipse at 20% 20%,#a45d79 0%,transparent 45%),linear-gradient(135deg,#271725,#4e263d)"
+};
+function clearMedia(){img.style.display="none";img.removeAttribute("src");video.pause();video.removeAttribute("src");video.load();video.style.display="none";yt.style.display="none";yt.src="";localStorage.removeItem("ivyScene");}
+function setScene(name){clearMedia();bgLayer.style.background=scenes[name]||scenes.midnight;localStorage.setItem("ivyScene",name);status("Background scene updated.");}
+$$("[data-bg]").forEach(b=>b.addEventListener("click",()=>setScene(b.dataset.bg)));
+$("#resetBg").addEventListener("click",()=>{clearMedia();bgLayer.style.background="";setOverlay(CONFIG.OVERLAY_OPACITY);localStorage.removeItem("ivyScene");status("Background reset.");});
+$("#photoFile").addEventListener("change",e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ if(!file.type.startsWith("image/")){status("Please select an image file.");return}
+ const reader=new FileReader();reader.onload=()=>{clearMedia();img.src=reader.result;img.style.display="block";bgLayer.style.background="";localStorage.removeItem("ivyScene");status("Photo background applied for this session.")};reader.readAsDataURL(file);
+});
+$("#videoFile").addEventListener("change",e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ if(!file.type.startsWith("video/")){status("Please select a video file.");return}
+ clearMedia();video.src=URL.createObjectURL(file);video.style.display="block";video.play().catch(()=>{});bgLayer.style.background="";localStorage.removeItem("ivyScene");status("Video background applied for this session.");
+});
+function youtubeId(value){
+ try{const u=new URL(value);if(u.hostname.includes("youtu.be"))return u.pathname.slice(1).split("/")[0];if(u.hostname.includes("youtube.com")){if(u.pathname==="/watch")return u.searchParams.get("v");const m=u.pathname.match(/\/(embed|shorts|live)\/([^/?]+)/);if(m)return m[2]}}catch(e){}return null;
+}
+$("#applyYoutube").addEventListener("click",()=>{
+ const id=youtubeId($("#youtubeUrl").value.trim());
+ if(!id){status("Enter a valid YouTube video URL first.");return}
+ clearMedia();yt.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(id)+"?autoplay=1&mute=1&controls=0&loop=1&playlist="+encodeURIComponent(id)+"&playsinline=1&modestbranding=1";yt.style.display="block";bgLayer.style.background="";localStorage.removeItem("ivyScene");status("YouTube background applied. If it stays blank, embedding may be disabled.");
+});
+$("#clearMedia").addEventListener("click",()=>{clearMedia();bgLayer.style.background="";status("Uploaded media cleared.")});
+$("#resetAll").addEventListener("click",()=>{
+ setTheme(CONFIG.THEME);setOverlay(CONFIG.OVERLAY_OPACITY);setGlow(CONFIG.GLOW_INTENSITY);setGlowEnabled(CONFIG.MOUSE_GLOW);
+ clearMedia();bgLayer.style.background="";localStorage.removeItem("ivyScene");status("Visual settings restored to defaults.");
+});
+$("#toolSearch").addEventListener("input",e=>{
+ const q=e.target.value.trim().toLowerCase();
+ $$(".tool-card").forEach(card=>card.classList.toggle("hidden",!((card.innerText+" "+card.dataset.search).toLowerCase().includes(q))));
+});
+$("#translateToggle").addEventListener("click",()=>{
+ const area=$("#translateArea");
+ if(area.dataset.loaded==="1"){area.innerHTML="";area.dataset.loaded="0";return}
+ area.dataset.loaded="1";
+ area.innerHTML='<div id="google_translate_element" style="margin-top:14px"></div><p class="hint">Google Translate may require an internet connection.</p>';
+ const s=document.createElement("script");s.src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";s.onerror=()=>{area.insertAdjacentHTML("beforeend","<p class='hint'>Could not load Google Translate. Use the Google Translate card below instead.</p>")};document.body.appendChild(s);
+});
+window.googleTranslateElementInit=function(){if(window.google?.translate?.TranslateElement)new google.translate.TranslateElement({pageLanguage:"en",layout:google.translate.TranslateElement.InlineLayout.SIMPLE,autoDisplay:false},"google_translate_element")};
+function updateClock(){
+ const d=new Date();$("#clock").textContent=d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+ $("#dateLine").textContent=d.toLocaleDateString([], {weekday:"long",year:"numeric",month:"long",day:"numeric"});
+ const start=new Date(d.getFullYear(),0,0);$("#dayCount").textContent=String(Math.floor((d-start)/86400000)).padStart(3,"0");
+ const h=d.getHours();$("#greeting").textContent=h<12?"Morning":h<18?"Hello":"Evening";$("#year").textContent=d.getFullYear();
+}
+updateClock();setInterval(updateClock,1000);
+const savedTheme=localStorage.getItem("ivyTheme")||CONFIG.THEME;
+setTheme(savedTheme,false);
+setOverlay(localStorage.getItem("ivyOverlay")??CONFIG.OVERLAY_OPACITY);
+setGlow(localStorage.getItem("ivyGlow")??CONFIG.GLOW_INTENSITY);
+setGlowEnabled(localStorage.getItem("ivyGlowEnabled")===null?CONFIG.MOUSE_GLOW:localStorage.getItem("ivyGlowEnabled")==="1");
+const savedScene=localStorage.getItem("ivyScene");if(savedScene&&scenes[savedScene])bgLayer.style.background=scenes[savedScene];
+</script>
+</body>
+</html>
