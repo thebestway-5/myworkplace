@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CodeSpace — Live Playground</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b0e14;color:#e8edf5;font:14px system-ui;height:100vh;overflow:hidden}
+button{background:#202a3b;color:#fff;border:1px solid #354158;padding:9px 12px;border-radius:7px;cursor:pointer}
+button:hover{background:#34425b}
+.app{height:100vh;display:flex;flex-direction:column}
+header{height:58px;display:flex;align-items:center;gap:10px;padding:0 14px;background:#111722;border-bottom:1px solid #30394b}
+.brand{font-weight:800;font-size:16px}.brand span{color:#8da5ff}
+.actions{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.run{background:#8198ff;color:#101522;font-weight:bold}
+main{display:grid;grid-template-columns:1fr 1fr;gap:5px;flex:1;min-height:0}
+.pane{display:flex;flex-direction:column;min-width:0;min-height:0;background:#121722}
+.bar{height:45px;display:flex;align-items:center;gap:5px;padding:6px;border-bottom:1px solid #30394b}
+.tab{background:transparent;border-color:transparent;color:#9caac0}
+.tab.active{background:#293449;color:white}
+.editors{flex:1;min-height:0;position:relative}
+textarea{display:none;width:100%;height:100%;resize:none;border:0;outline:0;padding:16px;background:#10151f;color:#dce6f5;font:13px/1.7 monospace;tab-size:2}
+textarea.active{display:block}
+iframe{width:100%;height:100%;border:0;background:white}
+.preview{flex:1;min-height:0;padding:8px;background:#252b37;display:flex;justify-content:center}
+#frame{border-radius:4px}
+.console{height:120px;flex-shrink:0;background:#0f131c;border-top:1px solid #30394b;display:flex;flex-direction:column}
+.consolehead{padding:7px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #30394b}
+#output{padding:8px 12px;overflow:auto;font:12px/1.6 monospace;white-space:pre-wrap}
+.err{color:#ff8c94}.warn{color:#f5cb79}
+select{background:#202a3b;color:white;padding:7px;border:1px solid #354158;border-radius:7px}
+@media(max-width:700px){
+ body{height:auto;min-height:100vh;overflow:auto}
+ .app{height:auto;min-height:100vh}
+ header{height:auto;min-height:58px;flex-wrap:wrap;padding:10px}
+ .actions{margin-left:0}
+ main{display:flex;flex-direction:column}
+ .pane{height:45vh;min-height:300px}
+ .console{height:120px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand">⌘ <span>CodeSpace</span></div>
+  <div class="actions">
+    <button id="run" class="run">▶ Run</button>
+    <button id="copy">Copy</button>
+    <button id="download">Download HTML</button>
+    <button id="reset">Reset</button>
+  </div>
+</header>
+<main>
+  <section class="pane">
+    <div class="bar">
+      <button class="tab active" data-tab="html">HTML</button>
+      <button class="tab" data-tab="css">CSS</button>
+      <button class="tab" data-tab="js">JavaScript</button>
+      <button id="clear" style="margin-left:auto">Clear</button>
+    </div>
+    <div class="editors">
+      <textarea id="html" class="active" spellcheck="false" aria-label="HTML code"><main class="card">
+  <span class="tag">MY FIRST PROJECT</span>
+  <h1>Hello, world! ✨</h1>
+  <p>Edit the code and see your changes instantly.</p>
+  <button id="hello">Click me</button>
+  <p id="message"></p>
+</main></textarea>
+      <textarea id="css" spellcheck="false" aria-label="CSS code">*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;display:grid;place-items:center;
+  padding:24px;font-family:system-ui,sans-serif;
+  background:linear-gradient(135deg,#e0e7ff,#fce7f3);
+  color:#1e293b
+}
+.card{
+  text-align:center;max-width:500px;padding:45px 30px;
+  border-radius:24px;background:#ffffffd9;
+  box-shadow:0 20px 60px #33415520
+}
+.tag{font-size:11px;letter-spacing:2px;color:#6366f1;font-weight:bold}
+h1{font-size:clamp(32px,7vw,52px);margin-bottom:10px}
+p{color:#64748b;line-height:1.7}
+button{padding:12px 20px;border:0;border-radius:10px;background:#6366f1;color:white;cursor:pointer}
+#message{color:#6366f1;font-weight:bold}</textarea>
+      <textarea id="js" spellcheck="false" aria-label="JavaScript code">document.querySelector("#hello").addEventListener("click",()=>{
+  document.querySelector("#message").textContent="It works! 🎉";
+  console.log("Button clicked successfully!");
+});
+console.log("Welcome to CodeSpace!");</textarea>
+    </div>
+  </section>
+  <section class="pane">
+    <div class="bar">
+      <strong>Live Preview</strong>
+      <select id="size" style="margin-left:auto">
+        <option value="100%">Responsive</option>
+        <option value="390px">Mobile</option>
+        <option value="768px">Tablet</option>
+        <option value="1024px">Desktop</option>
+      </select>
+      <button id="refresh">↻</button>
+    </div>
+    <div class="preview"><iframe id="frame" title="Live preview" sandbox="allow-scripts allow-forms allow-modals"></iframe></div>
+  </section>
+</main>
+<section class="console">
+  <div class="consolehead"><strong>Console</strong><button id="clearlog" style="margin-left:auto">Clear console</button></div>
+  <div id="output">Ready. Console messages will appear here.</div>
+</section>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const fields=["html","css","js"];
+const initial=Object.fromEntries(fields.map(id=>[id,$(id).value]));
+let timer,logs=[];
+
+function makePage(){
+ const css=$("css").value.replace(/<\/style/gi,"<\\/style");
+ const js=$("js").value.replace(/<\/script/gi,"<\\/script");
+ return `<!doctype html><html><head><meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1">
+ <style>${css}</style></head><body>${$("html").value}
+ <script>
+ (function(){
+  function report(type,args){
+   parent.postMessage({codespace:true,type:type,args:Array.from(args).map(x=>{
+    if(typeof x==="string")return x;
+    try{return JSON.stringify(x)}catch(e){return String(x)}
+   })},"*")
+  }
+  ["log","info","warn","error"].forEach(type=>{
+   const original=console[type].bind(console);
+   console[type]=(...args)=>{original(...args);report(type,args)}
+  });
+  addEventListener("error",e=>report("error",[e.message+" at line "+e.lineno]));
+ })();
+ <\/script><script>${js}<\/script></body></html>`;
+}
+function run(){
+ clearTimeout(timer);
+ $("frame").srcdoc=makePage();
+ $("output").textContent="Preview refreshed.";
+ logs=[];
+}
+function schedule(){clearTimeout(timer);timer=setTimeout(run,350)}
+function log(type,args){
+ logs.push({type,text:args.join(" ")});
+ $("output").textContent=logs.map(x=>x.text).join("\\n");
+ $("output").className=logs.some(x=>x.type==="error")?"err":"";
+}
+window.addEventListener("message",e=>{
+ if(e.source!==$("frame").contentWindow||!e.data?.codespace)return;
+ log(e.data.type,e.data.args||[]);
+});
+document.querySelectorAll(".tab").forEach(btn=>btn.onclick=()=>{
+ document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===btn));
+ fields.forEach(id=>$(id).classList.toggle("active",id===btn.dataset.tab));
+});
+fields.forEach(id=>{
+ $(id).addEventListener("input",schedule);
+ $(id).addEventListener("keydown",e=>{
+  if(e.key==="Tab"){
+   e.preventDefault();
+   const a=e.target.selectionStart,b=e.target.selectionEnd;
+   e.target.setRangeText("  ",a,b,"end");schedule();
+  }
+  if((e.ctrlKey||e.metaKey)&&e.key==="Enter")run();
+ });
+});
+$("run").onclick=run;
+$("refresh").onclick=run;
+$("clear").onclick=()=>{$(document.querySelector(".tab.active").dataset.tab).value="";schedule()};
+$("clearlog").onclick=()=>{$("output").textContent="Console cleared.";logs=[]};
+$("reset").onclick=()=>{
+ if(confirm("Restore the starter code?")){
+  fields.forEach(id=>$(id).value=initial[id]);run();
+ }
+};
+$("size").onchange=()=>{$("frame").style.width=$("size").value;$("frame").style.maxWidth="100%"};
+$("copy").onclick=async()=>{
+ try{
+  await navigator.clipboard.writeText(makePage());
+  $("copy").textContent="Copied!";
+ }catch(e){
+  const t=document.createElement("textarea");t.value=makePage();document.body.appendChild(t);
+  t.select();document.execCommand("copy");t.remove();$("copy").textContent="Copied!";
+ }
+ setTimeout(()=>$("copy").textContent="Copy",1300);
+};
+$("download").onclick=()=>{
+ const blob=new Blob([makePage()],{type:"text/html"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="my-project.html";a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
+run();
+</script>
+</body>
+</html>

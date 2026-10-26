@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="BizCalc Malaysia — a collection of business calculators for finance, payroll, pricing, tax estimates, loans, sales, e-commerce and construction.">
+<title>BizCalc Malaysia — Business Calculators</title>
+<style>
+:root{--navy:#14253d;--blue:#315fcb;--ink:#182338;--muted:#64748b;--line:#e2e8f0;--bg:#f5f7fb;--card:#fff;--green:#16845b;--amber:#b45309;--shadow:0 8px 30px rgba(20,37,61,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}button{cursor:pointer}.shell{max-width:1200px;margin:auto;padding:0 22px}.topbar{background:var(--navy);color:#fff}.top-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 0}.brand{display:flex;gap:11px;align-items:center;font-size:19px;font-weight:800;letter-spacing:-.4px}.logo{width:39px;height:39px;display:grid;place-items:center;background:#fff;color:var(--navy);border-radius:12px;font-size:23px}.topnav{display:flex;gap:22px;align-items:center;color:#d9e2f0;font-size:13px}.topnav a{color:inherit;text-decoration:none}.topnav a:hover{color:#fff}.hero{background:linear-gradient(115deg,#14253d,#203e66);color:#fff;padding:48px 0 40px}.hero-grid{display:grid;grid-template-columns:1.4fr .8fr;align-items:center;gap:35px}.eyebrow{display:inline-flex;gap:7px;align-items:center;border:1px solid #4c6382;background:#243d5e;padding:5px 10px;border-radius:99px;font-size:12px;color:#e2eaf5}.hero h1{font-size:clamp(32px,4vw,49px);line-height:1.08;letter-spacing:-1.5px;margin:18px 0 14px;max-width:650px}.hero p{color:#d4deeb;max-width:620px;margin:0 0 24px;font-size:16px}.search-wrap{display:flex;max-width:620px;background:#fff;border-radius:12px;padding:5px;box-shadow:0 10px 25px #07162c55}.search-wrap input{border:0;outline:0;flex:1;min-width:0;padding:12px;color:var(--ink);background:transparent}.primary{border:0;background:var(--blue);color:#fff;border-radius:9px;padding:11px 16px;font-weight:700}.primary:hover{filter:brightness(1.06)}.hero .primary{background:#fff;color:var(--navy)}.hero-note{border:1px solid #415876;background:#1a304d;border-radius:18px;padding:22px}.hero-note .big{font-size:32px;font-weight:800;letter-spacing:-1px}.hero-note p{font-size:13px;margin:5px 0 16px}.mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mini-stat{background:#263f60;padding:13px;border-radius:12px}.mini-stat strong{display:block;font-size:20px}.mini-stat span{color:#d4deeb;font-size:12px}.main{padding:30px 0 54px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:18px}.section-head h2{margin:0;font-size:23px;letter-spacing:-.5px}.section-head p{margin:4px 0 0;color:var(--muted)}.small-link{border:0;background:transparent;color:var(--blue);font-weight:700}.categories{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}.chip{border:1px solid var(--line);background:#fff;color:#40516b;border-radius:99px;padding:8px 13px;font-size:13px;font-weight:650}.chip.active,.chip:hover{background:var(--navy);color:#fff;border-color:var(--navy)}.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:22px;align-items:start}.tools-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.tool-card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:17px;text-align:left;min-height:166px;box-shadow:0 2px 6px #10233d05;transition:transform .15s,border-color .15s,box-shadow .15s}.tool-card:hover{transform:translateY(-2px);border-color:#b5c7ed;box-shadow:var(--shadow)}.tool-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:#edf2ff;font-size:21px;margin-bottom:13px}.tool-card h3{font-size:15px;margin:0 0 5px}.tool-card p{font-size:12.5px;color:var(--muted);margin:0}.tool-meta{display:flex;justify-content:space-between;align-items:center;margin-top:13px;font-size:11px;color:#718096}.tag{padding:3px 7px;border-radius:6px;background:#f1f5f9;color:#53657e}.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:15px}.panel h3{margin:0 0 5px;font-size:17px}.panel-sub{color:var(--muted);font-size:13px;margin:0 0 16px}.calc-panel{position:sticky;top:15px}.field{display:block;margin:13px 0}.field span{display:block;font-size:12px;font-weight:700;color:#526177;margin-bottom:6px}.field input,.field select{width:100%;border:1px solid #d8e0eb;border-radius:9px;padding:10px 11px;background:#fff;color:var(--ink);outline:0}.field input:focus,.field select:focus{border-color:#7d9be8;box-shadow:0 0 0 3px #315fcb17}.results{background:#f3f6fc;border:1px solid #e2eaf7;border-radius:12px;padding:14px;margin-top:15px}.result-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;font-size:13px}.result-row+.result-row{border-top:1px solid #dfe7f3}.result-row strong{font-size:14px;text-align:right}.result-total{font-size:21px;font-weight:800;color:var(--navy)}.hint{font-size:11px;color:var(--muted);margin-top:10px}.empty{grid-column:1/-1;padding:40px 20px;text-align:center;color:var(--muted);background:#fff;border:1px dashed #cbd5e1;border-radius:15px}.feature-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}.feature{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}.feature .ficon{font-size:22px}.feature h3{font-size:14px;margin:8px 0 4px}.feature p{font-size:12px;color:var(--muted);margin:0}.footer{background:#102039;color:#d9e2f0;padding:27px 0;font-size:12px}.footer-inner{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}.footer strong{color:#fff}.disclaimer{margin-top:18px;border-top:1px solid var(--line);padding-top:12px;color:var(--muted);font-size:11px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#102039;color:white;padding:11px 16px;border-radius:10px;box-shadow:var(--shadow);display:none;z-index:5}.modal-backdrop{position:fixed;inset:0;background:#0b172acc;display:none;align-items:center;justify-content:center;padding:20px;z-index:10}.modal{background:#fff;border-radius:18px;max-width:560px;width:100%;max-height:90vh;overflow:auto;padding:23px;box-shadow:0 20px 70px #0004}.modal-head{display:flex;align-items:start;justify-content:space-between;gap:15px}.close{border:0;background:#eef2f7;border-radius:9px;width:35px;height:35px;font-size:20px}.modal h2{margin:0 0 4px}.modal p{color:var(--muted);font-size:13px;margin:0 0 16px}.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}.modal .results{margin-top:4px}
+@media(max-width:960px){.layout{grid-template-columns:1fr}.calc-panel{position:static}.tools-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hero-grid{grid-template-columns:1fr .7fr}}
+@media(max-width:680px){.shell{padding:0 15px}.topnav{display:none}.hero{padding:35px 0}.hero-grid{grid-template-columns:1fr}.hero-note{display:none}.tools-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.tool-card{padding:13px;min-height:158px}.section-head{align-items:start}.section-head p{font-size:13px}.feature-row{grid-template-columns:1fr}.modal-grid{grid-template-columns:1fr}.search-wrap input{padding:10px}.search-wrap .primary{padding:10px 12px}.hero h1{font-size:35px}}
+@media(max-width:390px){.tools-grid{grid-template-columns:1fr}.tool-card{min-height:auto}.section-head{display:block}.small-link{padding:8px 0}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="shell top-inner">
+    <div class="brand"><span class="logo">∑</span><span>BizCalc <span style="font-weight:500;color:#b9c8dd">Malaysia</span></span></div>
+    <nav class="topnav"><a href="#tools">Calculators</a><a href="#features">Features</a><a href="#about">About</a></nav>
+    <button class="primary" onclick="document.getElementById('tools').scrollIntoView({behavior:'smooth'})">Explore tools ↗</button>
+  </div>
+</header>
+<section class="hero">
+  <div class="shell hero-grid">
+    <div>
+      <span class="eyebrow">✦ SMART TOOLS FOR BUSINESS OWNERS</span>
+      <h1>Every business calculation. <span style="color:#a9c4ff">One place.</span></h1>
+      <p>Make better decisions with practical calculators for pricing, profit, payroll estimates, loans, sales, e-commerce and more — built with Malaysian businesses in mind.</p>
+      <div class="search-wrap"><input id="search" type="search" placeholder="Search calculators, e.g. profit margin..." aria-label="Search calculators"><button class="primary" onclick="runSearch()">Search tools</button></div>
+    </div>
+    <div class="hero-note">
+      <div style="font-size:12px;color:#bdcce0;font-weight:700;letter-spacing:.7px">YOUR BUSINESS TOOLKIT</div>
+      <div class="big">50+ tools</div>
+      <p>A scalable home for everyday business maths. This demo includes working core calculators and sample tool listings.</p>
+      <div class="mini-stats"><div class="mini-stat"><strong>RM</strong><span>Local currency</span></div><div class="mini-stat"><strong>Instant</strong><span>Live results</span></div></div>
+    </div>
+  </div>
+</section>
+<main class="main shell" id="tools">
+  <div class="section-head"><div><h2>Find the right calculator</h2><p>Choose a category or search for a specific calculation.</p></div><button class="small-link" onclick="resetFilters()">View all tools ↗</button></div>
+  <div class="categories" id="categories"></div>
+  <div class="layout">
+    <section><div class="tools-grid" id="toolsGrid"></div>
+      <div class="feature-row" id="features">
+        <div class="feature"><div class="ficon">⚡</div><h3>Instant calculations</h3><p>Change inputs and see results immediately, without a spreadsheet.</p></div>
+        <div class="feature"><div class="ficon">🇲🇾</div><h3>Malaysia-aware</h3><p>Designed for MYR and local business workflows. Statutory calculations need verified, updated rules.</p></div>
+        <div class="feature"><div class="ficon">🔒</div><h3>Privacy-minded</h3><p>This demo calculates locally in your browser and does not send entered values to a server.</p></div>
+      </div>
+    </section>
+    <aside>
+      <div class="panel calc-panel">
+        <h3>Quick profit calculator</h3><p class="panel-sub">Calculate profit per unit, margin and total profit.</p>
+        <label class="field"><span>Cost per unit (RM)</span><input id="qCost" type="number" min="0" step="0.01" value="100"></label>
+        <label class="field"><span>Selling price per unit (RM)</span><input id="qPrice" type="number" min="0" step="0.01" value="150"></label>
+        <label class="field"><span>Quantity sold</span><input id="qQty" type="number" min="0" step="1" value="100"></label>
+        <div class="results" aria-live="polite">
+          <div class="result-row"><span>Profit per unit</span><strong id="qUnit">RM 50.00</strong></div>
+          <div class="result-row"><span>Profit margin</span><strong id="qMargin">33.33%</strong></div>
+          <div class="result-row"><span>Total sales</span><strong id="qSales">RM 15,000.00</strong></div>
+          <div class="result-row"><span>Total cost</span><strong id="qTotalCost">RM 10,000.00</strong></div>
+          <div class="result-row"><span>Total profit</span><strong class="result-total" id="qProfit">RM 5,000.00</strong></div>
+        </div>
+        <p class="hint">Profit shown is before overheads, tax, fees and other costs.</p>
+        <button class="primary" style="width:100%;margin-top:10px" onclick="openCalculator('profit')">Open full calculator</button>
+      </div>
+      <div class="panel"><h3>Popular tools</h3><p class="panel-sub">Start with common everyday calculations.</p>
+        <div style="display:grid;gap:9px">
+          <button class="small-link" style="text-align:left" onclick="openCalculator('markup')">↗ Markup & selling price</button>
+          <button class="small-link" style="text-align:left" onclick="openCalculator('breakEven')">↗ Break-even point</button>
+          <button class="small-link" style="text-align:left" onclick="openCalculator('loan')">↗ Loan repayment</button>
+          <button class="small-link" style="text-align:left" onclick="openCalculator('discount')">↗ Discount calculator</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+  <div class="disclaimer" id="about">Important: This is a standalone demo and its listed tools are a product concept, not professional financial, tax, legal or payroll advice. Tax, SST, e-Invoice and statutory payroll requirements vary by situation and change over time; verify official requirements before relying on calculations. Sample categories do not mean every listed calculator is implemented.</div>
+</main>
+<footer class="footer"><div class="shell footer-inner"><div><strong>∑ BizCalc Malaysia</strong><br>Practical calculations for smarter business decisions.</div><div>Calculator demo · MYR support · Responsive design</div><div>© <span id="year"></span> BizCalc Malaysia</div></div></footer>
+<div class="toast" id="toast" role="status"></div>
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle" onclick="if(event.target===this)closeModal()">
+ <div class="modal"><div class="modal-head"><div><h2 id="modalTitle">Calculator</h2><p id="modalDesc">Enter values to calculate.</p></div><button class="close" onclick="closeModal()" aria-label="Close calculator">×</button></div><div id="modalBody"></div></div>
+</div>
+<script>
+const categories = ["All tools","Profit & pricing","Finance & loans","Payroll & HR","Tax & invoices","Sales & marketing","E-commerce","Construction","Business planning"];
+const tools = [
+{id:"profit",name:"Profit & margin",cat:"Profit & pricing",icon:"📈",desc:"Calculate unit profit, gross margin and total profit.",kind:"live"},
+{id:"markup",name:"Markup & selling price",cat:"Profit & pricing",icon:"🏷️",desc:"Set a selling price using cost and markup.",kind:"live"},
+{id:"breakEven",name:"Break-even point",cat:"Profit & pricing",icon:"⚖️",desc:"Find units or sales needed to cover fixed costs.",kind:"live"},
+{id:"discount",name:"Discount calculator",cat:"Profit & pricing",icon:"％",desc:"Calculate sale price and discount savings.",kind:"live"},
+{id:"marginTarget",name:"Target margin pricing",cat:"Profit & pricing",icon:"🎯",desc:"Find a selling price for a target margin.",kind:"live"},
+{id:"costPlus",name:"Cost-plus pricing",cat:"Profit & pricing",icon:"➕",desc:"Add labour, materials, overhead and markup.",kind:"planned"},
+{id:"loan",name:"Loan repayment",cat:"Finance & loans",icon:"🏦",desc:"Estimate monthly instalment and total interest.",kind:"live"},
+{id:"compound",name:"Compound growth",cat:"Finance & loans",icon:"📊",desc:"Project growth with recurring contributions.",kind:"planned"},
+{id:"cashRunway",name:"Cash runway",cat:"Finance & loans",icon:"⏳",desc:"Estimate how long available cash may last.",kind:"planned"},
+{id:"currency",name:"Currency conversion",cat:"Finance & loans",icon:"💱",desc:"Convert amounts using a rate you enter.",kind:"planned"},
+{id:"salary",name:"Salary & take-home estimate",cat:"Payroll & HR",icon:"👤",desc:"Compare gross salary and deductions you enter.",kind:"planned"},
+{id:"overtime",name:"Overtime pay",cat:"Payroll & HR",icon:"🕒",desc:"Estimate overtime from hourly rate and multiplier.",kind:"planned"},
+{id:"commission",name:"Sales commission",cat:"Payroll & HR",icon:"🤝",desc:"Calculate commission based on sales and rate.",kind:"planned"},
+{id:"employerCost",name:"Employee cost",cat:"Payroll & HR",icon:"👥",desc:"Combine salary and employer costs you enter.",kind:"planned"},
+{id:"invoice",name:"Invoice total",cat:"Tax & invoices",icon:"🧾",desc:"Add items, discount and a user-entered tax rate.",kind:"planned"},
+{id:"taxInclusive",name:"Tax inclusive / exclusive",cat:"Tax & invoices",icon:"％",desc:"Extract or add a user-entered tax rate.",kind:"planned"},
+{id:"sst",name:"SST estimate",cat:"Tax & invoices",icon:"🇲🇾",desc:"Illustrative rate-based estimate; verify applicability.",kind:"planned"},
+{id:"salesTarget",name:"Sales target",cat:"Sales & marketing",icon:"🚀",desc:"Calculate daily or weekly target to hit a goal.",kind:"planned"},
+{id:"roi",name:"ROI calculator",cat:"Sales & marketing",icon:"📣",desc:"Compare campaign return with spend.",kind:"planned"},
+{id:"roas",name:"Advertising ROAS",cat:"Sales & marketing",icon:"📢",desc:"Revenue generated per unit of ad spend.",kind:"planned"},
+{id:"cac",name:"Customer acquisition cost",cat:"Sales & marketing",icon:"🧲",desc:"Calculate average cost to acquire a customer.",kind:"planned"},
+{id:"platformFee",name:"Marketplace fee",cat:"E-commerce",icon:"🛒",desc:"Estimate fees and contribution per order.",kind:"planned"},
+{id:"shipping",name:"Shipping cost per order",cat:"E-commerce",icon:"📦",desc:"Allocate delivery and packaging costs.",kind:"planned"},
+{id:"inventory",name:"Inventory turnover",cat:"E-commerce",icon:"🔄",desc:"Estimate stock turnover from cost and inventory.",kind:"planned"},
+{id:"material",name:"Material estimator",cat:"Construction",icon:"🧱",desc:"Estimate quantity and cost from dimensions.",kind:"planned"},
+{id:"labour",name:"Labour cost estimator",cat:"Construction",icon:"🦺",desc:"Estimate labour hours and total project labour.",kind:"planned"},
+{id:"projectBudget",name:"Project budget",cat:"Construction",icon:"📐",desc:"Combine materials, labour and contingency.",kind:"planned"},
+{id:"growth",name:"Revenue growth",cat:"Business planning",icon:"📅",desc:"Compare current revenue with a previous period.",kind:"planned"},
+{id:"averageOrder",name:"Average order value",cat:"Sales & marketing",icon:"🧮",desc:"Average revenue per order.",kind:"planned"},
+{id:"conversion",name:"Conversion rate",cat:"Sales & marketing",icon:"🎯",desc:"Calculate conversion from visits or leads.",kind:"planned"},
+{id:"hourly",name:"Hourly rate",cat:"Payroll & HR",icon:"⌚",desc:"Convert monthly pay into an estimated hourly rate.",kind:"planned"}
+];
+let activeCategory="All tools", currentSearch="";
+const fmt=n=>Number.isFinite(n)?n.toLocaleString("en-MY",{style:"currency",currency:"MYR",minimumFractionDigits:2,maximumFractionDigits:2}):"—";
+const num=id=>Math.max(0,Number(document.getElementById(id)?.value)||0);
+function renderCategories(){document.getElementById("categories").innerHTML=categories.map(c=>`<button class="chip ${c===activeCategory?"active":""}" onclick="setCategory(${JSON.stringify(c).replace(/"/g,'&quot;')})">${c}</button>`).join("")}
+function renderTools(){const filtered=tools.filter(t=>(activeCategory==="All tools"||t.cat===activeCategory)&&(t.name+" "+t.cat+" "+t.desc).toLowerCase().includes(currentSearch.toLowerCase()));const grid=document.getElementById("toolsGrid");if(!filtered.length){grid.innerHTML='<div class="empty">No calculators found. Try another search or category.</div>';return}grid.innerHTML=filtered.map(t=>`<button class="tool-card" onclick="openCalculator('${t.id}')"><div class="tool-icon">${t.icon}</div><h3>${t.name}</h3><p>${t.desc}</p><div class="tool-meta"><span>${t.cat}</span><span class="tag">${t.kind==="live"?"Interactive":"Planned"}</span></div></button>`).join("")}
+function setCategory(c){activeCategory=c;renderCategories();renderTools()}
+function runSearch(){currentSearch=document.getElementById("search").value.trim();renderTools()}
+function resetFilters(){activeCategory="All tools";currentSearch="";document.getElementById("search").value="";renderCategories();renderTools()}
+document.getElementById("search").addEventListener("input",runSearch);
+function quickCalc(){const c=num("qCost"),p=num("qPrice"),q=num("qQty");document.getElementById("qUnit").textContent=fmt(p-c);document.getElementById("qMargin").textContent=p>0?((p-c)/p*100).toFixed(2)+"%":"—";document.getElementById("qSales").textContent=fmt(p*q);document.getElementById("qTotalCost").textContent=fmt(c*q);document.getElementById("qProfit").textContent=fmt((p-c)*q)}
+["qCost","qPrice","qQty"].forEach(id=>document.getElementById(id).addEventListener("input",quickCalc));
+const definitions={
+profit:{title:"Profit & margin calculator",desc:"Calculate revenue, cost, profit and gross margin.",fields:[["cost","Cost per unit (RM)",100],["price","Selling price per unit (RM)",150],["qty","Quantity sold",100]],calc:v=>({rows:[["Sales revenue",fmt(v.price*v.qty)],["Total cost",fmt(v.cost*v.qty)],["Profit per unit",fmt(v.price-v.cost)],["Profit margin",v.price?((v.price-v.cost)/v.price*100).toFixed(2)+"%":"—"]],total:fmt((v.price-v.cost)*v.qty),label:"Total profit"})},
+markup:{title:"Markup & selling price",desc:"Markup is calculated as a percentage of cost, not selling price.",fields:[["cost","Cost per unit (RM)",100],["markup","Markup (%)",30],["qty","Quantity",1]],calc:v=>{const price=v.cost*(1+v.markup/100);return {rows:[["Cost per unit",fmt(v.cost)],["Markup amount",fmt(price-v.cost)],["Markup rate",v.markup.toFixed(2)+"%"],["Profit margin",price?((price-v.cost)/price*100).toFixed(2)+"%":"—"]],total:fmt(price),label:"Suggested selling price per unit"}}},
+breakEven:{title:"Break-even calculator",desc:"Assumes a single product or average unit contribution.",fields:[["fixed","Fixed costs (RM)",10000],["price","Selling price per unit (RM)",100],["variable","Variable cost per unit (RM)",60]],calc:v=>{const contribution=v.price-v.variable;const units=contribution>0?Math.ceil(v.fixed/contribution):null;return {rows:[["Contribution per unit",fmt(contribution)],["Contribution margin",v.price>0?(contribution/v.price*100).toFixed(2)+"%":"—"],["Break-even units",units===null?"Not possible at these inputs":units.toLocaleString()],["Break-even sales",units===null?"—":fmt(units*v.price)]],total:units===null?"—":units.toLocaleString()+" units",label:"Units to break even"}}},
+discount:{title:"Discount calculator",desc:"Calculates a discount from the original price.",fields:[["price","Original price (RM)",200],["discount","Discount (%)",15],["qty","Quantity",1]],calc:v=>{const d=v.price*v.discount/100;return {rows:[["Original total",fmt(v.price*v.qty)],["Discount amount",fmt(d*v.qty)],["Discount rate",v.discount.toFixed(2)+"%"]],total:fmt((v.price-d)*v.qty),label:"Final price"}}},
+marginTarget:{title:"Target margin pricing",desc:"Find the selling price needed for a target margin.",fields:[["cost","Total cost per unit (RM)",80],["margin","Target profit margin (%)",35]],calc:v=>{const price=v.margin<100?v.cost/(1-v.margin/100):null;return {rows:[["Cost per unit",fmt(v.cost)],["Target margin",v.margin.toFixed(2)+"%"],["Required profit per unit",price===null?"—":fmt(price-v.cost)]],total:price===null?"Enter a margin below 100%":fmt(price),label:"Required selling price"}}},
+loan:{title:"Loan repayment estimator",desc:"Fixed-rate amortizing loan estimate; actual lender fees and terms may differ.",fields:[["amount","Loan amount (RM)",100000],["rate","Annual interest rate (%)",5],["years","Loan term (years)",5]],calc:v=>{const n=Math.round(v.years*12),r=v.rate/1200;const pay=n>0?(r===0?v.amount/n:v.amount*r/(1-Math.pow(1+r,-n))):0;return {rows:[["Loan amount",fmt(v.amount)],["Monthly instalment",fmt(pay)],["Number of payments",n.toLocaleString()],["Total interest",fmt(Math.max(0,pay*n-v.amount))]],total:fmt(pay),label:"Estimated monthly payment"}}}
+};
+function openCalculator(id){const d=definitions[id];if(!d){showToast("This calculator is listed as a planned tool in this demo.");return}const backdrop=document.getElementById("modalBackdrop");document.getElementById("modalTitle").textContent=d.title;document.getElementById("modalDesc").textContent=d.desc;document.getElementById("modalBody").innerHTML=`<div class="modal-grid">${d.fields.map(f=>`<label class="field"><span>${f[1]}</span><input type="number" min="0" step="any" id="m_${f[0]}" value="${f[2]}"></label>`).join("")}</div><div id="modalResults" class="results" aria-live="polite"></div><p class="hint">Illustrative estimate only. Check assumptions and applicable requirements before making business decisions.</p><button class="primary" style="width:100%;margin-top:8px" onclick="copyResults()">Copy results</button>`;d.fields.forEach(f=>document.getElementById("m_"+f[0]).addEventListener("input",()=>updateModal(id)));updateModal(id);backdrop.style.display="flex";document.body.style.overflow="hidden";window.currentCalcId=id}
+function updateModal(id){const d=definitions[id];if(!d)return;const v={};d.fields.forEach(f=>v[f[0]]=Math.max(0,Number(document.getElementById("m_"+f[0]).value)||0));const r=d.calc(v);document.getElementById("modalResults").innerHTML=r.rows.map(row=>`<div class="result-row"><span>${row[0]}</span><strong>${row[1]}</strong></div>`).join("")+`<div style="border-top:1px solid #dfe7f3;margin-top:6px;padding-top:11px"><div style="font-size:12px;color:#64748b">${r.label}</div><div class="result-total">${r.total}</div></div>`}
+function closeModal(){document.getElementById("modalBackdrop").style.display="none";document.body.style.overflow=""}
+function copyResults(){const d=definitions[window.currentCalcId];if(!d)return;const v={};d.fields.forEach(f=>v[f[0]]=Math.max(0,Number(document.getElementById("m_"+f[0]).value)||0));const r=d.calc(v);const textOut=d.title+"\n"+r.rows.map(x=>x[0]+": "+x[1]).join("\n")+"\n"+r.label+": "+r.total;navigator.clipboard?.writeText(textOut).then(()=>showToast("Results copied to clipboard.")).catch(()=>showToast("Copy is unavailable in this browser."))||showToast("Copy is unavailable in this browser.")}
+function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.style.display="block";clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display="none",2600)}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+document.getElementById("year").textContent=new Date().getFullYear();renderCategories();renderTools();quickCalc();
+</script>
+</body>
+</html>

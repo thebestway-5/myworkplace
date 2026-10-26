@@ -1,0 +1,2278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Business Profit & Break-Even Analysis</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family:
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            Roboto,
+            "Noto Sans SC",
+            "Microsoft YaHei",
+            Arial,
+            sans-serif;
+        background: #f4f7fb;
+        color: #172033;
+    }
+
+    .container {
+        max-width: 1250px;
+        margin: auto;
+        padding: 28px 20px 60px;
+    }
+
+    /* HEADER */
+
+    header {
+        margin-bottom: 24px;
+    }
+
+    header h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+        color: #16213e;
+    }
+
+    header p {
+        margin: 0;
+        color: #64748b;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    /* LANGUAGE */
+
+    .language-bar {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+
+    .language-btn {
+        border: 1px solid #d7deea;
+        background: white;
+        color: #475569;
+        padding: 8px 14px;
+        border-radius: 9px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        transition: .2s;
+    }
+
+    .language-btn:hover {
+        border-color: #2563eb;
+        color: #2563eb;
+    }
+
+    .language-btn.active {
+        background: #2563eb;
+        color: white;
+        border-color: #2563eb;
+    }
+
+    /* LAYOUT */
+
+    .grid {
+        display: grid;
+        grid-template-columns: 360px 1fr;
+        gap: 20px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 18px;
+        padding: 22px;
+        box-shadow: 0 5px 20px rgba(15, 23, 42, .06);
+        border: 1px solid #e8edf5;
+    }
+
+    .card h2 {
+        margin: 0 0 18px;
+        font-size: 19px;
+    }
+
+    /* INPUTS */
+
+    .input-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 7px;
+        color: #475569;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px 13px;
+        border: 1px solid #d7deea;
+        border-radius: 10px;
+        font-size: 16px;
+        outline: none;
+        transition: .2s;
+    }
+
+    input:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+    }
+
+    .input-help {
+        font-size: 11px;
+        color: #94a3b8;
+        margin-top: 5px;
+        line-height: 1.5;
+    }
+
+    .btn {
+        width: 100%;
+        border: 0;
+        padding: 13px;
+        border-radius: 10px;
+        background: #2563eb;
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 5px;
+    }
+
+    .btn:hover {
+        background: #1d4ed8;
+    }
+
+    /* DASHBOARD */
+
+    .dashboard {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+
+    .metric {
+        background: #f8fafc;
+        border-radius: 14px;
+        padding: 17px;
+        border: 1px solid #edf1f7;
+    }
+
+    .metric .label {
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 8px;
+    }
+
+    .metric .value {
+        font-size: 24px;
+        font-weight: 800;
+        color: #172033;
+        word-break: break-word;
+    }
+
+    .metric .small {
+        font-size: 12px;
+        margin-top: 5px;
+        color: #64748b;
+        line-height: 1.4;
+    }
+
+    .blue {
+        color: #2563eb !important;
+    }
+
+    .green {
+        color: #16a34a !important;
+    }
+
+    .orange {
+        color: #ea580c !important;
+    }
+
+    .red {
+        color: #dc2626 !important;
+    }
+
+    /* STATUS */
+
+    .status {
+        padding: 18px;
+        border-radius: 14px;
+        margin-top: 18px;
+        font-weight: 600;
+        line-height: 1.6;
+    }
+
+    .status.good {
+        background: #ecfdf5;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .status.warning {
+        background: #fff7ed;
+        color: #9a3412;
+        border: 1px solid #fed7aa;
+    }
+
+    .status.loss {
+        background: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    /* SECTION */
+
+    .section {
+        margin-top: 20px;
+    }
+
+    .section-title {
+        font-size: 19px;
+        font-weight: 800;
+        margin-bottom: 15px;
+    }
+
+    /* TABLE */
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+    th,
+    td {
+        padding: 12px 10px;
+        border-bottom: 1px solid #edf1f7;
+        text-align: left;
+    }
+
+    th {
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    td:last-child,
+    th:last-child {
+        text-align: right;
+    }
+
+    .highlight-row {
+        background: #eff6ff;
+        font-weight: 700;
+    }
+
+    /* BAR */
+
+    .bar-container {
+        margin-top: 15px;
+    }
+
+    .bar-label {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 13px;
+        margin-bottom: 6px;
+    }
+
+    .bar {
+        height: 15px;
+        background: #e2e8f0;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .bar-fill {
+        height: 100%;
+        background: #2563eb;
+        border-radius: 20px;
+        transition: width .4s;
+    }
+
+    .explain {
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.7;
+        margin-top: 12px;
+    }
+
+    /* FOOTER */
+
+    .footer-note {
+        margin-top: 25px;
+        color: #94a3b8;
+        font-size: 12px;
+        text-align: center;
+        line-height: 1.6;
+    }
+
+    /* MOBILE */
+
+    @media(max-width: 900px) {
+
+        .grid {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media(max-width: 600px) {
+
+        .container {
+            padding: 20px 14px 40px;
+        }
+
+        header h1 {
+            font-size: 24px;
+        }
+
+        .dashboard {
+            grid-template-columns: 1fr;
+        }
+
+        .language-bar {
+            justify-content: center;
+        }
+
+        .language-btn {
+            flex: 1;
+        }
+
+        table {
+            font-size: 12px;
+        }
+
+        th,
+        td {
+            padding: 10px 6px;
+        }
+    }
+</style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <!-- LANGUAGE SWITCHER -->
+
+    <div class="language-bar">
+
+        <button
+            class="language-btn active"
+            data-lang="en"
+            onclick="setLanguage('en')">
+            English
+        </button>
+
+        <button
+            class="language-btn"
+            data-lang="ms"
+            onclick="setLanguage('ms')">
+            Bahasa Melayu
+        </button>
+
+        <button
+            class="language-btn"
+            data-lang="zh"
+            onclick="setLanguage('zh')">
+            中文
+        </button>
+
+    </div>
+
+
+    <!-- HEADER -->
+
+    <header>
+
+        <h1 id="pageTitle">
+            Business Profit & Break-Even Analysis
+        </h1>
+
+        <p id="pageSubtitle">
+            Understand how much you need to sell to
+            break even, reach your target profit,
+            and see your current profit.
+        </p>
+
+    </header>
+
+
+    <div class="grid">
+
+
+        <!-- INPUT -->
+
+        <div class="card">
+
+            <h2 id="inputTitle">
+                ① Business Inputs
+            </h2>
+
+
+            <div class="input-group">
+
+                <label id="priceLabel">
+                    Selling Price / Unit
+                </label>
+
+                <input
+                    id="price"
+                    type="number"
+                    value="10"
+                    min="0"
+                    step="0.01"
+                >
+
+                <div
+                    class="input-help"
+                    id="priceHelp">
+                    How much do you charge for one unit?
+                </div>
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label id="variableLabel">
+                    Variable Cost / Unit
+                </label>
+
+                <input
+                    id="variableCost"
+                    type="number"
+                    value="4"
+                    min="0"
+                    step="0.01"
+                >
+
+                <div
+                    class="input-help"
+                    id="variableHelp">
+                    Costs that increase when you sell more units,
+                    such as materials, packaging, or commission.
+                </div>
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label id="fixedLabel">
+                    Fixed Cost
+                </label>
+
+                <input
+                    id="fixedCost"
+                    type="number"
+                    value="5000"
+                    min="0"
+                    step="0.01"
+                >
+
+                <div
+                    class="input-help"
+                    id="fixedHelp">
+                    Costs that normally remain regardless of sales volume,
+                    such as rent and fixed salaries.
+                </div>
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label id="targetLabel">
+                    Target Profit
+                </label>
+
+                <input
+                    id="targetProfit"
+                    type="number"
+                    value="10000"
+                    min="0"
+                    step="0.01"
+                >
+
+                <div
+                    class="input-help"
+                    id="targetHelp">
+                    The profit you want to achieve.
+                </div>
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label id="currentUnitsLabel">
+                    Current Sales Volume / Units
+                </label>
+
+                <input
+                    id="currentUnits"
+                    type="number"
+                    value="3322"
+                    min="0"
+                    step="1"
+                >
+
+                <div
+                    class="input-help"
+                    id="currentUnitsHelp">
+                    How many units have you sold?
+                </div>
+
+            </div>
+
+
+            <button
+                class="btn"
+                id="calculateBtn"
+                onclick="calculate()">
+                Recalculate
+            </button>
+
+        </div>
+
+
+
+        <!-- RESULTS -->
+
+        <div>
+
+            <div class="card">
+
+                <h2 id="resultsTitle">
+                    ② Key Results
+                </h2>
+
+
+                <div class="dashboard">
+
+
+                    <div class="metric">
+
+                        <div
+                            class="label"
+                            id="cmLabel">
+                            Contribution Margin / Unit
+                        </div>
+
+                        <div
+                            class="value blue"
+                            id="cm">
+                            RM6.00
+                        </div>
+
+                        <div
+                            class="small"
+                            id="cmSmall">
+                            Selling Price − Variable Cost
+                        </div>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <div
+                            class="label"
+                            id="cmRatioLabel">
+                            Contribution Margin Ratio
+                        </div>
+
+                        <div
+                            class="value blue"
+                            id="cmRatio">
+                            60%
+                        </div>
+
+                        <div
+                            class="small"
+                            id="cmRatioSmall">
+                            Contribution generated from each RM1 of sales
+                        </div>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <div
+                            class="label"
+                            id="salesLabel">
+                            Current Sales Revenue
+                        </div>
+
+                        <div
+                            class="value"
+                            id="sales">
+                            RM33,220.00
+                        </div>
+
+                        <div
+                            class="small"
+                            id="salesSmall">
+                            Current revenue
+                        </div>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <div
+                            class="label"
+                            id="breakUnitsLabel">
+                            Break-Even Units
+                        </div>
+
+                        <div
+                            class="value orange"
+                            id="breakEvenUnits">
+                            834
+                        </div>
+
+                        <div
+                            class="small"
+                            id="breakUnitsSmall">
+                            Units needed to avoid a loss
+                        </div>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <div
+                            class="label"
+                            id="breakSalesLabel">
+                            Break-Even Sales
+                        </div>
+
+                        <div
+                            class="value orange"
+                            id="breakEvenSales">
+                            RM8,333.33
+                        </div>
+
+                        <div
+                            class="small"
+                            id="breakSalesSmall">
+                            Minimum sales revenue to break even
+                        </div>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <div
+                            class="label"
+                            id="profitLabel">
+                            Current Profit
+                        </div>
+
+                        <div
+                            class="value green"
+                            id="profit">
+                            RM14,932.00
+                        </div>
+
+                        <div
+                            class="small"
+                            id="profitSmall">
+                            Contribution Margin − Fixed Cost
+                        </div>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <div
+                            class="label"
+                            id="targetUnitsLabel">
+                            Units Required for Target Profit
+                        </div>
+
+                        <div
+                            class="value blue"
+                            id="targetUnits">
+                            2,500
+                        </div>
+
+                        <div
+                            class="small"
+                            id="targetUnitsSmall">
+                            Units needed to achieve target profit
+                        </div>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <div
+                            class="label"
+                            id="targetSalesLabel">
+                            Sales Required for Target Profit
+                        </div>
+
+                        <div
+                            class="value blue"
+                            id="targetSales">
+                            RM25,000.00
+                        </div>
+
+                        <div
+                            class="small"
+                            id="targetSalesSmall">
+                            Revenue required to achieve target profit
+                        </div>
+
+                    </div>
+
+
+                    <div class="metric">
+
+                        <div
+                            class="label"
+                            id="mosLabel">
+                            Margin of Safety
+                        </div>
+
+                        <div
+                            class="value green"
+                            id="mos">
+                            RM24,886.67
+                        </div>
+
+                        <div
+                            class="small"
+                            id="mosSmall">
+                            Sales buffer before reaching break-even
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="status"
+                    class="status good">
+                    🎉 Your current sales are above break-even
+                    and the business is profitable.
+                </div>
+
+            </div>
+
+
+
+            <!-- FINANCIAL BREAKDOWN -->
+
+            <div class="card section">
+
+                <div
+                    class="section-title"
+                    id="breakdownTitle">
+                    ③ Financial Breakdown
+                </div>
+
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th id="itemHeader">
+                                Item
+                            </th>
+
+                            <th id="calculationHeader">
+                                Calculation
+                            </th>
+
+                            <th id="amountHeader">
+                                Amount
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                        <tr>
+
+                            <td id="salesRevenueRow">
+                                Sales Revenue
+                            </td>
+
+                            <td id="salesCalc">
+                                3,322 × RM10.00
+                            </td>
+
+                            <td id="salesTable">
+                                RM33,220.00
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td id="variableCostRow">
+                                Variable Cost
+                            </td>
+
+                            <td id="variableCalc">
+                                3,322 × RM4.00
+                            </td>
+
+                            <td id="variableTable">
+                                RM13,288.00
+                            </td>
+
+                        </tr>
+
+
+                        <tr class="highlight-row">
+
+                            <td id="contributionRow">
+                                Contribution Margin
+                            </td>
+
+                            <td id="contributionCalc">
+                                Sales − Variable Cost
+                            </td>
+
+                            <td id="contributionTable">
+                                RM19,932.00
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td id="fixedCostRow">
+                                Fixed Cost
+                            </td>
+
+                            <td id="fixedCalc">
+                                Rent + Salaries + Other Fixed Costs
+                            </td>
+
+                            <td id="fixedTable">
+                                RM5,000.00
+                            </td>
+
+                        </tr>
+
+
+                        <tr class="highlight-row">
+
+                            <td id="profitRow">
+                                Profit
+                            </td>
+
+                            <td id="profitCalc">
+                                Contribution Margin − Fixed Cost
+                            </td>
+
+                            <td id="profitTable">
+                                RM14,932.00
+                            </td>
+
+                        </tr>
+
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+
+            <!-- SALES SAFETY -->
+
+            <div class="card section">
+
+                <div
+                    class="section-title"
+                    id="safetyTitle">
+                    ④ Sales Safety
+                </div>
+
+
+                <div class="bar-container">
+
+                    <div class="bar-label">
+
+                        <span id="breakBarLabel">
+                            Break-Even Sales
+                        </span>
+
+                        <strong id="breakBarText">
+                            RM8,333.33
+                        </strong>
+
+                    </div>
+
+
+                    <div class="bar">
+
+                        <div
+                            class="bar-fill"
+                            id="breakBar"
+                            style="width:25%;">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="explain"
+                    id="safetyExplanation">
+
+                    <strong>Margin of Safety</strong>
+                    shows how much your sales can fall before
+                    the business reaches break-even.
+
+                    <br><br>
+
+                    A larger safety margin generally means
+                    you have more room before the business moves
+                    into a loss position.
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <div
+        class="footer-note"
+        id="footer">
+
+        CVP = Cost-Volume-Profit Analysis ·
+        For management planning and analysis only.
+        This tool does not replace formal accounting,
+        tax, or financial reporting.
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+/* =========================================================
+   TRANSLATIONS
+========================================================= */
+
+const translations = {
+
+    en: {
+
+        pageTitle:
+            "Business Profit & Break-Even Analysis",
+
+        pageSubtitle:
+            "Understand how much you need to sell to break even, reach your target profit, and see your current profit.",
+
+        inputTitle:
+            "① Business Inputs",
+
+        priceLabel:
+            "Selling Price / Unit",
+
+        priceHelp:
+            "How much do you charge for one unit?",
+
+        variableLabel:
+            "Variable Cost / Unit",
+
+        variableHelp:
+            "Costs that increase when you sell more units, such as materials, packaging, or commission.",
+
+        fixedLabel:
+            "Fixed Cost",
+
+        fixedHelp:
+            "Costs that normally remain regardless of sales volume, such as rent and fixed salaries.",
+
+        targetLabel:
+            "Target Profit",
+
+        targetHelp:
+            "The profit you want to achieve.",
+
+        currentUnitsLabel:
+            "Current Sales Volume / Units",
+
+        currentUnitsHelp:
+            "How many units have you sold?",
+
+        calculateBtn:
+            "Recalculate",
+
+        resultsTitle:
+            "② Key Results",
+
+        cmLabel:
+            "Contribution Margin / Unit",
+
+        cmSmall:
+            "Selling Price − Variable Cost",
+
+        cmRatioLabel:
+            "Contribution Margin Ratio",
+
+        cmRatioSmall:
+            "Contribution generated from each RM1 of sales",
+
+        salesLabel:
+            "Current Sales Revenue",
+
+        salesSmall:
+            "Current revenue",
+
+        breakUnitsLabel:
+            "Break-Even Units",
+
+        breakUnitsSmall:
+            "Units needed to avoid a loss",
+
+        breakSalesLabel:
+            "Break-Even Sales",
+
+        breakSalesSmall:
+            "Minimum sales revenue to break even",
+
+        profitLabel:
+            "Current Profit",
+
+        profitSmall:
+            "Contribution Margin − Fixed Cost",
+
+        targetUnitsLabel:
+            "Units Required for Target Profit",
+
+        targetUnitsSmall:
+            "Units needed to achieve target profit",
+
+        targetSalesLabel:
+            "Sales Required for Target Profit",
+
+        targetSalesSmall:
+            "Revenue required to achieve target profit",
+
+        mosLabel:
+            "Margin of Safety",
+
+        mosSmall:
+            "Sales buffer before reaching break-even",
+
+        breakdownTitle:
+            "③ Financial Breakdown",
+
+        itemHeader:
+            "Item",
+
+        calculationHeader:
+            "Calculation",
+
+        amountHeader:
+            "Amount",
+
+        salesRevenueRow:
+            "Sales Revenue",
+
+        variableCostRow:
+            "Variable Cost",
+
+        contributionRow:
+            "Contribution Margin",
+
+        contributionCalc:
+            "Sales − Variable Cost",
+
+        fixedCostRow:
+            "Fixed Cost",
+
+        fixedCalc:
+            "Rent + Salaries + Other Fixed Costs",
+
+        profitRow:
+            "Profit",
+
+        profitCalc:
+            "Contribution Margin − Fixed Cost",
+
+        safetyTitle:
+            "④ Sales Safety",
+
+        breakBarLabel:
+            "Break-Even Sales",
+
+        safetyExplanation:
+            "<strong>Margin of Safety</strong> shows how much your sales can fall before the business reaches break-even.<br><br>A larger safety margin generally means you have more room before the business moves into a loss position.",
+
+        footer:
+            "CVP = Cost-Volume-Profit Analysis · For management planning and analysis only. This tool does not replace formal accounting, tax, or financial reporting."
+    },
+
+
+    ms: {
+
+        pageTitle:
+            "Analisis Keuntungan & Titik Pulang Modal",
+
+        pageSubtitle:
+            "Ketahui berapa banyak jualan diperlukan untuk mencapai titik pulang modal, sasaran keuntungan dan keuntungan semasa.",
+
+        inputTitle:
+            "① Maklumat Perniagaan",
+
+        priceLabel:
+            "Harga Jualan / Unit",
+
+        priceHelp:
+            "Berapakah harga yang dikenakan untuk satu unit?",
+
+        variableLabel:
+            "Kos Berubah / Unit",
+
+        variableHelp:
+            "Kos yang meningkat apabila jualan meningkat, seperti bahan, pembungkusan atau komisen.",
+
+        fixedLabel:
+            "Kos Tetap",
+
+        fixedHelp:
+            "Kos yang biasanya kekal walaupun jumlah jualan berubah, seperti sewa dan gaji tetap.",
+
+        targetLabel:
+            "Sasaran Keuntungan",
+
+        targetHelp:
+            "Jumlah keuntungan yang ingin dicapai.",
+
+        currentUnitsLabel:
+            "Jumlah Jualan Semasa / Unit",
+
+        currentUnitsHelp:
+            "Berapakah jumlah unit yang telah dijual?",
+
+        calculateBtn:
+            "Kira Semula",
+
+        resultsTitle:
+            "② Keputusan Utama",
+
+        cmLabel:
+            "Margin Sumbangan / Unit",
+
+        cmSmall:
+            "Harga Jualan − Kos Berubah",
+
+        cmRatioLabel:
+            "Nisbah Margin Sumbangan",
+
+        cmRatioSmall:
+            "Sumbangan yang dijana bagi setiap RM1 jualan",
+
+        salesLabel:
+            "Hasil Jualan Semasa",
+
+        salesSmall:
+            "Jumlah hasil semasa",
+
+        breakUnitsLabel:
+            "Unit Titik Pulang Modal",
+
+        breakUnitsSmall:
+            "Unit yang diperlukan untuk tidak mengalami kerugian",
+
+        breakSalesLabel:
+            "Jualan Titik Pulang Modal",
+
+        breakSalesSmall:
+            "Jualan minimum untuk mencapai titik pulang modal",
+
+        profitLabel:
+            "Keuntungan Semasa",
+
+        profitSmall:
+            "Margin Sumbangan − Kos Tetap",
+
+        targetUnitsLabel:
+            "Unit Diperlukan untuk Sasaran Keuntungan",
+
+        targetUnitsSmall:
+            "Unit yang diperlukan untuk mencapai sasaran keuntungan",
+
+        targetSalesLabel:
+            "Jualan Diperlukan untuk Sasaran Keuntungan",
+
+        targetSalesSmall:
+            "Hasil jualan yang diperlukan untuk mencapai sasaran",
+
+        mosLabel:
+            "Margin Keselamatan",
+
+        mosSmall:
+            "Ruang jualan sebelum mencapai titik pulang modal",
+
+        breakdownTitle:
+            "③ Pecahan Kewangan",
+
+        itemHeader:
+            "Item",
+
+        calculationHeader:
+            "Pengiraan",
+
+        amountHeader:
+            "Jumlah",
+
+        salesRevenueRow:
+            "Hasil Jualan",
+
+        variableCostRow:
+            "Kos Berubah",
+
+        contributionRow:
+            "Margin Sumbangan",
+
+        contributionCalc:
+            "Jualan − Kos Berubah",
+
+        fixedCostRow:
+            "Kos Tetap",
+
+        fixedCalc:
+            "Sewa + Gaji + Kos Tetap Lain",
+
+        profitRow:
+            "Keuntungan",
+
+        profitCalc:
+            "Margin Sumbangan − Kos Tetap",
+
+        safetyTitle:
+            "④ Keselamatan Jualan",
+
+        breakBarLabel:
+            "Jualan Titik Pulang Modal",
+
+        safetyExplanation:
+            "<strong>Margin Keselamatan</strong> menunjukkan berapa banyak jualan boleh menurun sebelum perniagaan mencapai titik pulang modal.<br><br>Margin keselamatan yang lebih tinggi secara amnya menunjukkan lebih banyak ruang sebelum perniagaan mula mengalami kerugian.",
+
+        footer:
+            "CVP = Analisis Kos-Volum-Keuntungan · Untuk perancangan dan analisis pengurusan sahaja. Sistem ini bukan pengganti rekod perakaunan, cukai atau laporan kewangan rasmi."
+    },
+
+
+    zh: {
+
+        pageTitle:
+            "企业利润与盈亏平衡分析",
+
+        pageSubtitle:
+            "了解需要卖多少才能保本、达到目标利润，以及目前到底赚多少钱。",
+
+        inputTitle:
+            "① 企业资料",
+
+        priceLabel:
+            "销售价格 / 每单位",
+
+        priceHelp:
+            "每一个产品卖多少钱？",
+
+        variableLabel:
+            "变动成本 / 每单位",
+
+        variableHelp:
+            "随着销量增加而增加的成本，例如材料、包装和销售佣金。",
+
+        fixedLabel:
+            "固定成本",
+
+        fixedHelp:
+            "无论销量多少通常都需要支付的成本，例如租金和固定工资。",
+
+        targetLabel:
+            "目标利润",
+
+        targetHelp:
+            "你希望达到的利润金额。",
+
+        currentUnitsLabel:
+            "目前销售量 / 单位",
+
+        currentUnitsHelp:
+            "目前已经卖出了多少个？",
+
+        calculateBtn:
+            "重新计算",
+
+        resultsTitle:
+            "② 核心结果",
+
+        cmLabel:
+            "每单位贡献毛益",
+
+        cmSmall:
+            "销售价格 − 变动成本",
+
+        cmRatioLabel:
+            "贡献毛益率",
+
+        cmRatioSmall:
+            "每 RM1 销售额产生多少贡献",
+
+        salesLabel:
+            "目前销售额",
+
+        salesSmall:
+            "目前营业收入",
+
+        breakUnitsLabel:
+            "保本销量",
+
+        breakUnitsSmall:
+            "不亏损所需要的最低销量",
+
+        breakSalesLabel:
+            "保本营业额",
+
+        breakSalesSmall:
+            "达到保本所需要的最低营业额",
+
+        profitLabel:
+            "目前利润",
+
+        profitSmall:
+            "贡献毛益 − 固定成本",
+
+        targetUnitsLabel:
+            "达到目标利润所需销量",
+
+        targetUnitsSmall:
+            "达到目标利润所需要卖出的数量",
+
+        targetSalesLabel:
+            "达到目标利润所需营业额",
+
+        targetSalesSmall:
+            "达到目标利润所需要的营业额",
+
+        mosLabel:
+            "安全边际",
+
+        mosSmall:
+            "距离开始亏损之前的销售缓冲",
+
+        breakdownTitle:
+            "③ 财务明细",
+
+        itemHeader:
+            "项目",
+
+        calculationHeader:
+            "计算",
+
+        amountHeader:
+            "金额",
+
+        salesRevenueRow:
+            "销售收入",
+
+        variableCostRow:
+            "变动成本",
+
+        contributionRow:
+            "贡献毛益",
+
+        contributionCalc:
+            "销售收入 − 变动成本",
+
+        fixedCostRow:
+            "固定成本",
+
+        fixedCalc:
+            "租金 + 工资 + 其他固定成本",
+
+        profitRow:
+            "利润",
+
+        profitCalc:
+            "贡献毛益 − 固定成本",
+
+        safetyTitle:
+            "④ 销售安全边际",
+
+        breakBarLabel:
+            "保本营业额",
+
+        safetyExplanation:
+            "<strong>安全边际</strong>表示销售额最多可以下降多少，企业才会达到保本点。<br><br>安全边际越高，一般代表企业距离亏损点还有更大的销售缓冲空间。",
+
+        footer:
+            "CVP = 成本－业务量－利润分析 · 仅用于经营管理规划与分析。本系统不能取代正式会计、税务或财务报告。"
+    }
+
+};
+
+
+/* =========================================================
+   LANGUAGE FUNCTION
+========================================================= */
+
+let currentLanguage =
+    localStorage.getItem("cvpLanguage") || "en";
+
+
+function setText(id, text) {
+
+    const element =
+        document.getElementById(id);
+
+    if (element) {
+        element.innerHTML = text;
+    }
+
+}
+
+
+function setLanguage(language) {
+
+    currentLanguage = language;
+
+    localStorage.setItem(
+        "cvpLanguage",
+        language
+    );
+
+    const t =
+        translations[language];
+
+
+    /* HEADER */
+
+    setText(
+        "pageTitle",
+        t.pageTitle
+    );
+
+    setText(
+        "pageSubtitle",
+        t.pageSubtitle
+    );
+
+
+    /* INPUT */
+
+    setText(
+        "inputTitle",
+        t.inputTitle
+    );
+
+    setText(
+        "priceLabel",
+        t.priceLabel
+    );
+
+    setText(
+        "priceHelp",
+        t.priceHelp
+    );
+
+    setText(
+        "variableLabel",
+        t.variableLabel
+    );
+
+    setText(
+        "variableHelp",
+        t.variableHelp
+    );
+
+    setText(
+        "fixedLabel",
+        t.fixedLabel
+    );
+
+    setText(
+        "fixedHelp",
+        t.fixedHelp
+    );
+
+    setText(
+        "targetLabel",
+        t.targetLabel
+    );
+
+    setText(
+        "targetHelp",
+        t.targetHelp
+    );
+
+    setText(
+        "currentUnitsLabel",
+        t.currentUnitsLabel
+    );
+
+    setText(
+        "currentUnitsHelp",
+        t.currentUnitsHelp
+    );
+
+    setText(
+        "calculateBtn",
+        t.calculateBtn
+    );
+
+
+    /* RESULTS */
+
+    setText(
+        "resultsTitle",
+        t.resultsTitle
+    );
+
+    setText(
+        "cmLabel",
+        t.cmLabel
+    );
+
+    setText(
+        "cmSmall",
+        t.cmSmall
+    );
+
+    setText(
+        "cmRatioLabel",
+        t.cmRatioLabel
+    );
+
+    setText(
+        "cmRatioSmall",
+        t.cmRatioSmall
+    );
+
+    setText(
+        "salesLabel",
+        t.salesLabel
+    );
+
+    setText(
+        "salesSmall",
+        t.salesSmall
+    );
+
+    setText(
+        "breakUnitsLabel",
+        t.breakUnitsLabel
+    );
+
+    setText(
+        "breakUnitsSmall",
+        t.breakUnitsSmall
+    );
+
+    setText(
+        "breakSalesLabel",
+        t.breakSalesLabel
+    );
+
+    setText(
+        "breakSalesSmall",
+        t.breakSalesSmall
+    );
+
+    setText(
+        "profitLabel",
+        t.profitLabel
+    );
+
+    setText(
+        "profitSmall",
+        t.profitSmall
+    );
+
+    setText(
+        "targetUnitsLabel",
+        t.targetUnitsLabel
+    );
+
+    setText(
+        "targetUnitsSmall",
+        t.targetUnitsSmall
+    );
+
+    setText(
+        "targetSalesLabel",
+        t.targetSalesLabel
+    );
+
+    setText(
+        "targetSalesSmall",
+        t.targetSalesSmall
+    );
+
+    setText(
+        "mosLabel",
+        t.mosLabel
+    );
+
+    setText(
+        "mosSmall",
+        t.mosSmall
+    );
+
+
+    /* TABLE */
+
+    setText(
+        "breakdownTitle",
+        t.breakdownTitle
+    );
+
+    setText(
+        "itemHeader",
+        t.itemHeader
+    );
+
+    setText(
+        "calculationHeader",
+        t.calculationHeader
+    );
+
+    setText(
+        "amountHeader",
+        t.amountHeader
+    );
+
+    setText(
+        "salesRevenueRow",
+        t.salesRevenueRow
+    );
+
+    setText(
+        "variableCostRow",
+        t.variableCostRow
+    );
+
+    setText(
+        "contributionRow",
+        t.contributionRow
+    );
+
+    setText(
+        "contributionCalc",
+        t.contributionCalc
+    );
+
+    setText(
+        "fixedCostRow",
+        t.fixedCostRow
+    );
+
+    setText(
+        "fixedCalc",
+        t.fixedCalc
+    );
+
+    setText(
+        "profitRow",
+        t.profitRow
+    );
+
+    setText(
+        "profitCalc",
+        t.profitCalc
+    );
+
+
+    /* SAFETY */
+
+    setText(
+        "safetyTitle",
+        t.safetyTitle
+    );
+
+    setText(
+        "breakBarLabel",
+        t.breakBarLabel
+    );
+
+    setText(
+        "safetyExplanation",
+        t.safetyExplanation
+    );
+
+
+    /* FOOTER */
+
+    setText(
+        "footer",
+        t.footer
+    );
+
+
+    /* LANGUAGE BUTTON */
+
+    document
+        .querySelectorAll(".language-btn")
+        .forEach(button => {
+
+            button.classList.toggle(
+                "active",
+                button.dataset.lang === language
+            );
+
+        });
+
+
+    updateStatus();
+}
+
+
+
+/* =========================================================
+   MONEY FORMAT
+========================================================= */
+
+function money(value) {
+
+    return "RM" +
+        Number(value).toLocaleString(
+            "en-MY",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        );
+
+}
+
+
+function number(value) {
+
+    return Number(value).toLocaleString(
+        "en-MY",
+        {
+            maximumFractionDigits: 0
+        }
+    );
+
+}
+
+
+
+/* =========================================================
+   CALCULATION
+========================================================= */
+
+function calculate() {
+
+    const price =
+        parseFloat(
+            document.getElementById("price").value
+        ) || 0;
+
+
+    const variableCost =
+        parseFloat(
+            document.getElementById("variableCost").value
+        ) || 0;
+
+
+    const fixedCost =
+        parseFloat(
+            document.getElementById("fixedCost").value
+        ) || 0;
+
+
+    const targetProfit =
+        parseFloat(
+            document.getElementById("targetProfit").value
+        ) || 0;
+
+
+    const currentUnits =
+        parseFloat(
+            document.getElementById("currentUnits").value
+        ) || 0;
+
+
+
+    /* Contribution Margin */
+
+    const cm =
+        price - variableCost;
+
+
+    /* Contribution Margin Ratio */
+
+    const cmRatio =
+        price > 0
+            ? cm / price
+            : 0;
+
+
+    /* Current Sales */
+
+    const currentSales =
+        currentUnits * price;
+
+
+    /* Current Variable Cost */
+
+    const currentVariableCost =
+        currentUnits * variableCost;
+
+
+    /* Current Contribution */
+
+    const currentContribution =
+        currentUnits * cm;
+
+
+    /* Current Profit */
+
+    const profit =
+        currentContribution - fixedCost;
+
+
+    /* Break-Even */
+
+    const breakEvenUnits =
+        cm > 0
+            ? fixedCost / cm
+            : 0;
+
+
+    const breakEvenSales =
+        cmRatio > 0
+            ? fixedCost / cmRatio
+            : 0;
+
+
+    /* Target Profit */
+
+    const targetUnits =
+        cm > 0
+            ? (fixedCost + targetProfit) / cm
+            : 0;
+
+
+    const targetSales =
+        cmRatio > 0
+            ? (fixedCost + targetProfit) / cmRatio
+            : 0;
+
+
+    /* Margin of Safety */
+
+    const marginOfSafety =
+        currentSales - breakEvenSales;
+
+
+
+    /* DISPLAY */
+
+    document.getElementById("cm").innerText =
+        money(cm);
+
+
+    document.getElementById("cmRatio").innerText =
+        (cmRatio * 100).toFixed(1) + "%";
+
+
+    document.getElementById("sales").innerText =
+        money(currentSales);
+
+
+    document.getElementById("breakEvenUnits").innerText =
+        Math.ceil(
+            breakEvenUnits
+        ).toLocaleString();
+
+
+    document.getElementById("breakEvenSales").innerText =
+        money(breakEvenSales);
+
+
+    document.getElementById("profit").innerText =
+        money(profit);
+
+
+    document.getElementById("targetUnits").innerText =
+        Math.ceil(
+            targetUnits
+        ).toLocaleString();
+
+
+    document.getElementById("targetSales").innerText =
+        money(targetSales);
+
+
+    document.getElementById("mos").innerText =
+        money(marginOfSafety);
+
+
+
+    /* TABLE */
+
+    document.getElementById("salesCalc").innerText =
+        number(currentUnits) +
+        " × " +
+        money(price);
+
+
+    document.getElementById("variableCalc").innerText =
+        number(currentUnits) +
+        " × " +
+        money(variableCost);
+
+
+    document.getElementById("salesTable").innerText =
+        money(currentSales);
+
+
+    document.getElementById("variableTable").innerText =
+        money(currentVariableCost);
+
+
+    document.getElementById("contributionTable").innerText =
+        money(currentContribution);
+
+
+    document.getElementById("fixedTable").innerText =
+        money(fixedCost);
+
+
+    document.getElementById("profitTable").innerText =
+        money(profit);
+
+
+
+    /* PROFIT COLOR */
+
+    const profitElement =
+        document.getElementById("profit");
+
+
+    if (profit > 0) {
+
+        profitElement.className =
+            "value green";
+
+    }
+
+    else if (profit < 0) {
+
+        profitElement.className =
+            "value red";
+
+    }
+
+    else {
+
+        profitElement.className =
+            "value orange";
+
+    }
+
+
+
+    /* BREAK-EVEN BAR */
+
+    let barWidth = 0;
+
+
+    if (currentSales > 0) {
+
+        barWidth =
+            Math.min(
+                (breakEvenSales / currentSales) * 100,
+                100
+            );
+
+    }
+
+
+    document.getElementById("breakBar").style.width =
+        barWidth + "%";
+
+
+    document.getElementById("breakBarText").innerText =
+        money(breakEvenSales);
+
+
+
+    updateStatus();
+
+}
+
+
+
+/* =========================================================
+   STATUS MESSAGE
+========================================================= */
+
+function updateStatus() {
+
+    const price =
+        parseFloat(
+            document.getElementById("price").value
+        ) || 0;
+
+
+    const variableCost =
+        parseFloat(
+            document.getElementById("variableCost").value
+        ) || 0;
+
+
+    const fixedCost =
+        parseFloat(
+            document.getElementById("fixedCost").value
+        ) || 0;
+
+
+    const currentUnits =
+        parseFloat(
+            document.getElementById("currentUnits").value
+        ) || 0;
+
+
+    const cm =
+        price - variableCost;
+
+
+    const contribution =
+        currentUnits * cm;
+
+
+    const profit =
+        contribution - fixedCost;
+
+
+    const status =
+        document.getElementById("status");
+
+
+    const t =
+        translations[currentLanguage];
+
+
+    if (cm <= 0) {
+
+        status.className =
+            "status loss";
+
+
+        if (currentLanguage === "en") {
+
+            status.innerHTML =
+                "⚠️ <strong>Negative or zero Contribution Margin.</strong><br>" +
+                "Your selling price must be higher than your variable cost to generate a positive contribution.";
+
+        }
+
+        else if (currentLanguage === "ms") {
+
+            status.innerHTML =
+                "⚠️ <strong>Margin Sumbangan adalah sifar atau negatif.</strong><br>" +
+                "Harga jualan mestilah lebih tinggi daripada kos berubah untuk menghasilkan margin sumbangan positif.";
+
+        }
+
+        else {
+
+            status.innerHTML =
+                "⚠️ <strong>贡献毛益为零或负数。</strong><br>" +
+                "销售价格必须高于变动成本，才能产生正的贡献毛益。";
+
+        }
+
+    }
+
+    else if (profit > 0) {
+
+        status.className =
+            "status good";
+
+
+        if (currentLanguage === "en") {
+
+            status.innerHTML =
+                "🎉 <strong>Your business is currently profitable.</strong><br>" +
+                "Current profit is approximately <strong>" +
+                money(profit) +
+                "</strong>.";
+
+        }
+
+        else if (currentLanguage === "ms") {
+
+            status.innerHTML =
+                "🎉 <strong>Perniagaan anda kini mencatat keuntungan.</strong><br>" +
+                "Keuntungan semasa adalah kira-kira <strong>" +
+                money(profit) +
+                "</strong>.";
+
+        }
+
+        else {
+
+            status.innerHTML =
+                "🎉 <strong>目前企业处于盈利状态。</strong><br>" +
+                "目前利润约为 <strong>" +
+                money(profit) +
+                "</strong>。";
+
+        }
+
+    }
+
+    else if (profit === 0) {
+
+        status.className =
+            "status warning";
+
+
+        if (currentLanguage === "en") {
+
+            status.innerHTML =
+                "⚖️ <strong>You are currently at break-even.</strong><br>" +
+                "The business is covering its costs but is not generating profit yet.";
+
+        }
+
+        else if (currentLanguage === "ms") {
+
+            status.innerHTML =
+                "⚖️ <strong>Perniagaan kini berada pada titik pulang modal.</strong><br>" +
+                "Kos telah dilindungi tetapi belum menghasilkan keuntungan.";
+
+        }
+
+        else {
+
+            status.innerHTML =
+                "⚖️ <strong>目前刚好达到保本点。</strong><br>" +
+                "目前已经覆盖所有成本，但还没有产生利润。";
+
+        }
+
+    }
+
+    else {
+
+        status.className =
+            "status loss";
+
+
+        if (currentLanguage === "en") {
+
+            status.innerHTML =
+                "🔴 <strong>Your business is currently operating at a loss.</strong><br>" +
+                "Current sales are below the break-even level.";
+
+        }
+
+        else if (currentLanguage === "ms") {
+
+            status.innerHTML =
+                "🔴 <strong>Perniagaan anda kini mengalami kerugian.</strong><br>" +
+                "Jualan semasa masih di bawah tahap titik pulang modal.";
+
+        }
+
+        else {
+
+            status.innerHTML =
+                "🔴 <strong>目前企业处于亏损状态。</strong><br>" +
+                "目前销售额低于保本水平。";
+
+        }
+
+    }
+
+}
+
+
+
+/* =========================================================
+   REAL-TIME CALCULATION
+========================================================= */
+
+document
+    .querySelectorAll("input")
+    .forEach(input => {
+
+        input.addEventListener(
+            "input",
+            calculate
+        );
+
+    });
+
+
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+setLanguage(currentLanguage);
+
+calculate();
+
+</script>
+
+</body>
+</html>

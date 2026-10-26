@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malaysia Racing Calendar (跑马历)</title>
+    <style>
+        :root {
+            --primary-red: #d32f2f; /* Classic Horse Racing Calendar Red */
+            --bg-gray: #f8f9fa;
+            --text-dark: #212529;
+            --weekend-red: #d32f2f;
+            --lunar-gray: #6c757d;
+            --holiday-bg: #fff5f5;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif;
+            background-color: var(--bg-gray);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Calendar Container */
+        .calendar-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 480px;
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            border: 4px solid var(--primary-red);
+        }
+
+        /* Red Header Header */
+        .calendar-header {
+            background-color: var(--primary-red);
+            color: #ffffff;
+            padding: 18px;
+            text-align: center;
+            position: relative;
+        }
+
+        .calendar-header h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .calendar-header .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.6rem;
+            cursor: pointer;
+            padding: 5px 15px;
+            transition: opacity 0.2s;
+        }
+
+        .calendar-header .nav-btn:hover {
+            opacity: 0.8;
+        }
+
+        .calendar-header .prev-btn { left: 10px; }
+        .calendar-header .next-btn { right: 10px; }
+
+        /* Days of the Week Row */
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background: #fff3f3;
+            text-align: center;
+            font-weight: bold;
+            border-bottom: 2px solid var(--primary-red);
+        }
+
+        .weekdays div {
+            padding: 12px 0;
+            font-size: 0.9rem;
+        }
+
+        /* Sunday & Saturday markers */
+        .weekdays div:nth-child(1) { color: var(--weekend-red); } /* Sun */
+        .weekdays div:nth-child(7) { color: #2e7d32; } /* Sat (Green in some formats) */
+
+        /* Main Grid */
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background-color: #eee;
+            gap: 1px; /* Borders between grids */
+        }
+
+        /* Individual Day Block */
+        .day-cell {
+            background: #ffffff;
+            min-height: 75px;
+            padding: 6px 4px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+        }
+
+        /* Big Solar Date Display */
+        .solar-num {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        /* Chinese Lunar / Islamic / Holiday text block */
+        .info-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-top: 4px;
+        }
+
+        .lunar-text {
+            font-size: 0.7rem;
+            color: var(--lunar-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Weekend styling rules */
+        .day-cell.sunday .solar-num {
+            color: var(--weekend-red);
+        }
+
+        /* Malaysia Holiday styling rules */
+        .day-cell.malaysia-holiday {
+            background-color: var(--holiday-bg);
+        }
+        .day-cell.malaysia-holiday .solar-num {
+            color: var(--weekend-red);
+        }
+        .day-cell.malaysia-holiday .holiday-label {
+            color: var(--weekend-red);
+            font-weight: bold;
+            font-size: 0.7rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Faded out styling for adjacent month elements */
+        .other-month {
+            background: #fafafa;
+        }
+        .other-month .solar-num,
+        .other-month .info-lines {
+            opacity: 0.25;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calendar-container">
+        <!-- Month and Year Switcher Header -->
+        <div class="calendar-header">
+            <button class="nav-btn prev-btn" onclick="changeMonth(-1)">❮</button>
+            <h1 id="calendar-title">2026 年 10 月</h1>
+            <button class="nav-btn next-btn" onclick="changeMonth(1)">❯</button>
+        </div>
+
+        <!-- Days Title Layout -->
+        <div class="weekdays">
+            <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
+        </div>
+
+        <!-- Date Output Grid -->
+        <div class="days-grid" id="days-container"></div>
+    </div>
+
+    <script>
+        // Set default display context to current active year/month (Oct 2026)
+        let currentYear = 2026;
+        let currentMonth = 9; // 0 = Jan, 9 = Oct
+
+        /**
+         * Core Database for Major Malaysia Holidays (Federal & Key States)
+         * Format: YYYY-MM-DD
+         */
+        const malaysiaHolidays = {
+            // 2026 Fixed & Tentative Estimated Dates
+            "2026-01-01": "New Year's Day",
+            "2026-02-17": "Chinese New Year",
+            "2026-02-18": "CNY Day 2",
+            "2026-03-20": "Hari Raya Aidilfitri",
+            "2026-03-21": "Hari Raya Day 2",
+            "2026-05-01": "Labour Day",
+            "2026-05-27": "Hari Raya Haji",
+            "2026-05-31": "Wesak Day",
+            "2026-06-01": "Agong's Birthday",
+            "2026-07-27": "Awal Muharram",
+            "2026-08-31": "Merdeka Day",
+            "2026-09-16": "Malaysia Day",
+            "2026-11-08": "Deepavali",
+            "2026-12-25": "Christmas Day"
+        };
+
+        // Static sample dictionary mapping Lunar info for structural demonstration 
+        const sampleLunarData = {
+            "10-01": "八月廿一", "10-02": "八月廿二", "10-03": "八月廿三", "10-24": "九月十五", "10-31": "九月廿二",
+            "01-01": "十一月十二", "02-17": "正月初一", "02-18": "正月初二", "08-31": "七月十九", "09-16": "八月初六"
+        };
+
+        function renderCalendar(year, month) {
+            const container = document.getElementById('days-container');
+            const title = document.getElementById('calendar-title');
+            
+            title.innerText = `${year}年 ${month + 1}月`;
+            container.innerHTML = '';
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const lastDate = new Date(year, month + 1, 0).getDate();
+            const prevLastDate = new Date(year, month, 0).getDate();
+
+            // 1. Generate Leading Days from Previous Month
+            for (let i = firstDayIndex; i > 0; i--) {
+                const dayNum = prevLastDate - i + 1;
+                createDayCell(dayNum, 'other-month', '', '');
+            }
+
+            // 2. Generate Active Current Month Grid Data
+            for (let date = 1; date <= lastDate; date++) {
+                const dayOfWeek = new Date(year, month, date).getDay();
+                const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+                const monthDateKey = `${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+                
+                let classes = [];
+                if (dayOfWeek === 0) classes.push('sunday');
+                
+                // Fetch public holidays
+                const holidayName = malaysiaHolidays[dateString] || '';
+                if (holidayName) {
+                    classes.push('malaysia-holiday');
+                }
+
+                // Match mock lunar strings
+                const lunarLabel = sampleLunarData[monthDateKey] || `初${date}`;
+
+                createDayCell(date, classes.join(' '), lunarLabel, holidayName);
+            }
+
+            // 3. Generate Trailing Cells for Grid Alignment (42 Boxes total)
+            const totalRendered = container.children.length;
+            const remainingCells = 42 - totalRendered;
+            for (let i = 1; i <= remainingCells; i++) {
+                createDayCell(i, 'other-month', '', '');
+            }
+        }
+
+        function createDayCell(solarNum, className, lunarText, holidayText) {
+            const container = document.getElementById('days-container');
+            const cell = document.createElement('div');
+            cell.className = `day-cell ${className}`;
+
+            // Main date text node
+            const solarDiv = document.createElement('div');
+            solarDiv.className = 'solar-num';
+            solarDiv.innerText = solarNum;
+            cell.appendChild(solarDiv);
+
+            // Container block holding details underneath solar value
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'info-lines';
+
+            if (holidayText) {
+                const holidaySpan = document.createElement('span');
+                holidaySpan.className = 'holiday-label';
+                holidaySpan.innerText = holidayText;
+                infoDiv.appendChild(holidaySpan);
+            } else if (lunarText) {
+                const lunarSpan = document.createElement('span');
+                lunarSpan.className = 'lunar-text';
+                lunarSpan.innerText = lunarText;
+                infoDiv.appendChild(lunarSpan);
+            }
+
+cell.appendChild(infoDiv);
+container.appendChild(cell);
+}
+function changeMonth(direction) {
+currentMonth += direction;
+if (currentMonth > 11) {
+currentMonth = 0;
+currentYear++;
+} else if (currentMonth < 0) {
+currentMonth = 11;
+currentYear--;
+}
+renderCalendar(currentYear, currentMonth);
+}
+// Initialize display execution
+renderCalendar(currentYear, currentMonth);
+
+        function changeMonth(direction) {
+            currentMonth += direction;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar(currentYear, currentMonth);
+        } // <-- This brace CLOSES the changeMonth function
+
+        // This line runs immediately to build the calendar layout on screen
+        renderCalendar(currentYear, currentMonth); 
+        
+    </script> <!-- This CLOSES the JavaScript code block -->
+</body> <!-- This CLOSES the HTML Body -->
+</html> <!-- This CLOSES the entire Document -->

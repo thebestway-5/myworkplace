@@ -1,0 +1,569 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#10243a">
+<title>Malaysia Salary & OT Calculator</title>
+<style>
+:root {
+  --navy:#10243a; --blue:#2457a7; --light:#f3f6fb;
+  --border:#dce3ed; --text:#1e293b; --muted:#64748b;
+  --green:#087443; --red:#b42318; --white:#fff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--light);color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.55
+}
+header{background:var(--navy);color:white;padding:30px 20px}
+.header-inner,main,footer{max-width:1100px;margin:auto}
+.eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#b9d2f7;font-weight:bold}
+h1{font-size:clamp(25px,4vw,36px);line-height:1.2;margin:8px 0}
+header p{color:#d4deeb;margin:8px 0 0}
+main{padding:24px 16px 48px}
+.panel{
+  background:white;border:1px solid var(--border);border-radius:12px;
+  padding:22px;margin-bottom:18px;box-shadow:0 3px 12px #172b4408
+}
+h2{font-size:19px;margin:0 0 5px;color:var(--navy)}
+h3{font-size:15px;margin:0 0 12px}
+.sub{color:var(--muted);margin:0 0 18px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.field label{display:block;font-weight:700;margin-bottom:6px;font-size:13px}
+.field input,.field select{
+  width:100%;min-width:0;padding:11px 12px;border:1px solid #cbd5e1;
+  border-radius:7px;background:white;color:var(--text);font:inherit
+}
+.field input:focus,.field select:focus{outline:2px solid #8cb5f8;border-color:var(--blue)}
+.hint{font-size:11px;color:var(--muted);margin-top:5px}
+.section-head{display:flex;gap:10px;align-items:center;margin-bottom:15px}
+.number{
+  width:31px;height:31px;border-radius:8px;background:#eaf1fd;color:var(--blue);
+  display:grid;place-items:center;font-weight:bold;flex-shrink:0
+}
+.rate-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.rate{
+  border:1px solid var(--border);border-radius:9px;padding:14px;background:#fbfcfe
+}
+.rate strong{display:block;color:var(--navy);font-size:13px}
+.rate .value{font-size:20px;font-weight:800;margin:6px 0;color:var(--blue)}
+.rate small{color:var(--muted);font-size:11px}
+.results{background:var(--navy);color:white;border-radius:12px;padding:24px;margin-bottom:18px}
+.results h2{color:white}
+.results .sub{color:#c4d0df}
+.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+.metric{background:#ffffff10;border:1px solid #ffffff20;border-radius:9px;padding:15px}
+.metric span{display:block;color:#cfdae7;font-size:12px}
+.metric strong{display:block;font-size:clamp(18px,3vw,27px);margin-top:5px;overflow-wrap:anywhere}
+.metric.total{background:#d8f8e6;color:#075c38;border:0}
+.metric.total span{color:#075c38}
+.metric.total strong{color:#075c38}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:12px 10px;text-align:left;border-bottom:1px solid var(--border)}
+th{background:#f5f7fb;color:#344256;font-size:12px}
+td.num,th.num{text-align:right;white-space:nowrap}
+tfoot td{font-weight:bold;background:#f5f7fb}
+.positive{color:var(--green);font-weight:bold}
+.warning{background:#fff7e8;border:1px solid #f3d49a;color:#744b00;border-radius:8px;padding:13px;margin:14px 0;font-size:12px}
+.info{background:#eff6ff;border:1px solid #c9dcfa;color:#1e426d;border-radius:8px;padding:13px;margin:14px 0;font-size:12px}
+.hidden{display:none!important}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+button{
+  cursor:pointer;border:0;border-radius:7px;padding:12px 18px;
+  font:inherit;font-weight:700
+}
+.primary{background:var(--blue);color:white}
+.secondary{background:#e9eef5;color:var(--navy)}
+button:hover{filter:brightness(.96)}
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.rule{border:1px solid var(--border);border-radius:9px;padding:15px}
+.rule strong{display:block;margin-bottom:5px}
+.rule p{margin:0;color:#526174;font-size:12px}
+footer{padding:0 16px 28px;color:var(--muted);font-size:11px}
+hr{border:0;border-top:1px solid var(--border);margin:20px 0}
+@media(min-width:700px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:520px){
+  .panel{padding:16px}
+  .summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .metric.total{grid-column:1/-1}
+  .rate-grid{grid-template-columns:1fr}
+  .rules{grid-template-columns:1fr}
+  header{padding:24px 16px}
+}
+@media print{
+  body{background:white;font-size:11px}
+  header{padding:15px;background:white;color:#10243a}
+  header p,.eyebrow{color:#334155}
+  main{padding:10px 0}
+  .panel,.results{box-shadow:none;break-inside:avoid}
+  .results{background:white;color:#10243a;border:1px solid #aaa}
+  .results h2,.results .sub{color:#10243a}
+  .metric{background:white;color:#10243a;border:1px solid #ddd}
+  .metric span,.metric strong,.metric.total span,.metric.total strong{color:#10243a}
+  .actions,.no-print{display:none!important}
+  footer{padding:0}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">Human Resources · Payroll Tool</div>
+    <h1>Malaysia Salary & OT Calculator</h1>
+    <p>Calculate normal overtime, rest-day pay, public-holiday pay and estimated monthly gross earnings in RM.</p>
+  </div>
+</header>
+
+<main>
+  <section class="panel">
+    <div class="section-head">
+      <div class="number">01</div>
+      <div><h2>Employee & Salary Details</h2>
+      <div class="sub">Enter your monthly pay and normal working hours.</div></div>
+    </div>
+    <div class="grid">
+      <div class="field">
+        <label for="employee">Employee name (optional)</label>
+        <input id="employee" type="text" placeholder="Enter employee name">
+      </div>
+      <div class="field">
+        <label for="period">Payroll month</label>
+        <input id="period" type="month">
+      </div>
+      <div class="field">
+        <label for="salary">Monthly wages (RM)</label>
+        <input id="salary" type="number" min="0" step="0.01" value="3000">
+        <div class="hint">Enter the monthly wage amount used for statutory ORP calculations, not automatically every payslip component.</div>
+      </div>
+      <div class="field">
+        <label for="hours">Normal working hours per day</label>
+        <select id="hours">
+          <option value="8" selected>8 hours</option>
+          <option value="7.5">7.5 hours</option>
+          <option value="7">7 hours</option>
+          <option value="9">9 hours (verify applicable rules)</option>
+          <option value="10">10 hours (verify applicable rules)</option>
+          <option value="12">12 hours (shift / special arrangements)</option>
+        </select>
+        <div class="hint">Use the normal hours in your employment arrangement, subject to applicable law.</div>
+      </div>
+      <div class="field">
+        <label for="basis">Employment / OT eligibility</label>
+        <select id="basis">
+          <option value="check" selected>Check statutory eligibility</option>
+          <option value="covered">Eligible for statutory OT rates</option>
+          <option value="contract">Contract / company policy rates</option>
+        </select>
+        <div class="hint">Eligibility can depend on wages, job duties and the law applying to your workplace.</div>
+      </div>
+      <div class="field">
+        <label for="other">Other earnings (RM)</label>
+        <input id="other" type="number" min="0" step="0.01" value="0">
+        <div class="hint">Optional bonus, commission or other additional earnings.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="section-head">
+      <div class="number">02</div>
+      <div><h2>Overtime Hours</h2>
+      <div class="sub">Enter hours for each category separately. Enter only hours actually worked.</div></div>
+    </div>
+    <div class="grid">
+      <div class="field">
+        <label for="normalOT">Normal working-day OT (hours)</label>
+        <input id="normalOT" type="number" min="0" step="0.25" value="10">
+        <div class="hint">Hours beyond normal daily working hours. Default multiplier: 1.5×.</div>
+      </div>
+      <div class="field">
+        <label for="restHours">Total hours worked on rest day</label>
+        <input id="restHours" type="number" min="0" step="0.25" value="0">
+        <div class="hint">Include hours within and beyond normal daily hours. The calculator separates the two.</div>
+      </div>
+      <div class="field">
+        <label for="phHours">Total hours worked on public holiday</label>
+        <input id="phHours" type="number" min="0" step="0.25" value="0">
+        <div class="hint">For a paid public holiday. Normal-hours pay and excess-hours OT are calculated separately.</div>
+      </div>
+    </div>
+    <div class="info">
+      <strong>Important:</strong> Rest days and public holidays are not interchangeable. For monthly-rated employees covered by the relevant statutory provisions, work within normal hours can attract a separate daily payment; work beyond normal hours has its own hourly multiplier.
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="section-head">
+      <div class="number">03</div>
+      <div><h2>Company Rates & Adjustments</h2>
+      <div class="sub">Defaults reflect commonly applicable statutory multipliers. Adjust only when your applicable contract or approved policy requires different rates.</div></div>
+    </div>
+    <div class="grid">
+      <div class="field">
+        <label for="normalRate">Normal-day OT multiplier</label>
+        <input id="normalRate" type="number" min="0" step="0.1" value="1.5">
+      </div>
+      <div class="field">
+        <label for="restRate">Rest-day excess-hours multiplier</label>
+        <input id="restRate" type="number" min="0" step="0.1" value="2">
+      </div>
+      <div class="field">
+        <label for="phRate">Public-holiday excess-hours multiplier</label>
+        <input id="phRate" type="number" min="0" step="0.1" value="3">
+      </div>
+      <div class="field">
+        <label for="restHalf">Rest-day payment: up to half normal hours (× ORP)</label>
+        <input id="restHalf" type="number" min="0" step="0.1" value="0.5">
+      </div>
+      <div class="field">
+        <label for="restFull">Rest-day payment: over half to normal hours (× ORP)</label>
+        <input id="restFull" type="number" min="0" step="0.1" value="1">
+      </div>
+      <div class="field">
+        <label for="phBase">Public-holiday normal-hours payment (× ORP)</label>
+        <input id="phBase" type="number" min="0" step="0.1" value="2">
+        <div class="hint">Additional wages for work on a paid public holiday; normal holiday pay is generally already included in monthly salary.</div>
+      </div>
+      <div class="field">
+        <label for="deductions">Estimated deductions (RM)</label>
+        <input id="deductions" type="number" min="0" step="0.01" value="0">
+        <div class="hint">Optional total for your own estimate. Not an official statutory deduction calculation.</div>
+      </div>
+    </div>
+    <div class="warning">
+      The calculator uses the Malaysian Employment Act 1955 statutory-style formula as a default estimate. Some employees, including certain employees earning more than RM4,000 monthly who are not within specified protected categories, may not qualify for statutory overtime payments under particular provisions. Contractual benefits may still apply. Confirm eligibility before using the result for payroll.
+    </div>
+  </section>
+
+  <section class="results" id="results" aria-live="polite">
+    <h2>Payroll Summary</h2>
+    <p class="sub">Estimated earnings for the selected payroll period.</p>
+    <div class="summary">
+      <div class="metric">
+        <span>Ordinary daily rate (ORP)</span>
+        <strong id="dailyOut">RM 0.00</strong>
+      </div>
+      <div class="metric">
+        <span>Hourly rate</span>
+        <strong id="hourlyOut">RM 0.00</strong>
+      </div>
+      <div class="metric">
+        <span>Total overtime & extra day pay</span>
+        <strong id="otOut">RM 0.00</strong>
+      </div>
+      <div class="metric">
+        <span>Other earnings</span>
+        <strong id="otherOut">RM 0.00</strong>
+      </div>
+      <div class="metric">
+        <span>Estimated deductions</span>
+        <strong id="deductOut">RM 0.00</strong>
+      </div>
+      <div class="metric total">
+        <span>Estimated net amount</span>
+        <strong id="netOut">RM 0.00</strong>
+      </div>
+    </div>
+    <div class="metric" style="background:#ffffff10;border-color:#ffffff25">
+      <span>Estimated gross pay (before deductions)</span>
+      <strong id="grossOut">RM 0.00</strong>
+    </div>
+    <div id="eligibilityWarning" class="warning hidden"></div>
+    <div id="validationWarning" class="warning hidden"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Detailed Pay Breakdown</h2>
+    <p class="sub">Amounts are calculated from your inputs and displayed to two decimal places.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Pay component</th><th class="num">Hours / basis</th><th class="num">Rate</th><th class="num">Amount (RM)</th></tr></thead>
+        <tbody id="breakdown">
+          <tr><td>Basic monthly salary</td><td class="num">Monthly</td><td class="num">—</td><td class="num">3,000.00</td></tr>
+        </tbody>
+        <tfoot><tr><td colspan="3">Total extra pay (OT and additional day payments)</td><td class="num" id="tableOT">0.00</td></tr></tfoot>
+      </table>
+    </div>
+    <div class="actions no-print">
+      <button class="primary" onclick="window.print()">Print / Save as PDF</button>
+      <button class="secondary" id="downloadBtn" type="button">Download payroll summary (CSV)</button>
+      <button class="secondary" id="resetBtn" type="button">Reset calculator</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Malaysia OT Rules — Quick Guide</h2>
+    <p class="sub">Plain-English guide for common monthly-rated employee calculations under the Employment Act 1955 where the relevant provisions apply.</p>
+    <div class="rules">
+      <div class="rule">
+        <strong>1. Normal working day</strong>
+        <p>OT is generally paid at no less than 1.5 times the hourly rate for qualifying hours beyond normal daily working hours.</p>
+      </div>
+      <div class="rule">
+        <strong>2. Rest day</strong>
+        <p>For monthly-rated employees, work up to half the normal daily hours generally attracts an additional half-day ORP. Work over half up to normal hours generally attracts one additional ORP. Excess hours are generally paid at no less than 2 times the hourly rate.</p>
+      </div>
+      <div class="rule">
+        <strong>3. Paid public holiday</strong>
+        <p>Work on a qualifying paid public holiday generally attracts two days' wages at ORP in addition to the holiday pay entitlement. Extra hours beyond normal hours are generally paid at no less than 3 times the hourly rate.</p>
+      </div>
+      <div class="rule">
+        <strong>4. Ordinary rate of pay</strong>
+        <p>For a monthly-rated employee, statutory ORP is generally monthly wages divided by 26. The hourly rate is generally ORP divided by normal daily working hours.</p>
+      </div>
+    </div>
+    <hr>
+    <h3>Before using this for actual payroll</h3>
+    <ul>
+      <li>Confirm whether the employee is covered by the applicable statutory OT and rest-day provisions.</li>
+      <li>Use the legally applicable normal working hours and the correct weekly rest day.</li>
+      <li>Check whether the holiday is a gazetted paid public holiday, a substituted holiday, or another type of day off.</li>
+      <li>Check the employee's wage components, shift arrangements, contract terms and any applicable collective agreement.</li>
+      <li>Check the applicable rules in Sabah or Sarawak separately where relevant.</li>
+      <li>Working-hour limits and OT limits are separate from the calculation of OT pay. This calculator does not determine legal compliance with those limits.</li>
+    </ul>
+    <div class="info">
+      Official reference: <a href="https://jtksm.mohr.gov.my/sites/default/files/2023-11/Akta%20Kerja%201955%20%28Akta%20265%29.pdf" target="_blank" rel="noopener">Employment Act 1955 — official JTKSM PDF</a>.
+      Relevant provisions commonly include sections 60A, 60 and 60D, together with section 60I and the First Schedule.
+    </div>
+    <p class="hint">Disclaimer: This is an estimate and educational payroll aid, not legal or tax advice. It does not calculate EPF, SOCSO, EIS, PCB/MTD, unpaid leave, prorated salary, allowances' statutory treatment, replacement holidays or every special employment arrangement. Verify results with HR or the relevant Labour Department.</p>
+  </section>
+</main>
+
+<footer>
+  Malaysia Salary & OT Calculator · Offline single-file tool · Currency: Malaysian Ringgit (RM) · Verify applicable law and company policy before processing payroll.
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+const $ = id => document.getElementById(id);
+const money = n => "RM " + (Number.isFinite(n) ? n : 0).toLocaleString("en-MY", {
+  minimumFractionDigits:2, maximumFractionDigits:2
+});
+const num = id => {
+  const el = $(id);
+  const v = Number(el.value);
+  return Number.isFinite(v) ? v : 0;
+};
+const fmt = n => (Number.isFinite(n) ? n : 0).toFixed(2);
+
+const inputIds = [
+  "employee","period","salary","hours","basis","other","normalOT",
+  "restHours","phHours","normalRate","restRate","phRate",
+  "restHalf","restFull","phBase","deductions"
+];
+
+let lastRows = [];
+let lastSummary = {};
+
+function calculate(){
+  const salary = Math.max(0,num("salary"));
+  const normalHours = Math.max(0.01,num("hours"));
+  const other = Math.max(0,num("other"));
+  const deductions = Math.max(0,num("deductions"));
+  const normalOT = Math.max(0,num("normalOT"));
+  const restHours = Math.max(0,num("restHours"));
+  const phHours = Math.max(0,num("phHours"));
+
+  const daily = salary / 26;
+  const hourly = daily / normalHours;
+  const half = normalHours / 2;
+
+  const normalRate = Math.max(0,num("normalRate"));
+  const restRate = Math.max(0,num("restRate"));
+  const phRate = Math.max(0,num("phRate"));
+  const restHalfRate = Math.max(0,num("restHalf"));
+  const restFullRate = Math.max(0,num("restFull"));
+  const phBaseRate = Math.max(0,num("phBase"));
+
+  const normalPay = normalOT * hourly * normalRate;
+
+  let restBasePay = 0;
+  let restBaseDescription = "No rest-day work";
+  if(restHours > 0 && restHours <= half){
+    restBasePay = daily * restHalfRate;
+    restBaseDescription = "Up to half normal hours";
+  } else if(restHours > half && restHours <= normalHours){
+    restBasePay = daily * restFullRate;
+    restBaseDescription = "Over half to normal hours";
+  } else if(restHours > normalHours){
+    restBasePay = daily * restFullRate;
+    restBaseDescription = "Normal-hours band";
+  }
+  const restExcess = Math.max(0,restHours-normalHours);
+  const restExcessPay = restExcess * hourly * restRate;
+  const restPay = restBasePay + restExcessPay;
+
+  const phNormalBandHours = Math.min(phHours,normalHours);
+  const phExcess = Math.max(0,phHours-normalHours);
+  const phBasePay = phHours > 0 ? daily * phBaseRate : 0;
+  const phExcessPay = phExcess * hourly * phRate;
+  const phPay = phBasePay + phExcessPay;
+
+  const extra = normalPay + restPay + phPay;
+  const gross = salary + other + extra;
+  const net = gross - deductions;
+
+  $("dailyOut").textContent = money(daily);
+  $("hourlyOut").textContent = money(hourly);
+  $("otOut").textContent = money(extra);
+  $("otherOut").textContent = money(other);
+  $("deductOut").textContent = money(deductions);
+  $("grossOut").textContent = money(gross);
+  $("netOut").textContent = money(net);
+  $("tableOT").textContent = fmt(extra);
+
+  const rows = [
+    ["Basic monthly salary","Monthly","Base wages",salary],
+    ["Normal working-day OT",fmt(normalOT)+" hours",fmt(normalRate)+" × hourly",normalPay],
+    ["Rest-day work within normal hours",restHours > 0 ? restBaseDescription : "0 hours",fmt(restBaseRate)+" × ORP",restBasePay],
+    ["Rest-day excess-hours OT",fmt(restExcess)+" hours",fmt(restRate)+" × hourly",restExcessPay],
+    ["Public-holiday normal-hours payment",phHours > 0 ? fmt(phNormalBandHours)+" hours worked" : "0 hours",fmt(phBaseRate)+" × ORP",phBasePay],
+    ["Public-holiday excess-hours OT",fmt(phExcess)+" hours",fmt(phRate)+" × hourly",phExcessPay],
+    ["Other earnings","Entered amount","—",other],
+    ["Estimated deductions","Entered amount","—",-deductions]
+  ];
+  lastRows = rows;
+
+  $("breakdown").innerHTML = rows.map(r =>
+    "<tr><td>"+escapeHTML(r[0])+"</td><td class='num'>"+
+    escapeHTML(r[1])+"</td><td class='num'>"+escapeHTML(r[2])+
+    "</td><td class='num "+(r[3]>=0?"":"")+
+    "'>"+fmt(r[3])+"</td></tr>"
+  ).join("");
+
+  const warnings = [];
+  if(salary === 0) warnings.push("Monthly wages are RM0. Enter the correct wage amount.");
+  if(num("salary") < 0 || num("other") < 0 || num("deductions") < 0 ||
+     num("normalOT") < 0 || num("restHours") < 0 || num("phHours") < 0){
+    warnings.push("Negative values are not valid. Enter zero or a positive amount.");
+  }
+  if(normalHours > 8){
+    warnings.push("Your selected normal daily hours exceed 8. Confirm that this schedule is lawful under the applicable working-hours rules and any permitted exceptions.");
+  }
+  if(normalHours * 6 > 45){
+    warnings.push("Your selected hours may exceed the usual 45-hour weekly limit if worked six days per week. Actual compliance depends on the applicable arrangement and law.");
+  }
+  if(normalOT + restExcess + phExcess > 104){
+    warnings.push("The entered OT hours exceed 104 for this calculation period. Check the applicable overtime limit, exceptions and any approval requirements.");
+  }
+  if(net < 0){
+    warnings.push("Estimated deductions exceed gross earnings. Check your entries.");
+  }
+
+  const warningBox = $("validationWarning");
+  warningBox.classList.toggle("hidden",warnings.length===0);
+  warningBox.innerHTML = warnings.map(escapeHTML).join("<br>");
+
+  const eligibilityBox = $("eligibilityWarning");
+  const basis = $("basis").value;
+  let eligibilityMessage = "";
+  if(basis === "check" && salary > 4000){
+    eligibilityMessage = "Eligibility review required: monthly wages exceed RM4,000. Certain employees above this threshold may be excluded from statutory OT, rest-day or public-holiday premium provisions, subject to specified categories and exceptions. Check the First Schedule and job duties. The figures remain estimates using the selected multipliers.";
+  } else if(basis === "contract"){
+    eligibilityMessage = "Contract/company policy mode selected. Confirm that the selected rates and calculation bases meet any applicable statutory minimums. The calculator does not decide legal eligibility.";
+  } else if(basis === "covered"){
+    eligibilityMessage = "You have marked this employee as eligible for statutory OT rates. Confirm eligibility and applicable wage definitions with HR.";
+  }
+  eligibilityBox.textContent = eligibilityMessage;
+  eligibilityBox.classList.toggle("hidden",!eligibilityMessage);
+
+  lastSummary = {
+    employee:$("employee").value,
+    period:$("period").value,
+    salary,daily,hourly,normalPay,restBasePay,restExcessPay,phBasePay,
+    phExcessPay,extra,other,deductions,gross,net
+  };
+}
+
+function escapeHTML(value){
+  return String(value).replace(/[&<>"']/g, ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[ch]));
+}
+
+function restBaseRate(){
+  const restHours = Math.max(0,num("restHours"));
+  const normalHours = Math.max(0.01,num("hours"));
+  if(restHours <= 0) return 0;
+  if(restHours <= normalHours/2) return Math.max(0,num("restHalf"));
+  return Math.max(0,num("restFull"));
+}
+
+function downloadCSV(){
+  const s = lastSummary;
+  const rows = [
+    ["Malaysia Salary & OT Calculator"],
+    ["Employee",s.employee],
+    ["Payroll period",s.period],
+    ["Currency","MYR"],
+    [],
+    ["Pay component","Amount (RM)"],
+    ["Basic monthly salary",fmt(s.salary)],
+    ["Ordinary daily rate",fmt(s.daily)],
+    ["Hourly rate",fmt(s.hourly)],
+    ["Normal working-day OT",fmt(s.normalPay)],
+    ["Rest-day normal-hours payment",fmt(s.restBasePay)],
+    ["Rest-day excess-hours OT",fmt(s.restExcessPay)],
+    ["Public-holiday normal-hours payment",fmt(s.phBasePay)],
+    ["Public-holiday excess-hours OT",fmt(s.phExcessPay)],
+    ["Total extra pay",fmt(s.extra)],
+    ["Other earnings",fmt(s.other)],
+    ["Estimated gross pay",fmt(s.gross)],
+    ["Estimated deductions",fmt(s.deductions)],
+    ["Estimated net amount",fmt(s.net)],
+    [],
+    ["Note","Estimate only. Verify applicable law, eligibility and company policy."]
+  ];
+  const csv = rows.map(row => row.map(v => {
+    let str = String(v == null ? "" : v);
+    if(/^[=+\-@]/.test(str)) str = "'"+str;
+    return '"'+str.replace(/"/g,'""')+'"';
+  }).join(",")).join("\r\n");
+  const blob = new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "malaysia-payroll-summary.csv";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+inputIds.forEach(id => $(id).addEventListener("input",calculate));
+inputIds.forEach(id => $(id).addEventListener("change",calculate));
+$("downloadBtn").addEventListener("click",downloadCSV);
+
+$("resetBtn").addEventListener("click",function(){
+  if(!confirm("Reset all fields to the calculator defaults?")) return;
+  $("employee").value = "";
+  $("period").value = new Date().toISOString().slice(0,7);
+  $("salary").value = "3000";
+  $("hours").value = "8";
+  $("basis").value = "check";
+  $("other").value = "0";
+  $("normalOT").value = "10";
+  $("restHours").value = "0";
+  $("phHours").value = "0";
+  $("normalRate").value = "1.5";
+  $("restRate").value = "2";
+  $("phRate").value = "3";
+  $("restHalf").value = "0.5";
+  $("restFull").value = "1";
+  $("phBase").value = "2";
+  $("deductions").value = "0";
+  calculate();
+});
+
+$("period").value = new Date().toISOString().slice(0,7);
+calculate();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,702 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RETRO POP — Real Piano 61</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  --pink:#ff4eb8;
+  --purple:#a66bff;
+  --cyan:#72f8ff;
+  --white-width:38px;
+  --black-width:25px;
+  --white-height:230px;
+  --black-height:140px;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;min-height:100vh;padding:18px 10px;
+  display:flex;justify-content:center;align-items:center;
+  color:white;font-family:'Space Mono',monospace;
+  background:
+    radial-gradient(ellipse at 50% 0%,#49235d,transparent 55%),
+    radial-gradient(ellipse at 100% 100%,#222c59,transparent 45%),
+    #100f16;
+}
+button,select,input {font:inherit}
+button {cursor:pointer}
+.machine {
+  width:min(1120px,100%);padding:8px;border-radius:24px;
+  background:linear-gradient(130deg,#fff,#858997 12%,#f5f5fa 25%,
+  #777b88 45%,#f4f3fa 58%,#8b8e9b 78%,#e8e9ef);
+  box-shadow:0 35px 100px #0009,0 0 35px #a66bff25;
+}
+.inner {
+  padding:clamp(14px,3vw,28px);border-radius:18px;overflow:hidden;
+  background:linear-gradient(145deg,#292832,#17161e 60%,#23212c);
+  border:1px solid #ffffff30;
+}
+.topline {
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:10px;color:#c5c5d3;font-size:10px;letter-spacing:2px;
+}
+.brand {font-family:Orbitron,sans-serif;font-weight:800;color:var(--cyan)}
+.brand span {color:var(--pink)}
+.led {color:#8affba}
+.hero {text-align:center;padding:27px 0 22px}
+.eyebrow {color:var(--pink);font-size:10px;letter-spacing:4px}
+h1 {
+  margin:10px 0;font:900 clamp(30px,6vw,55px)/1.1 Orbitron,sans-serif;
+  letter-spacing:-2px;
+  background:linear-gradient(180deg,#fff 10%,#c6c6d4 42%,#ff83ce 75%,#a66bff);
+  color:transparent;background-clip:text;
+}
+.subtitle {color:#8f8c9d;font-size:10px;letter-spacing:2px}
+.screen {
+  padding:15px;margin-bottom:17px;border:1px solid #ffffff20;border-radius:10px;
+  background:linear-gradient(110deg,#0b2028,#11151f 50%,#28152b);
+  box-shadow:inset 0 0 24px #000a;
+}
+.screen-head {display:flex;justify-content:space-between;gap:10px}
+.screen-label {color:var(--cyan);font-size:9px;letter-spacing:2px}
+.note-name {
+  margin-top:6px;font:800 25px Orbitron,sans-serif;color:var(--pink);
+  text-shadow:0 0 15px #ff4eb888;
+}
+.status {font-size:10px;color:#8affba;margin-top:9px}
+.visualizer {
+  height:43px;display:flex;align-items:end;justify-content:center;
+  gap:4px;margin-top:10px;
+}
+.bar {
+  width:5%;max-width:13px;height:4px;border-radius:3px;
+  background:linear-gradient(to top,var(--purple),var(--pink),var(--cyan));
+  transition:height .1s;
+}
+.controls {
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:13px;margin:17px 0;
+}
+.group {display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.label {font-size:9px;color:#aaa6ba;letter-spacing:1px}
+select,.btn {
+  border:1px solid #ffffff25;border-radius:6px;
+  padding:9px 11px;background:#302d39;color:white;font-size:10px;
+}
+.btn:hover,.btn.active {background:#ff4eb825;color:#ff83ce;border-color:var(--pink)}
+input[type=range] {width:95px;accent-color:var(--pink)}
+.zoom-number {min-width:45px;text-align:center;color:var(--cyan);font-size:11px}
+.keyboard-shell {
+  padding:12px;border:1px solid #ffffff20;border-radius:10px;
+  background:linear-gradient(180deg,#0e0d13,#292632);
+  box-shadow:inset 0 4px 18px #000b;
+}
+.keyboard-scroll {
+  width:100%;overflow:auto hidden;overscroll-behavior-x:contain;
+  scrollbar-color:#a66bff #201d29;scrollbar-width:thin;
+  touch-action:pan-x;
+}
+.keyboard {
+  position:relative;display:flex;width:max-content;
+  height:calc(var(--white-height) + 16px);padding-top:2px;
+  user-select:none;-webkit-user-select:none;
+}
+.key {
+  position:relative;flex:0 0 var(--white-width);
+  width:var(--white-width);height:var(--white-height);
+  padding:10px 0;display:flex;flex-direction:column;
+  justify-content:space-between;align-items:center;
+  border:1px solid #b9bbc6;border-radius:0 0 5px 5px;
+  background:linear-gradient(90deg,#b9bbc6,#fff 22%,#f5f4fa 75%,#c0c2ce);
+  color:#393542;box-shadow:0 5px 0 #777986;
+  cursor:pointer;z-index:1;outline:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.key .number {font-size:9px;font-weight:bold}
+.key .note {font-size:9px;color:#8b849a}
+.key .keyname {font-size:9px;color:#5b5767}
+.key.black {
+  position:absolute;top:2px;
+  height:var(--black-height);width:var(--black-width);flex:none;
+  padding:10px 0;z-index:3;border:1px solid #777080;
+  border-radius:0 0 5px 5px;
+  background:linear-gradient(90deg,#17151f,#484354 45%,#211e2a);
+  color:var(--cyan);box-shadow:0 5px 0 #09080d,0 7px 8px #0009;
+}
+.key.black .number {font-size:8px}
+.key.black .note,.key.black .keyname {color:#c4a7df;font-size:8px}
+.key.active,.key.white:active {
+  transform:translateY(4px);
+  background:linear-gradient(90deg,#ff83ce,#fff0fb,#c5a0ff);
+  box-shadow:0 1px 0 #777986,inset 0 0 15px #ff4eb860;
+}
+.key.black.active,.key.black:active {
+  transform:translateY(3px);
+  background:linear-gradient(90deg,#a66bff,#ff4eb8);
+  box-shadow:0 1px #09080d,inset 0 0 15px #72f8ff60;
+}
+.key:focus-visible {outline:2px solid var(--cyan);outline-offset:-3px}
+.piano-caption {
+  display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  margin-top:10px;color:#8f8b9c;font-size:9px;
+}
+.hint {margin-top:15px;color:#aaa5b8;text-align:center;font-size:10px;line-height:2}
+.cyan {color:var(--cyan)}
+.footer {
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  margin-top:20px;padding-top:16px;border-top:1px solid #ffffff17;
+  color:#898698;font-size:9px;letter-spacing:1px;
+}
+.footer b {color:var(--cyan);font-weight:400}
+@media(max-width:520px) {
+  body {padding:8px 4px}
+  .inner {padding:14px 9px}
+  .keyboard-shell {padding:7px}
+  .hero {padding:22px 0 18px}
+  .topline {font-size:8px}
+}
+</style>
+</head>
+<body>
+<main class="machine">
+<div class="inner">
+
+  <div class="topline">
+    <div class="brand">R/P <span>STUDIO®</span></div>
+    <div>MODEL 061 — PIANO SYSTEM</div>
+    <div class="led">● <span id="powerText">LOADING AUDIO</span></div>
+  </div>
+
+  <header class="hero">
+    <div class="eyebrow">✦ ANALOG SOUL · DIGITAL HEART ✦</div>
+    <h1>RETRO POP</h1>
+    <div class="subtitle">REAL PIANO SAMPLER / 61 KEYS</div>
+  </header>
+
+  <section class="screen">
+    <div class="screen-head">
+      <div>
+        <div class="screen-label">NOW PLAYING / LIVE INPUT</div>
+        <div class="note-name" id="noteName">READY_</div>
+      </div>
+      <div style="text-align:right">
+        <div class="screen-label">C2 — C7</div>
+        <div class="status" id="status">WAITING FOR AUDIO</div>
+      </div>
+    </div>
+    <div class="visualizer" id="visualizer"></div>
+  </section>
+
+  <div class="controls">
+    <div class="group">
+      <span class="label">INSTRUMENT</span>
+      <select id="sound">
+        <option value="piano">Acoustic Grand Piano</option>
+        <option value="bright">Bright Piano</option>
+        <option value="electric">Electric Piano</option>
+      </select>
+    </div>
+
+    <div class="group">
+      <span class="label">VOLUME</span>
+      <input id="volume" type="range" min="0" max="100" value="65">
+    </div>
+
+    <div class="group">
+      <span class="label">KEY SIZE</span>
+      <button class="btn" id="zoomOut" type="button">−</button>
+      <input id="zoom" type="range" min="24" max="65" value="38">
+      <button class="btn" id="zoomIn" type="button">+</button>
+      <span class="zoom-number" id="zoomLabel">100%</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="group">
+      <button class="btn" id="record" type="button">● REC</button>
+      <button class="btn" id="playback" type="button">▶ PLAY</button>
+      <button class="btn" id="stop" type="button">■ STOP</button>
+    </div>
+    <div class="group">
+      <button class="btn" id="center" type="button">⌖ CENTER C4</button>
+      <button class="btn" id="fullscreen" type="button">⛶ FULLSCREEN</button>
+    </div>
+  </div>
+
+  <div class="keyboard-shell">
+    <div class="keyboard-scroll" id="keyboardScroll">
+      <div class="keyboard" id="keyboard"></div>
+    </div>
+    <div class="piano-caption">
+      <span>61 KEYS · 36 WHITE / 25 BLACK</span>
+      <span>SCROLL ← TO EXPLORE →</span>
+    </div>
+  </div>
+
+  <div class="hint">
+    <span class="cyan">COMPUTER KEYBOARD</span><br>
+    Top row, QWERTY, home row, bottom row and numeric keypad map across the 61 notes.<br>
+    Hold keys to sustain notes · Press multiple keys for chords<br>
+    <span id="toast">CLICK A PIANO KEY TO START ✦</span>
+  </div>
+
+  <div class="footer">
+    <span>R/P STUDIO <b>© 2026</b></span>
+    <span>REAL SAMPLED INSTRUMENT</span>
+    <span id="recStatus">REC: OFF</span>
+  </div>
+
+</div>
+</main>
+
+<!-- SoundFont playback engine and acoustic piano sample bank.
+     Internet is required to download these files. -->
+<script src="https://surikov.github.io/webaudiofont/npm/dist/WebAudioFontPlayer.js"></script>
+<script src="https://surikov.github.io/webaudiofontdata/sound/0000_Aspirin_sf2_file.js"></script>
+
+<script>
+'use strict';
+
+const FIRST_MIDI = 36;
+const LAST_MIDI = 96;
+const WHITE_PITCHES = new Set([0,2,4,5,7,9,11]);
+const BLACK_PITCHES = new Set([1,3,6,8,10]);
+const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+
+let audioContext = null;
+let player = null;
+let master = null;
+let pianoPreset = null;
+let audioReady = false;
+let loadingPromise = null;
+let recording = false;
+let recordingStart = 0;
+let recordedNotes = [];
+let playbackTimers = [];
+let playbackGeneration = 0;
+let activeNotes = new Map();
+let pressedCodes = new Set();
+let zoomWidth = 38;
+
+const keyboard = document.getElementById('keyboard');
+const keyboardScroll = document.getElementById('keyboardScroll');
+const keys = [];
+const visualizer = document.getElementById('visualizer');
+
+function noteName(midi) {
+  return NOTE_NAMES[midi % 12] + (Math.floor(midi / 12) - 1);
+}
+
+function midiFrequency(midi) {
+  return 440 * Math.pow(2, (midi - 69) / 12);
+}
+
+// Create 61 keys: C2 through C7.
+let whiteCount = 0;
+
+for (let midi = FIRST_MIDI; midi <= LAST_MIDI; midi++) {
+  const pitch = midi % 12;
+  const isBlack = BLACK_PITCHES.has(pitch);
+  const key = document.createElement('button');
+
+  key.type = 'button';
+  key.className = 'key ' + (isBlack ? 'black' : 'white');
+  key.dataset.midi = String(midi);
+  key.dataset.index = String(midi - FIRST_MIDI);
+  key.setAttribute('aria-label', noteName(midi));
+
+  key.innerHTML =
+    '<span class="number">' + noteName(midi) + '</span>' +
+    '<span class="note">' + (isBlack ? '♯' : '♪') + '</span>' +
+    '<span class="keyname">' +
+    (pitch === 0 ? noteName(midi) : '') +
+    '</span>';
+
+  if (isBlack) {
+    key.style.left = (whiteCount * zoomWidth - 12.5) + 'px';
+  } else {
+    whiteCount++;
+  }
+  keys.push(key);
+}
+
+function renderKeys() {
+  keys.filter(k => k.classList.contains('white'))
+      .forEach(k => keyboard.appendChild(k));
+  keys.filter(k => k.classList.contains('black'))
+      .forEach(k => keyboard.appendChild(k));
+  updateZoom();
+}
+
+function updateZoom() {
+  const width = zoomWidth;
+  const blackWidth = Math.max(16, Math.round(width * 0.66));
+  const whiteHeight = Math.round(width * 6.05);
+  const blackHeight = Math.round(whiteHeight * 0.60);
+
+  document.documentElement.style.setProperty('--white-width', width + 'px');
+  document.documentElement.style.setProperty('--black-width', blackWidth + 'px');
+  document.documentElement.style.setProperty('--white-height', whiteHeight + 'px');
+  document.documentElement.style.setProperty('--black-height', blackHeight + 'px');
+
+  let whiteIndex = 0;
+  keys.forEach(key => {
+    if (key.classList.contains('black')) {
+      key.style.left = (whiteIndex * width - blackWidth / 2) + 'px';
+    } else {
+      whiteIndex++;
+    }
+  });
+
+  keyboard.style.width = (whiteIndex * width) + 'px';
+  document.getElementById('zoom').value = width;
+  document.getElementById('zoomLabel').textContent =
+    Math.round(width / 38 * 100) + '%';
+}
+
+renderKeys();
+
+for (let i = 0; i < 32; i++) {
+  const bar = document.createElement('div');
+  bar.className = 'bar';
+  visualizer.appendChild(bar);
+}
+
+let animationTimer;
+
+function animateBars() {
+  clearTimeout(animationTimer);
+  [...visualizer.children].forEach(bar => {
+    bar.style.height = (5 + Math.random() * 38) + 'px';
+  });
+  animationTimer = setTimeout(() => {
+    [...visualizer.children].forEach(bar => bar.style.height = '4px');
+    document.getElementById('status').textContent = 'SYSTEM READY';
+  }, 350);
+}
+
+function setStatus(message) {
+  document.getElementById('status').textContent = message;
+}
+
+async function initAudio() {
+  if (audioReady) {
+    if (audioContext.state === 'suspended') await audioContext.resume();
+    return true;
+  }
+
+  if (loadingPromise) return loadingPromise;
+
+  loadingPromise = (async () => {
+    try {
+      if (typeof WebAudioFontPlayer === 'undefined' ||
+          typeof _tone_0000_Aspirin_sf2_file === 'undefined') {
+        throw new Error('Piano sample files did not load. Check your internet connection.');
+      }
+
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      audioContext = new AudioContextClass();
+
+      player = new WebAudioFontPlayer();
+      master = audioContext.createGain();
+      master.gain.value = Number(document.getElementById('volume').value) / 100;
+      master.connect(audioContext.destination);
+
+      pianoPreset = _tone_0000_Aspirin_sf2_file;
+
+      player.loader.decodeAfterLoading(audioContext, pianoPreset);
+      await audioContext.resume();
+
+      audioReady = true;
+      document.getElementById('powerText').textContent = 'AUDIO READY';
+      setStatus('PIANO LOADED');
+      document.getElementById('toast').textContent = 'REAL PIANO SAMPLE READY ✦';
+      return true;
+    } catch (error) {
+      console.error(error);
+      document.getElementById('powerText').textContent = 'AUDIO ERROR';
+      setStatus('CHECK INTERNET');
+      document.getElementById('toast').textContent =
+        'AUDIO LOAD FAILED — CHECK CONNECTION AND RELOAD';
+      loadingPromise = null;
+      return false;
+    }
+  })();
+
+  return loadingPromise;
+}
+
+document.getElementById('volume').addEventListener('input', event => {
+  if (master && audioContext) {
+    master.gain.setTargetAtTime(
+      Number(event.target.value) / 100,
+      audioContext.currentTime,
+      0.02
+    );
+  }
+});
+
+function selectedPreset() {
+  // The supplied file contains the acoustic grand piano.
+  // Alternative presets require their own corresponding SoundFont files.
+  return pianoPreset;
+}
+
+function startNote(index, fromPlayback = false) {
+  if (index < 0 || index >= keys.length) return;
+
+  initAudio().then(ok => {
+    if (!ok) return;
+
+    const midi = FIRST_MIDI + index;
+    const sound = document.getElementById('sound').value;
+    const preset = selectedPreset();
+
+    // These options all use the acoustic piano sample bank.
+    // The sample engine transposes samples to the requested MIDI pitch.
+    const volume = Number(document.getElementById('volume').value) / 100;
+
+    if (sound === 'bright') {
+      // Slightly louder for a brighter perceived tone.
+    }
+
+    const duration = 8;
+    const envelope = player.queueWaveTable(
+      audioContext,
+      master,
+      preset,
+      audioContext.currentTime,
+      midi,
+      duration,
+      volume
+    );
+
+    const token = Symbol('note');
+    activeNotes.set(token, { envelope, index });
+
+    const key = keys[index];
+    key.classList.add('active');
+
+    document.getElementById('noteName').textContent = noteName(midi);
+    setStatus('PLAYING ●');
+    document.getElementById('toast').textContent =
+      noteName(midi) + ' · ' + midiFrequency(midi).toFixed(1) + ' HZ';
+    animateBars();
+
+    if (recording && !fromPlayback) {
+      recordedNotes.push({
+        note: index,
+        time: performance.now() - recordingStart
+      });
+    }
+
+    // Store the current envelope so key release can end a held note.
+    if (!fromPlayback) {
+      const heldKey = keys[index];
+      if (!heldKey._voices) heldKey._voices = [];
+      heldKey._voices.push({ token, envelope });
+    }
+
+    setTimeout(() => {
+      activeNotes.delete(token);
+      if (!keys[index]._voices ||
+          !keys[index]._voices.some(v => v.token === token)) {
+        key.classList.remove('active');
+      }
+    }, duration * 1000);
+  });
+}
+
+function releaseNote(index) {
+  const key = keys[index];
+  if (!key || !key._voices) return;
+
+  key._voices.forEach(voice => {
+    try {
+      if (voice.envelope && typeof voice.envelope.cancel === 'function') {
+        voice.envelope.cancel();
+      }
+    } catch (e) {}
+    activeNotes.delete(voice.token);
+  });
+
+  key._voices = [];
+  key.classList.remove('active');
+}
+
+function playOneShot(index) {
+  startNote(index);
+}
+
+// Mouse and touchscreen: play on press, release when pointer lifts.
+keys.forEach((key, index) => {
+  key.addEventListener('pointerdown', event => {
+    event.preventDefault();
+    startNote(index);
+  });
+});
+
+// Keyboard mapping: 61 different physical keys, in chromatic order.
+// Use multiple keyboard rows and the numeric keypad to reach every note.
+const computerCodes = [
+  'Digit1','Digit2','Digit3','Digit4','Digit5','Digit6',
+  'Digit7','Digit8','Digit9','Digit0','Minus','Equal',
+  'KeyQ','KeyW','KeyE','KeyR','KeyT','KeyY',
+  'KeyU','KeyI','KeyO','KeyP','BracketLeft','BracketRight',
+  'KeyA','KeyS','KeyD','KeyF','KeyG','KeyH',
+  'KeyJ','KeyK','KeyL','Semicolon','Quote','Backslash',
+  'KeyZ','KeyX','KeyC','KeyV','KeyB','KeyN',
+  'KeyM','Comma','Period','Slash',
+  'Numpad1','Numpad2','Numpad3','Numpad4','Numpad5',
+  'Numpad6','Numpad7','Numpad8','Numpad9','Numpad0',
+  'NumpadAdd','NumpadSubtract','NumpadMultiply','NumpadDivide',
+  'NumpadDecimal'
+];
+
+const codeToIndex = new Map();
+computerCodes.forEach((code, index) => codeToIndex.set(code, index));
+
+document.addEventListener('keydown', event => {
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  if (['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+  const index = codeToIndex.get(event.code);
+  if (index === undefined || event.repeat || pressedCodes.has(event.code)) return;
+
+  event.preventDefault();
+  pressedCodes.add(event.code);
+  startNote(index);
+});
+
+document.addEventListener('keyup', event => {
+  const index = codeToIndex.get(event.code);
+  if (index === undefined) return;
+
+  pressedCodes.delete(event.code);
+  releaseNote(index);
+});
+
+window.addEventListener('blur', () => {
+  pressedCodes.forEach(code => {
+    const index = codeToIndex.get(code);
+    if (index !== undefined) releaseNote(index);
+  });
+  pressedCodes.clear();
+});
+
+// Zoom controls
+document.getElementById('zoom').addEventListener('input', event => {
+  zoomWidth = Number(event.target.value);
+  updateZoom();
+});
+
+document.getElementById('zoomIn').addEventListener('click', () => {
+  zoomWidth = Math.min(65, zoomWidth + 3);
+  updateZoom();
+});
+
+document.getElementById('zoomOut').addEventListener('click', () => {
+  zoomWidth = Math.max(24, zoomWidth - 3);
+  updateZoom();
+});
+
+document.getElementById('center').addEventListener('click', () => {
+  const c4 = keys[60 - FIRST_MIDI];
+  if (c4) {
+    keyboardScroll.scrollTo({
+      left: Math.max(0, c4.offsetLeft - keyboardScroll.clientWidth / 2),
+      behavior: 'smooth'
+    });
+  }
+});
+
+document.getElementById('fullscreen').addEventListener('click', async () => {
+  try {
+    if (!document.fullscreenElement) {
+      await document.querySelector('.machine').requestFullscreen();
+    } else {
+      await document.exitFullscreen();
+    }
+  } catch (e) {
+    document.getElementById('toast').textContent =
+      'FULLSCREEN IS NOT AVAILABLE IN THIS BROWSER';
+  }
+});
+
+// Record note timing and replay it.
+document.getElementById('record').addEventListener('click', () => {
+  if (!recording) {
+    recordedNotes = [];
+    recordingStart = performance.now();
+    recording = true;
+    document.getElementById('record').classList.add('active');
+    document.getElementById('recStatus').textContent = 'REC: ● ON';
+    document.getElementById('toast').textContent = 'RECORDING PERFORMANCE...';
+  } else {
+    recording = false;
+    document.getElementById('record').classList.remove('active');
+    document.getElementById('recStatus').textContent =
+      'REC: SAVED ' + recordedNotes.length;
+    document.getElementById('toast').textContent =
+      'TAKE SAVED / ' + recordedNotes.length + ' NOTES';
+  }
+});
+
+function stopPlayback() {
+  playbackGeneration++;
+  playbackTimers.forEach(clearTimeout);
+  playbackTimers = [];
+}
+
+document.getElementById('playback').addEventListener('click', () => {
+  if (recording) {
+    recording = false;
+    document.getElementById('record').classList.remove('active');
+    document.getElementById('recStatus').textContent =
+      'REC: SAVED ' + recordedNotes.length;
+  }
+
+  if (!recordedNotes.length) {
+    document.getElementById('toast').textContent = 'RECORD SOMETHING FIRST ✦';
+    return;
+  }
+
+  stopPlayback();
+  const generation = playbackGeneration;
+  document.getElementById('toast').textContent = 'PLAYING YOUR TAKE ▶';
+
+  recordedNotes.forEach(event => {
+    const timer = setTimeout(() => {
+      if (generation === playbackGeneration) playOneShot(event.note);
+    }, event.time);
+    playbackTimers.push(timer);
+  });
+});
+
+document.getElementById('stop').addEventListener('click', () => {
+  stopPlayback();
+  recording = false;
+  document.getElementById('record').classList.remove('active');
+  document.getElementById('recStatus').textContent =
+    'REC: SAVED ' + recordedNotes.length;
+  document.getElementById('toast').textContent = 'STOPPED ■';
+  setStatus('SYSTEM READY');
+});
+
+// Center on middle C after layout is ready.
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const c4 = keys[60 - FIRST_MIDI];
+    if (c4) {
+      keyboardScroll.scrollLeft =
+        Math.max(0, c4.offsetLeft - keyboardScroll.clientWidth / 2);
+    }
+  }, 100);
+});
+</script>
+</body>
+</html>
