@@ -299,7 +299,7 @@ main{scroll-margin-top:90px}
    Keep this block at the end of the stylesheet so it is safe to edit.
    ================================================================ */
 :root {
-  --ivy-gradient: linear-gradient(105deg, #171170 0%, #067267 42%, #404874 72%, #f0bd83 100%);
+  --ivy-gradient: linear-gradient(105deg, #f7f5ef 0%, #8ce8df 42%, #a9b8ff 72%, #f0bd83 100%);
   --ivy-focus: #72e4dc;
 }
 .hero h1 em,
@@ -424,7 +424,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
         <button class="unlock-btn" id="unlockBtn" aria-label="Unlock">→</button>
       </div>
       <div class="error-msg" id="errorMsg" aria-live="polite"></div>
-      <div class="password-hint" data-i18n="passwordHint">1234 /</div>
+      <div class="password-hint" data-i18n="passwordHint">Password can be changed in CONFIG · Shortcut: /</div>
     </div>
     <div class="function-area" id="functionArea">
       <section class="welcome">
@@ -447,7 +447,6 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   <select class="dock-item theme-dock" id="themeSelect" aria-label="Choose visual theme" title="Choose visual theme">
     <option value="vintage">✦ Vintage</option><option value="sage">✦ Sage</option><option value="burgundy">✦ Burgundy</option><option value="midnight">✦ Midnight</option><option value="glass">✦ Glass</option><option value="japanese">✦ Japanese Minimal</option><option value="apple">✦ Apple</option>
   </select>
-  <div class="dock-item translate-dock" aria-hidden="true" title="Translate page">🌐</div>
   <div id="google_translate_element" aria-label="Translate page"></div>
   <button class="dock-item visual-dock" id="openVisualStudio" type="button" aria-label="Background & Visuals" title="Background & Visuals">⚙</button>
 </div>
@@ -458,11 +457,11 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 <div class="visual-modal" id="visualModal" role="dialog" aria-modal="true" aria-labelledby="visualTitle">
   <div class="visual-dialog">
     <div class="visual-dialog-head"><h2 id="visualTitle">⚙</h2><button class="visual-close" id="closeVisualStudio" type="button">✕ Close</button></div>
-    <p class="visual-help">Changes apply immediately. Appearance and selected background settings are remembered in this browser. Put shared media in the GH <code>source/</code> folder to make it available across devices.</p>
+    <p class="visual-help">Changes apply immediately. Appearance and selected background settings are remembered in this browser. Put shared media in the GitHub <code>source/</code> folder to make it available across devices.</p>
     <div class="visual-grid">
       <div>
         <h3>Background source</h3>
-        <label class="visual-field">Use a file from source/ <select id="sourceMediaChoice"><option value="none">No source media</option><option value="image">source/background.jpg</option><option value="video">source/background.mp4</option><option value="webm">source/background.webm</option></select></label>
+        <label class="visual-field">Use a file from GitHub source/ <select id="sourceMediaChoice"><option value="none">No source media</option><option value="image">source/background.jpg</option><option value="video">source/background.mp4</option><option value="webm">source/background.webm</option></select></label>
         <button class="header-action" id="applySourceMedia" type="button">Use source/ media</button>
         <label class="visual-field">Upload photo<input id="liveBackgroundImage" type="file" accept="image/*"></label>
         <label class="visual-field">Choose background video<input id="liveBackgroundVideo" type="file" accept="video/*"></label>
@@ -497,7 +496,7 @@ const CONFIG = {
        image: "images/your-photo.jpg" (or a full image URL)
        video: "videos/your-background.mp4" (MP4 recommended)
        youtube: paste a normal YouTube URL, e.g. "https://www.youtube.com/watch?v=VIDEO_ID"
-     Pages: put shared files in ./source/ (background.jpg, background.mp4, or background.webm).
+     GitHub Pages: put shared files in ./source/ (background.jpg, background.mp4, or background.webm).
      YouTube background uses an embed URL; use a video you have permission to embed.
   */
   BACKGROUND: {
@@ -508,7 +507,7 @@ const CONFIG = {
   },
 
   /* ---- 基本设置 ---- */
-  SITE_NAME:   "IVY . INFO",
+  SITE_NAME:   "IVY . SHARE INFO",
 
 
   /* ---- 密码开关 ---- */
@@ -543,7 +542,7 @@ const CONFIG = {
     { icon: "🏡", title: "Image to Excel",                    description: "Tool", href: "1/image2excel.html",                                        color: "green" },
     { icon: "🏡", title: "Shop8",                             description: "Tool", href: "1/shop8.html",                                        color: "green" },
     { icon: "🏡", title: "Data to Excel",                     description: "Tool", href: "1/data2excel.html",                                        color: "green" },
-    { icon: "🏡", title: "Shopee Seller Profitability & Fee Calculator",           description: "Tool", href: "1/Shopee Seller Profitability & Fee Calculator.html",        color: "green" },
+    { icon: "🏡", title: "Shopee Seller Profitability & Fee Calculator",           description: "Tool", href: "1/Shopee Seller Profitability & Fee Calculator.html",                                        color: "green" },
     { icon: "🏡", title: "Tools",                                 description: "Tool", href: "1/4.html",                                        color: "green" },
 { icon: "🏡", title: "Tools",                                 description: "Tool", href: "1/4.html",                                        color: "green" },
 { icon: "🏡", title: "Tools",                                 description: "Tool", href: "1/4.html",                                        color: "green" },
@@ -774,44 +773,81 @@ function getYouTubeId(value){
   return '';
 }
 
-/* Google Translate: visible language selector, with load/error feedback. */
-function loadGoogleTranslate(){
+/* Google Translate: robust loader + external fallback when Google's widget is blocked. */
+let ivyTranslateLoading = false;
+let ivyTranslateReady = false;
+let ivyTranslateFallbackTimer = null;
+const IVY_TRANSLATE_LANGUAGES = [
+  ['zh-CN','简体中文'],['zh-TW','繁體中文'],['ms','Bahasa Melayu'],['ja','日本語'],
+  ['ko','한국어'],['fr','Français'],['de','Deutsch'],['es','Español'],['ta','தமிழ்'],
+  ['hi','हिन्दी'],['it','Italiano'],['pt','Português'],['ar','العربية'],['en','English']
+];
+function showTranslateFallback(){
+  const host = $('google_translate_element');
+  if (!host || ivyTranslateReady) return;
+  host.innerHTML = '';
+  const select = document.createElement('select');
+  select.className = 'ivy-translate-fallback-select';
+  select.setAttribute('aria-label','Choose page translation language');
+  select.style.cssText = 'max-width:190px;min-height:36px;padding:7px 10px;border-radius:10px;background:#202630;color:#fff8ed;border:1px solid #b88a4b;font:12px system-ui,sans-serif;';
+  const initial = document.createElement('option'); initial.value=''; initial.textContent='Choose language…'; select.appendChild(initial);
+  IVY_TRANSLATE_LANGUAGES.forEach(([code,name])=>{const opt=document.createElement('option');opt.value=code;opt.textContent=name;select.appendChild(opt)});
+  select.addEventListener('change',()=>{
+    if (!select.value) return;
+    const target = select.value;
+    const current = window.location.href;
+    const translateUrl = 'https://translate.google.com/translate?sl=auto&tl=' + encodeURIComponent(target) + '&u=' + encodeURIComponent(current);
+    window.open(translateUrl,'_blank','noopener');
+  });
+  host.appendChild(select);
+}
+function loadGoogleTranslate(forceRetry=false){
   const host = $('google_translate_element');
   if (!host) return;
-  host.innerHTML = '<span class="translate-loading" style="font:12px Inter,sans-serif;color:inherit">Loading languages…</span>';
+  if (ivyTranslateReady && host.querySelector('.goog-te-combo')) return;
+  if (ivyTranslateLoading && !forceRetry) return;
+  ivyTranslateLoading = true;
+  host.innerHTML = '<span class="translate-loading" style="font:12px system-ui,sans-serif;color:inherit">Loading languages…</span>';
   window.googleTranslateElementInit = function(){
     try {
-      if (window.google && google.translate && google.translate.TranslateElement) {
-        host.innerHTML = '';
-        new google.translate.TranslateElement({
-          pageLanguage:'en',
-          includedLanguages:'en,zh-CN,zh-TW,ms,ja,ko,fr,de,es,ta,hi',
-          autoDisplay:false,
-          layout:google.translate.TranslateElement.InlineLayout.SIMPLE
-        }, 'google_translate_element');
-        window.setTimeout(function(){
-          if (!host.querySelector('select')) {
-            host.innerHTML = '<span style="font:11px Inter,sans-serif;color:#e2bd83">Languages unavailable — refresh or check connection</span>';
-          }
-        }, 4500);
-      }
+      if (!(window.google && window.google.translate && window.google.translate.TranslateElement)) throw new Error('Translate API not ready');
+      host.innerHTML = '';
+      new window.google.translate.TranslateElement({
+        pageLanguage:'en', includedLanguages:'en,zh-CN,zh-TW,ms,ja,ko,fr,de,es,ta,hi,it,pt,ar',
+        autoDisplay:false, layout:window.google.translate.TranslateElement.InlineLayout.SIMPLE
+      }, 'google_translate_element');
+      ivyTranslateLoading = false;
+      window.setTimeout(()=>{
+        if (host.querySelector('select.goog-te-combo')) { ivyTranslateReady=true; }
+        else showTranslateFallback();
+      }, 5000);
     } catch (err) {
-      host.innerHTML = '<span style="font:11px Inter,sans-serif;color:#e2bd83">Translate unavailable</span>';
+      ivyTranslateLoading = false;
+      showTranslateFallback();
     }
   };
+  const existing = document.querySelector('script[data-ivy-google-translate]');
   if (window.google && window.google.translate && window.google.translate.TranslateElement) {
     window.googleTranslateElementInit();
     return;
   }
-  if (document.querySelector('script[data-ivy-google-translate]')) return;
+  if (existing) {
+    // A script tag can remain after a blocked request; allow one retry with cache-busting.
+    if (forceRetry) existing.remove(); else {
+      window.setTimeout(()=>{ if(!host.querySelector('select.goog-te-combo')) {ivyTranslateLoading=false;showTranslateFallback();} },6500);
+      return;
+    }
+  }
   const script = document.createElement('script');
   script.dataset.ivyGoogleTranslate = 'true';
-  script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+  script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit&ivy=' + Date.now();
   script.async = true;
-  script.onerror = () => {
-    host.innerHTML = '<span style="font:11px Inter,sans-serif;color:#e2bd83">Translate needs internet access</span>';
-  };
+  script.onerror = () => { ivyTranslateLoading=false; showTranslateFallback(); };
   document.head.appendChild(script);
+  window.clearTimeout(ivyTranslateFallbackTimer);
+  ivyTranslateFallbackTimer = window.setTimeout(()=>{
+    if (!host.querySelector('select.goog-te-combo')) { ivyTranslateLoading=false; showTranslateFallback(); }
+  },9000);
 }
 
 /* ---------- Live visual studio ---------- */
