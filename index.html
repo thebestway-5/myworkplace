@@ -22,11 +22,11 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:999;op
 .brand:hover .brand-mark{transform:rotate(180deg);border-color:var(--aqua)}
 .brand-name{font-size:15px;font-weight:700;letter-spacing:1px}
 .nav{display:flex;gap:4px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
-.nav a,.language-select{padding:9px 12px;font-size:12px;letter-spacing:.2px;color:#aaa;text-decoration:none;border-radius:8px;transition:.2s;background:transparent;border:1px solid transparent}
+.nav a{padding:9px 12px;font-size:12px;letter-spacing:.2px;color:#aaa;text-decoration:none;border-radius:8px;transition:.2s;background:transparent;border:1px solid transparent}
 .nav a:hover{color:#fff;background:#1a1a1a}
 .nav .store-link{color:#000;background:#fff;font-weight:700}
 .nav .store-link:hover{background:var(--aqua);color:#000}
-.language-select{color:#eee;background:#151515;border-color:#303030;cursor:pointer;outline:none}\n#google_translate_element{font-size:11px;max-width:150px;overflow:hidden}#google_translate_element select{max-width:145px;padding:8px;border-radius:8px;background:var(--theme-panel,#151515);color:var(--theme-text,#eee);border:1px solid var(--theme-border,#303030)}.goog-te-gadget{font:11px Inter,sans-serif!important;color:var(--theme-nav-text,#eee)!important}.goog-te-gadget img,.goog-te-banner-frame,.skiptranslate iframe{display:none!important}body{top:0!important}
+
 main{width:min(1120px,calc(100% - 40px));margin:auto;padding:58px 0 82px;position:relative;z-index:5;flex:1}
 .hero{margin-bottom:34px}
 .hero-label{font:500 11px 'JetBrains Mono';letter-spacing:3px;text-transform:uppercase;color:#777;margin-bottom:16px}
@@ -79,7 +79,7 @@ main{width:min(1120px,calc(100% - 40px));margin:auto;padding:58px 0 82px;positio
 .admin-note{margin-top:28px;font:10px 'JetBrains Mono';color:#555;border-top:1px solid #242424;padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
 footer{border-top:1px solid #1a1a1a;padding:28px 20px;text-align:center;font:10px 'JetBrains Mono';letter-spacing:2px;color:#444;position:relative;z-index:5}
 footer span{color:var(--aqua)}
-@media(max-width:650px){.top-inner{width:calc(100% - 24px);padding:12px 0;align-items:flex-start;flex-direction:column}.nav{justify-content:flex-start}.nav a{padding:8px 9px}.language-select{padding:8px}.hero h1{letter-spacing:-1.8px}main{width:calc(100% - 24px);padding-top:38px}.tools-grid{grid-template-columns:1fr}.tool-card{min-height:145px}}
+@media(max-width:650px){.top-inner{width:calc(100% - 24px);padding:12px 0;align-items:flex-start;flex-direction:column}.nav{justify-content:flex-start}.nav a{padding:8px 9px}.hero h1{letter-spacing:-1.8px}main{width:calc(100% - 24px);padding-top:38px}.tools-grid{grid-template-columns:1fr}.tool-card{min-height:145px}}
 
 /* ================================================================
    THEME PRESETS — 更换整站 UI 只需修改下方 CONFIG.THEME
@@ -130,11 +130,11 @@ body:before{opacity:.035}
 .brand,.brand-name{color:var(--theme-nav-text)}
 .brand-mark{border-color:var(--aqua)}
 .brand:hover .brand-mark{border-color:var(--aqua)}
-.nav a,.language-select{color:var(--theme-nav-text)}
+.nav a{color:var(--theme-nav-text)}
 .nav a:hover{background:color-mix(in srgb,var(--aqua) 13%,transparent);color:var(--theme-nav-text)}
 .nav .store-link{background:var(--aqua);color:var(--theme-accent-text)}
 .nav .store-link:hover{background:var(--theme-accent);color:var(--theme-accent-text)}
-.language-select{background:var(--theme-panel);color:var(--theme-panel-text);border-color:var(--theme-border)}
+
 .hero-label,.hero h1 em{color:var(--theme-muted)}
 .hero h1{color:var(--theme-text)}
 .hero-desc{color:var(--theme-muted)}
@@ -202,7 +202,7 @@ footer span{color:var(--aqua)}
 :root[data-theme="glass"] .top{backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%)}
 :root[data-theme="glass"] .panel{backdrop-filter:blur(24px) saturate(140%);-webkit-backdrop-filter:blur(24px) saturate(140%);border:1px solid rgba(255,255,255,.22);box-shadow:inset 0 1px rgba(255,255,255,.12),0 24px 60px rgba(0,0,0,.2)}
 :root[data-theme="glass"] .tool-card{backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-color:rgba(255,255,255,.2)}
-:root[data-theme="glass"] .language-select{background:rgba(255,255,255,.12)}
+
 :root[data-theme="glass"] .nav .store-link{color:#10232c}
 /* Japanese minimal: warm paper, ink, restrained vermilion, quiet geometry */
 :root[data-theme="japanese"] body{font-family:"Hiragino Sans","Yu Gothic",Meiryo,Inter,sans-serif}
@@ -257,14 +257,13 @@ html{scroll-padding-top:86px;scroll-padding-bottom:110px}
 .bottom-tools .dock-item:hover{background:rgba(255,255,255,.12);border-color:rgba(10,186,181,.5);transform:translateY(-1px)}
 .bottom-tools .theme-dock{font:500 12px Inter,sans-serif;max-width:190px;cursor:pointer}
 .bottom-tools .visual-dock{width:44px;justify-content:center;padding:0;font-size:20px;cursor:pointer}
-.bottom-tools .translate-dock{font-size:19px;justify-content:center;min-width:44px;padding:0;cursor:default}
-.bottom-tools #google_translate_element{max-width:175px;overflow:visible;font-size:11px}
-.bottom-tools #google_translate_element select{max-width:165px;min-height:34px;padding:7px 9px;border-radius:10px;background:rgba(22,24,26,.96);color:#f4f4f4;border:1px solid rgba(255,255,255,.16);font:500 12px Inter,sans-serif}
-.bottom-tools .goog-te-gadget{font:11px Inter,sans-serif!important;color:#bbb!important}
-.bottom-tools .goog-te-gadget span{display:none!important}
-.bottom-tools .goog-te-gadget img{display:none!important}
+
+
+
+
+
+
 main{scroll-margin-top:90px}
-@media(max-width:600px){body{padding-bottom:128px}.bottom-tools{gap:7px;padding:8px 8px calc(8px + env(safe-area-inset-bottom))}.bottom-tools .dock-item{min-height:40px;padding:6px 9px;border-radius:12px}.bottom-tools .theme-dock{max-width:145px;font-size:11px}.bottom-tools #google_translate_element{max-width:150px}.bottom-tools #google_translate_element select{max-width:145px;font-size:11px}.bottom-tools .visual-dock{width:40px}.bottom-tools .translate-dock{min-width:40px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.bottom-tools .dock-item{transition:none}}
 
 
@@ -286,12 +285,11 @@ main{scroll-margin-top:90px}
 :root[data-theme="vintage"] .bottom-tools{background:rgba(20,23,29,.94);border-top-color:rgba(215,164,95,.28)}
 :root[data-theme="vintage"] .bottom-tools .dock-item{color:#f7f4ef;background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.16)}
 :root[data-theme="vintage"] .bottom-tools .theme-dock{color:#f7f4ef;background:#292e37}
-.bottom-tools #google_translate_element{min-width:155px;max-width:none;overflow:visible;display:flex;align-items:center;justify-content:center}
-.bottom-tools #google_translate_element .goog-te-gadget{display:flex!important;align-items:center;gap:6px;white-space:nowrap;color:#f4f4f4!important}
-.bottom-tools #google_translate_element .goog-te-combo{display:block!important;visibility:visible!important;opacity:1!important;width:auto;max-width:190px;min-width:130px;min-height:36px;margin:0!important;padding:7px 26px 7px 10px;border-radius:10px;background:#20252d;color:#f7f7f7;border:1px solid rgba(255,255,255,.2);font:500 12px Inter,sans-serif;cursor:pointer}
-.bottom-tools #google_translate_element .goog-te-gadget span{display:none!important}
-.bottom-tools #google_translate_element .goog-te-gadget img{display:none!important}
-@media(max-width:600px){.bottom-tools #google_translate_element{min-width:130px}.bottom-tools #google_translate_element .goog-te-combo{max-width:145px;min-width:120px;font-size:11px}}
+
+
+
+
+
 
 
 /* ================================================================
@@ -299,7 +297,7 @@ main{scroll-margin-top:90px}
    Keep this block at the end of the stylesheet so it is safe to edit.
    ================================================================ */
 :root {
-  --ivy-gradient: linear-gradient(105deg, #f7f5ef 0%, #8ce8df 42%, #a9b8ff 72%, #f0bd83 100%);
+  --ivy-gradient: linear-gradient(105deg, #13033d 0%, #292886 42%, #a9b8ff 72%, #f0bd83 100%);
   --ivy-focus: #72e4dc;
 }
 .hero h1 em,
@@ -388,7 +386,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 :root[data-theme="vintage"] .tool-card {
   box-shadow: 0 16px 38px rgba(0,0,0,.24), inset 0 1px rgba(255,255,255,.025);
 }
-:root[data-theme="vintage"] .bottom-tools #google_translate_element .goog-te-combo {
+
   background: #202630 !important;
   color: #fff8ed !important;
   border-color: #b88a4b !important;
@@ -424,7 +422,7 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
         <button class="unlock-btn" id="unlockBtn" aria-label="Unlock">→</button>
       </div>
       <div class="error-msg" id="errorMsg" aria-live="polite"></div>
-      <div class="password-hint" data-i18n="passwordHint">Password can be changed in CONFIG · Shortcut: /</div>
+      <div class="password-hint" data-i18n="passwordHint">1234 /</div>
     </div>
     <div class="function-area" id="functionArea">
       <section class="welcome">
@@ -443,11 +441,10 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
     </div>
   </section>
 </main>
-<div class="bottom-tools" role="toolbar" aria-label="Visual and language controls">
+<div class="bottom-tools" role="toolbar" aria-label="Visual controls">
   <select class="dock-item theme-dock" id="themeSelect" aria-label="Choose visual theme" title="Choose visual theme">
     <option value="vintage">✦ Vintage</option><option value="sage">✦ Sage</option><option value="burgundy">✦ Burgundy</option><option value="midnight">✦ Midnight</option><option value="glass">✦ Glass</option><option value="japanese">✦ Japanese Minimal</option><option value="apple">✦ Apple</option>
   </select>
-  <div id="google_translate_element" aria-label="Translate page"></div>
   <button class="dock-item visual-dock" id="openVisualStudio" type="button" aria-label="Background & Visuals" title="Background & Visuals">⚙</button>
 </div>
 
@@ -457,11 +454,11 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 <div class="visual-modal" id="visualModal" role="dialog" aria-modal="true" aria-labelledby="visualTitle">
   <div class="visual-dialog">
     <div class="visual-dialog-head"><h2 id="visualTitle">⚙</h2><button class="visual-close" id="closeVisualStudio" type="button">✕ Close</button></div>
-    <p class="visual-help">Changes apply immediately. Appearance and selected background settings are remembered in this browser. Put shared media in the GitHub <code>source/</code> folder to make it available across devices.</p>
+    <p class="visual-help">Changes apply immediately. Appearance and selected background settings are remembered in this browser. Put shared media in the GH <code>source/</code> folder to make it available across devices.</p>
     <div class="visual-grid">
       <div>
         <h3>Background source</h3>
-        <label class="visual-field">Use a file from GitHub source/ <select id="sourceMediaChoice"><option value="none">No source media</option><option value="image">source/background.jpg</option><option value="video">source/background.mp4</option><option value="webm">source/background.webm</option></select></label>
+        <label class="visual-field">Use a file from source/ <select id="sourceMediaChoice"><option value="none">No source media</option><option value="image">source/background.jpg</option><option value="video">source/background.mp4</option><option value="webm">source/background.webm</option></select></label>
         <button class="header-action" id="applySourceMedia" type="button">Use source/ media</button>
         <label class="visual-field">Upload photo<input id="liveBackgroundImage" type="file" accept="image/*"></label>
         <label class="visual-field">Choose background video<input id="liveBackgroundVideo" type="file" accept="video/*"></label>
@@ -496,7 +493,7 @@ const CONFIG = {
        image: "images/your-photo.jpg" (or a full image URL)
        video: "videos/your-background.mp4" (MP4 recommended)
        youtube: paste a normal YouTube URL, e.g. "https://www.youtube.com/watch?v=VIDEO_ID"
-     GitHub Pages: put shared files in ./source/ (background.jpg, background.mp4, or background.webm).
+     Pages: put shared files in ./source/ (background.jpg, background.mp4, or background.webm).
      YouTube background uses an embed URL; use a video you have permission to embed.
   */
   BACKGROUND: {
@@ -773,83 +770,6 @@ function getYouTubeId(value){
   return '';
 }
 
-/* Google Translate: robust loader + external fallback when Google's widget is blocked. */
-let ivyTranslateLoading = false;
-let ivyTranslateReady = false;
-let ivyTranslateFallbackTimer = null;
-const IVY_TRANSLATE_LANGUAGES = [
-  ['zh-CN','简体中文'],['zh-TW','繁體中文'],['ms','Bahasa Melayu'],['ja','日本語'],
-  ['ko','한국어'],['fr','Français'],['de','Deutsch'],['es','Español'],['ta','தமிழ்'],
-  ['hi','हिन्दी'],['it','Italiano'],['pt','Português'],['ar','العربية'],['en','English']
-];
-function showTranslateFallback(){
-  const host = $('google_translate_element');
-  if (!host || ivyTranslateReady) return;
-  host.innerHTML = '';
-  const select = document.createElement('select');
-  select.className = 'ivy-translate-fallback-select';
-  select.setAttribute('aria-label','Choose page translation language');
-  select.style.cssText = 'max-width:190px;min-height:36px;padding:7px 10px;border-radius:10px;background:#202630;color:#fff8ed;border:1px solid #b88a4b;font:12px system-ui,sans-serif;';
-  const initial = document.createElement('option'); initial.value=''; initial.textContent='Choose language…'; select.appendChild(initial);
-  IVY_TRANSLATE_LANGUAGES.forEach(([code,name])=>{const opt=document.createElement('option');opt.value=code;opt.textContent=name;select.appendChild(opt)});
-  select.addEventListener('change',()=>{
-    if (!select.value) return;
-    const target = select.value;
-    const current = window.location.href;
-    const translateUrl = 'https://translate.google.com/translate?sl=auto&tl=' + encodeURIComponent(target) + '&u=' + encodeURIComponent(current);
-    window.open(translateUrl,'_blank','noopener');
-  });
-  host.appendChild(select);
-}
-function loadGoogleTranslate(forceRetry=false){
-  const host = $('google_translate_element');
-  if (!host) return;
-  if (ivyTranslateReady && host.querySelector('.goog-te-combo')) return;
-  if (ivyTranslateLoading && !forceRetry) return;
-  ivyTranslateLoading = true;
-  host.innerHTML = '<span class="translate-loading" style="font:12px system-ui,sans-serif;color:inherit">Loading languages…</span>';
-  window.googleTranslateElementInit = function(){
-    try {
-      if (!(window.google && window.google.translate && window.google.translate.TranslateElement)) throw new Error('Translate API not ready');
-      host.innerHTML = '';
-      new window.google.translate.TranslateElement({
-        pageLanguage:'en', includedLanguages:'en,zh-CN,zh-TW,ms,ja,ko,fr,de,es,ta,hi,it,pt,ar',
-        autoDisplay:false, layout:window.google.translate.TranslateElement.InlineLayout.SIMPLE
-      }, 'google_translate_element');
-      ivyTranslateLoading = false;
-      window.setTimeout(()=>{
-        if (host.querySelector('select.goog-te-combo')) { ivyTranslateReady=true; }
-        else showTranslateFallback();
-      }, 5000);
-    } catch (err) {
-      ivyTranslateLoading = false;
-      showTranslateFallback();
-    }
-  };
-  const existing = document.querySelector('script[data-ivy-google-translate]');
-  if (window.google && window.google.translate && window.google.translate.TranslateElement) {
-    window.googleTranslateElementInit();
-    return;
-  }
-  if (existing) {
-    // A script tag can remain after a blocked request; allow one retry with cache-busting.
-    if (forceRetry) existing.remove(); else {
-      window.setTimeout(()=>{ if(!host.querySelector('select.goog-te-combo')) {ivyTranslateLoading=false;showTranslateFallback();} },6500);
-      return;
-    }
-  }
-  const script = document.createElement('script');
-  script.dataset.ivyGoogleTranslate = 'true';
-  script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit&ivy=' + Date.now();
-  script.async = true;
-  script.onerror = () => { ivyTranslateLoading=false; showTranslateFallback(); };
-  document.head.appendChild(script);
-  window.clearTimeout(ivyTranslateFallbackTimer);
-  ivyTranslateFallbackTimer = window.setTimeout(()=>{
-    if (!host.querySelector('select.goog-te-combo')) { ivyTranslateLoading=false; showTranslateFallback(); }
-  },9000);
-}
-
 /* ---------- Live visual studio ---------- */
 let liveBackgroundObjectURL = null;
 const IVY_VISUAL_SETTINGS_KEY = 'ivy-visual-settings-v1';
@@ -946,7 +866,6 @@ function initVisualStudio(){
   initPasswordGate();
   initCursorGlow();
   initBackgroundMedia();
-  loadGoogleTranslate();
   initVisualStudio();
 })();
 </script>
