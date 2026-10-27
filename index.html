@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IVY Future Hub — Share & Tools</title>
+<title>IVY Future Hub — Premium Visual Studio</title>
+<!-- EDITING GUIDE: edit CONFIG for defaults; edit TOOL_DATA for tools; edit THEME CSS block for colours. -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -87,13 +88,13 @@ footer span{color:var(--aqua)}
          japanese（日式极简）、apple（苹果风格）
    ================================================================ */
 :root[data-theme="vintage"]{
-  --aqua:#b28a4b;--bg:#211d19;--muted:#857763;--border:rgba(93,69,43,.22);
-  --theme-page:#211d19;--theme-text:#f0e5d0;--theme-muted:#8e806a;
-  --theme-panel:rgba(238,228,208,.94);--theme-panel-text:#30271e;
-  --theme-card:#e8dcc4;--theme-card-text:#34291e;--theme-border:#c7b28d;
-  --theme-accent:#9b7138;--theme-accent-text:#fff3d8;--theme-nav:rgba(38,31,24,.94);
-  --theme-nav-text:#e9dcc5;--theme-field:#f6eedf;--theme-field-text:#30271e;
-  --theme-shadow:rgba(22,15,9,.2);
+  --aqua:#bd8744;--bg:#171a20;--muted:#aab1bd;--border:rgba(189,135,68,.25);
+  --theme-page:#171a20;--theme-text:#f4f1eb;--theme-muted:#b9b5ad;
+  --theme-panel:rgba(31,35,43,.97);--theme-panel-text:#f4f1eb;
+  --theme-card:#252b35;--theme-card-text:#f5f2ec;--theme-border:#454b55;
+  --theme-accent:#d7a45f;--theme-accent-text:#171a20;--theme-nav:rgba(21,24,30,.96);
+  --theme-nav-text:#f4f1eb;--theme-field:#171b22;--theme-field-text:#f7f4ef;
+  --theme-shadow:rgba(0,0,0,.3);
 }
 :root[data-theme="sage"]{
   --aqua:#667a5a;--bg:#e8e8d9;--muted:#727866;--border:rgba(74,91,64,.22);
@@ -247,6 +248,156 @@ footer span{color:var(--aqua)}
 #visualStatus{font-size:12px;color:var(--aqua);min-height:18px;margin-top:12px}
 @media(max-width:800px){.top-inner{flex-wrap:wrap}.header-tools{width:100%}.visual-grid{grid-template-columns:1fr}}
 
+
+/* Elegant fixed bottom utility dock */
+body{padding-bottom:94px;scroll-behavior:smooth}
+html{scroll-padding-top:86px;scroll-padding-bottom:110px}
+.bottom-tools{position:fixed;left:0;right:0;bottom:0;z-index:1001;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:11px 16px calc(11px + env(safe-area-inset-bottom));background:rgba(12,14,16,.84);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);border-top:1px solid rgba(255,255,255,.12);box-shadow:0 -10px 35px rgba(0,0,0,.22)}
+.bottom-tools .dock-item{display:flex;align-items:center;gap:9px;min-height:42px;padding:7px 12px;border:1px solid rgba(255,255,255,.13);border-radius:14px;background:rgba(255,255,255,.055);color:#f4f4f4;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);transition:background .2s,border-color .2s,transform .2s}
+.bottom-tools .dock-item:hover{background:rgba(255,255,255,.12);border-color:rgba(10,186,181,.5);transform:translateY(-1px)}
+.bottom-tools .theme-dock{font:500 12px Inter,sans-serif;max-width:190px;cursor:pointer}
+.bottom-tools .visual-dock{width:44px;justify-content:center;padding:0;font-size:20px;cursor:pointer}
+.bottom-tools .translate-dock{font-size:19px;justify-content:center;min-width:44px;padding:0;cursor:default}
+.bottom-tools #google_translate_element{max-width:175px;overflow:visible;font-size:11px}
+.bottom-tools #google_translate_element select{max-width:165px;min-height:34px;padding:7px 9px;border-radius:10px;background:rgba(22,24,26,.96);color:#f4f4f4;border:1px solid rgba(255,255,255,.16);font:500 12px Inter,sans-serif}
+.bottom-tools .goog-te-gadget{font:11px Inter,sans-serif!important;color:#bbb!important}
+.bottom-tools .goog-te-gadget span{display:none!important}
+.bottom-tools .goog-te-gadget img{display:none!important}
+main{scroll-margin-top:90px}
+@media(max-width:600px){body{padding-bottom:128px}.bottom-tools{gap:7px;padding:8px 8px calc(8px + env(safe-area-inset-bottom))}.bottom-tools .dock-item{min-height:40px;padding:6px 9px;border-radius:12px}.bottom-tools .theme-dock{max-width:145px;font-size:11px}.bottom-tools #google_translate_element{max-width:150px}.bottom-tools #google_translate_element select{max-width:145px;font-size:11px}.bottom-tools .visual-dock{width:40px}.bottom-tools .translate-dock{min-width:40px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.bottom-tools .dock-item{transition:none}}
+
+
+/* Premium contrast refinements: readable text in every Vintage surface */
+:root[data-theme="vintage"] body{background:radial-gradient(ellipse at 15% 0%,rgba(189,135,68,.13),transparent 38%),radial-gradient(ellipse at 90% 22%,rgba(91,111,139,.12),transparent 34%),var(--theme-page);color:var(--theme-text)}
+:root[data-theme="vintage"] .panel{background:linear-gradient(145deg,rgba(39,44,53,.98),rgba(27,31,39,.98));border-color:rgba(189,135,68,.32)}
+:root[data-theme="vintage"] .panel-header h2,:root[data-theme="vintage"] .welcome h2,:root[data-theme="vintage"] .tools-head h2,:root[data-theme="vintage"] .password-label,:root[data-theme="vintage"] .panel *{--local-readable:#f2eee7}
+:root[data-theme="vintage"] .panel-header h2,:root[data-theme="vintage"] .welcome h2,:root[data-theme="vintage"] .tools-head h2,:root[data-theme="vintage"] .password-label{color:#f2eee7}
+:root[data-theme="vintage"] .welcome p,:root[data-theme="vintage"] .tools-head span,:root[data-theme="vintage"] .tool-card p,:root[data-theme="vintage"] .hero-desc,:root[data-theme="vintage"] .admin-note,:root[data-theme="vintage"] footer{color:#c0c4cc}
+:root[data-theme="vintage"] .tool-card{background:linear-gradient(145deg,#2a303a,#20252e);color:#f5f2ec;border-color:#454b55}
+:root[data-theme="vintage"] .tool-card h3,:root[data-theme="vintage"] .tool-card .tool-arrow{color:#f5f2ec}
+:root[data-theme="vintage"] .tool-card p{color:#c2c7d0}
+:root[data-theme="vintage"] .badge{color:#f0c17c;background:rgba(189,135,68,.15);border-color:rgba(189,135,68,.4)}
+:root[data-theme="vintage"] .lock-indicator,:root[data-theme="vintage"] .password-hint{color:#b9bec7;border-color:#454b55}
+:root[data-theme="vintage"] .hero-label{color:#c4a77d}
+:root[data-theme="vintage"] .hero h1 em{color:#d7a45f}
+:root[data-theme="vintage"] .hero-desc code{color:#f0c17c;background:#292e37}
+:root[data-theme="vintage"] .search-row input,:root[data-theme="vintage"] .password-input-wrap input{background:#171b22;color:#f7f4ef;border-color:#4b515d}
+:root[data-theme="vintage"] .bottom-tools{background:rgba(20,23,29,.94);border-top-color:rgba(215,164,95,.28)}
+:root[data-theme="vintage"] .bottom-tools .dock-item{color:#f7f4ef;background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.16)}
+:root[data-theme="vintage"] .bottom-tools .theme-dock{color:#f7f4ef;background:#292e37}
+.bottom-tools #google_translate_element{min-width:155px;max-width:none;overflow:visible;display:flex;align-items:center;justify-content:center}
+.bottom-tools #google_translate_element .goog-te-gadget{display:flex!important;align-items:center;gap:6px;white-space:nowrap;color:#f4f4f4!important}
+.bottom-tools #google_translate_element .goog-te-combo{display:block!important;visibility:visible!important;opacity:1!important;width:auto;max-width:190px;min-width:130px;min-height:36px;margin:0!important;padding:7px 26px 7px 10px;border-radius:10px;background:#20252d;color:#f7f7f7;border:1px solid rgba(255,255,255,.2);font:500 12px Inter,sans-serif;cursor:pointer}
+.bottom-tools #google_translate_element .goog-te-gadget span{display:none!important}
+.bottom-tools #google_translate_element .goog-te-gadget img{display:none!important}
+@media(max-width:600px){.bottom-tools #google_translate_element{min-width:130px}.bottom-tools #google_translate_element .goog-te-combo{max-width:145px;min-width:120px;font-size:11px}}
+
+
+/* ================================================================
+   UI POLISH — gradient typography, clear contrast, easy controls
+   Keep this block at the end of the stylesheet so it is safe to edit.
+   ================================================================ */
+:root {
+  --ivy-gradient: linear-gradient(105deg, #a8851c 0%, #8ce8df 42%, #a9b8ff 72%, #f0bd83 100%);
+  --ivy-focus: #72e4dc;
+}
+.hero h1 em,
+.welcome h2 span,
+.welcome h2 strong,
+.tools-head h2,
+.panel-header h2 .heading-accent {
+  color: transparent;
+  background: var(--ivy-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: none;
+}
+.hero h1 em { display:inline-block; padding-bottom:.06em; }
+.welcome h2 { letter-spacing:-.045em; }
+.welcome h2 span { font-weight:800; }
+.hero-label, .welcome .eyebrow {
+  color: var(--aqua);
+  text-shadow: 0 0 22px color-mix(in srgb, var(--aqua) 22%, transparent);
+}
+.panel, .tool-card {
+  transition: border-color .22s ease, transform .22s ease, box-shadow .22s ease;
+}
+.tool-card:hover {
+  box-shadow: 0 16px 36px rgba(0,0,0,.22);
+}
+button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible {
+  outline: 2px solid var(--ivy-focus);
+  outline-offset: 3px;
+}
+
+/* Native dropdown menus often ignore inherited text colours. Set both the
+   closed control AND each option explicitly, especially for Vintage. */
+.bottom-tools .theme-dock,
+.visual-field select,
+.visual-dialog select {
+  color: var(--theme-text, #f4f4f4) !important;
+  background-color: var(--theme-field, #20252d) !important;
+  border-color: var(--theme-border, #505866) !important;
+  color-scheme: dark;
+}
+.bottom-tools .theme-dock option,
+.visual-field select option,
+.visual-dialog select option {
+  background: #202630 !important;
+  color: #f7f4ef !important;
+}
+:root[data-theme="vintage"] .bottom-tools .theme-dock,
+:root[data-theme="vintage"] .visual-field select,
+:root[data-theme="vintage"] .visual-dialog select {
+  background-color: #202630 !important;
+  color: #fff8ed !important;
+  border-color: #b88a4b !important;
+  color-scheme: dark;
+}
+:root[data-theme="vintage"] .bottom-tools .theme-dock option,
+:root[data-theme="vintage"] .visual-field select option,
+:root[data-theme="vintage"] .visual-dialog select option {
+  background: #202630 !important;
+  color: #fff8ed !important;
+}
+:root[data-theme="vintage"] .bottom-tools .dock-item:hover,
+:root[data-theme="vintage"] .bottom-tools .theme-dock:focus-visible {
+  border-color: #e7b96d !important;
+  box-shadow: 0 0 0 3px rgba(215,164,95,.18);
+}
+:root[data-theme="vintage"] .hero h1 em,
+:root[data-theme="vintage"] .welcome h2 span,
+:root[data-theme="vintage"] .welcome h2 strong,
+:root[data-theme="vintage"] .tools-head h2 {
+  background: linear-gradient(105deg, #fff0d2 0%, #f0bd70 45%, #e6a5a0 75%, #f9e4b9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+:root[data-theme="vintage"] .tool-card p,
+:root[data-theme="vintage"] .welcome p,
+:root[data-theme="vintage"] .hero-desc,
+:root[data-theme="vintage"] .visual-help,
+:root[data-theme="vintage"] .visual-field,
+:root[data-theme="vintage"] .admin-note,
+:root[data-theme="vintage"] footer {
+  color: #d0d4dc;
+}
+:root[data-theme="vintage"] .panel,
+:root[data-theme="vintage"] .tool-card {
+  box-shadow: 0 16px 38px rgba(0,0,0,.24), inset 0 1px rgba(255,255,255,.025);
+}
+:root[data-theme="vintage"] .bottom-tools #google_translate_element .goog-te-combo {
+  background: #202630 !important;
+  color: #fff8ed !important;
+  border-color: #b88a4b !important;
+}
+@media (max-width: 600px) {
+  .hero h1 { line-height: 1.04; }
+  .bottom-tools { gap: 8px; }
+}
+
 </style>
 </head>
 <body>
@@ -254,19 +405,6 @@ footer span{color:var(--aqua)}
 <header class="top"><div class="top-inner">
   <a class="brand" href="index.html"><span class="brand-mark">IVY</span><span class="brand-name">IVY FUTURE HUB</span></a>
   <nav class="nav" id="mainNav" aria-label="Main navigation"></nav>
-  <select class="language-select" id="themeSelect" aria-label="Choose visual theme">
-     <option value="vintage">✦ Vintage</option>
-     <option value="sage">✦ Sage</option>
-     <option value="burgundy">✦ Burgundy</option>
-     <option value="midnight">✦ Midnight</option>
-     <option value="glass">✦ Glass</option>
-     <option value="japanese">✦ Japanese Minimal</option>
-     <option value="apple">✦ Apple</option>
-   </select>
-   <div id="google_translate_element" aria-label="Translate page"></div>
-    <div class="header-tools">
-      <button class="header-action" id="openVisualStudio" type="button">⚙ Background & Visuals</button>
-    </div>
 </div></header>
 <main>
   <section class="hero">
@@ -305,17 +443,26 @@ footer span{color:var(--aqua)}
     </div>
   </section>
 </main>
+<div class="bottom-tools" role="toolbar" aria-label="Visual and language controls">
+  <select class="dock-item theme-dock" id="themeSelect" aria-label="Choose visual theme" title="Choose visual theme">
+    <option value="vintage">✦ Vintage</option><option value="sage">✦ Sage</option><option value="burgundy">✦ Burgundy</option><option value="midnight">✦ Midnight</option><option value="glass">✦ Glass</option><option value="japanese">✦ Japanese Minimal</option><option value="apple">✦ Apple</option>
+  </select>
+  <div class="dock-item translate-dock" aria-hidden="true" title="Translate page">🌐</div>
+  <div id="google_translate_element" aria-label="Translate page"></div>
+  <button class="dock-item visual-dock" id="openVisualStudio" type="button" aria-label="Background & Visuals" title="Background & Visuals">⚙</button>
+</div>
+
 <footer>IVY — <span>FUTURE HUB</span> · </footer>
 
 
 <div class="visual-modal" id="visualModal" role="dialog" aria-modal="true" aria-labelledby="visualTitle">
   <div class="visual-dialog">
     <div class="visual-dialog-head"><h2 id="visualTitle">⚙</h2><button class="visual-close" id="closeVisualStudio" type="button">✕ Close</button></div>
-    <p class="visual-help">Changes apply immediately. Appearance and selected background settings are remembered in this browser. Put shared media in the GitHub <code>source/</code> folder to make it available across devices.</p>
+    <p class="visual-help">Changes apply immediately. Appearance and selected background settings are remembered in this browser. Put shared media in the GH <code>source/</code> folder to make it available across devices.</p>
     <div class="visual-grid">
       <div>
         <h3>Background source</h3>
-        <label class="visual-field">Use a file from GitHub source/ <select id="sourceMediaChoice"><option value="none">No source media</option><option value="image">source/background.jpg</option><option value="video">source/background.mp4</option><option value="webm">source/background.webm</option></select></label>
+        <label class="visual-field">Use a file from source/ <select id="sourceMediaChoice"><option value="none">No source media</option><option value="image">source/background.jpg</option><option value="video">source/background.mp4</option><option value="webm">source/background.webm</option></select></label>
         <button class="header-action" id="applySourceMedia" type="button">Use source/ media</button>
         <label class="visual-field">Upload photo<input id="liveBackgroundImage" type="file" accept="image/*"></label>
         <label class="visual-field">Choose background video<input id="liveBackgroundVideo" type="file" accept="video/*"></label>
@@ -350,7 +497,7 @@ const CONFIG = {
        image: "images/your-photo.jpg" (or a full image URL)
        video: "videos/your-background.mp4" (MP4 recommended)
        youtube: paste a normal YouTube URL, e.g. "https://www.youtube.com/watch?v=VIDEO_ID"
-     GitHub Pages: put shared files in ./source/ (background.jpg, background.mp4, or background.webm).
+     Pages: put shared files in ./source/ (background.jpg, background.mp4, or background.webm).
      YouTube background uses an embed URL; use a video you have permission to embed.
   */
   BACKGROUND: {
@@ -361,7 +508,7 @@ const CONFIG = {
   },
 
   /* ---- 基本设置 ---- */
-  SITE_NAME:   "IVY . SHARE INFO",
+  SITE_NAME:   "IVY . INFO",
 
 
   /* ---- 密码开关 ---- */
@@ -396,7 +543,7 @@ const CONFIG = {
     { icon: "🏡", title: "Image to Excel",                    description: "Tool", href: "1/image2excel.html",                                        color: "green" },
     { icon: "🏡", title: "Shop8",                             description: "Tool", href: "1/shop8.html",                                        color: "green" },
     { icon: "🏡", title: "Data to Excel",                     description: "Tool", href: "1/data2excel.html",                                        color: "green" },
-    { icon: "🏡", title: "Shopee Seller Profitability & Fee Calculator",           description: "Tool", href: "1/Shopee Seller Profitability & Fee Calculator.html",                                        color: "green" },
+    { icon: "🏡", title: "Shopee Seller Profitability & Fee Calculator",           description: "Tool", href: "1/Shopee Seller Profitability & Fee Calculator.html",        color: "green" },
     { icon: "🏡", title: "Tools",                                 description: "Tool", href: "1/4.html",                                        color: "green" },
 { icon: "🏡", title: "Tools",                                 description: "Tool", href: "1/4.html",                                        color: "green" },
 { icon: "🏡", title: "Tools",                                 description: "Tool", href: "1/4.html",                                        color: "green" },
@@ -627,28 +774,45 @@ function getYouTubeId(value){
   return '';
 }
 
-/* Google Translate: English is the source language; visitors choose a translation. */
+/* Google Translate: visible language selector, with load/error feedback. */
 function loadGoogleTranslate(){
+  const host = $('google_translate_element');
+  if (!host) return;
+  host.innerHTML = '<span class="translate-loading" style="font:12px Inter,sans-serif;color:inherit">Loading languages…</span>';
   window.googleTranslateElementInit = function(){
-    if (window.google && google.translate && google.translate.TranslateElement) {
-      new google.translate.TranslateElement({
-        pageLanguage:'en',
-        includedLanguages:'en,zh-CN,zh-TW,ms,ja,ko,fr,de,es,ta,hi',
-        autoDisplay:false,
-        layout:google.translate.TranslateElement.InlineLayout.SIMPLE
-      }, 'google_translate_element');
+    try {
+      if (window.google && google.translate && google.translate.TranslateElement) {
+        host.innerHTML = '';
+        new google.translate.TranslateElement({
+          pageLanguage:'en',
+          includedLanguages:'en,zh-CN,zh-TW,ms,ja,ko,fr,de,es,ta,hi',
+          autoDisplay:false,
+          layout:google.translate.TranslateElement.InlineLayout.SIMPLE
+        }, 'google_translate_element');
+        window.setTimeout(function(){
+          if (!host.querySelector('select')) {
+            host.innerHTML = '<span style="font:11px Inter,sans-serif;color:#e2bd83">Languages unavailable — refresh or check connection</span>';
+          }
+        }, 4500);
+      }
+    } catch (err) {
+      host.innerHTML = '<span style="font:11px Inter,sans-serif;color:#e2bd83">Translate unavailable</span>';
     }
   };
+  if (window.google && window.google.translate && window.google.translate.TranslateElement) {
+    window.googleTranslateElementInit();
+    return;
+  }
+  if (document.querySelector('script[data-ivy-google-translate]')) return;
   const script = document.createElement('script');
+  script.dataset.ivyGoogleTranslate = 'true';
   script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
   script.async = true;
   script.onerror = () => {
-    const el = $('google_translate_element');
-    if (el) el.title = 'Google Translate could not load. Check your internet connection.';
+    host.innerHTML = '<span style="font:11px Inter,sans-serif;color:#e2bd83">Translate needs internet access</span>';
   };
   document.head.appendChild(script);
 }
-
 
 /* ---------- Live visual studio ---------- */
 let liveBackgroundObjectURL = null;
