@@ -405,6 +405,36 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   .bottom-tools { gap: 8px; }
 }
 
+
+
+/* Mobile stability: reduce unnecessary repainting during touch scrolling. */
+@media (hover:none), (pointer:coarse) {
+  #cursor-glow { display:none !important; }
+  .top, .bottom-tools, .panel,
+  :root[data-theme="glass"] .top,
+  :root[data-theme="glass"] .panel {
+    -webkit-backdrop-filter:none !important;
+    backdrop-filter:none !important;
+  }
+  .tool-card, .panel, .bottom-tools .dock-item { transition:none !important; }
+  .tool-card:hover, .bottom-tools .dock-item:hover {
+    transform:none !important;
+    box-shadow:none !important;
+  }
+}
+html { min-height:100%; }
+body { min-height:100vh; min-height:100svh; }
+@media (max-width:650px) {
+  .visual-dialog { max-height:calc(100dvh - 36px); }
+}
+@media (prefers-reduced-motion:reduce) {
+  *, *::before, *::after {
+    scroll-behavior:auto !important;
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -717,23 +747,60 @@ function initPasswordGate(){
 function initCursorGlow(){
   const glow = $('cursor-glow');
   const g = CONFIG.GLOW;
-  glow.style.width  = g.SIZE + 'px';
+  const finePointer = window.matchMedia &&
+    window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const reducedMotion = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Touch screens have no cursor: keep the effect off to avoid needless
+     repaints and scroll jank on iOS/Android. */
+  if (!finePointer || reducedMotion) {
+    glow.hidden = true;
+    glow.style.display = 'none';
+    return;
+  }
+
+  glow.style.width = g.SIZE + 'px';
   glow.style.height = g.SIZE + 'px';
   glow.style.background =
     'radial-gradient(circle,' + g.COLOR_1 + ' 0%,' +
     g.COLOR_2 + ' 30%,' + g.COLOR_3 + ' 55%,transparent 80%)';
 
-  let tx = innerWidth/2, ty = innerHeight/2, cx = tx, cy = ty;
-  addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
-  addEventListener('mouseleave', () => glow.style.opacity = '.3');
-  addEventListener('mouseenter', () => glow.style.opacity = '.9');
+  let tx = innerWidth / 2, ty = innerHeight / 2;
+  let cx = tx, cy = ty, rafId = 0;
 
-  (function loop(){
+  function animate(){
     cx += (tx - cx) * g.SMOOTH;
     cy += (ty - cy) * g.SMOOTH;
-    glow.style.transform = 'translate(' + cx + 'px,' + cy + 'px) translate(-50%,-50%)';
-    requestAnimationFrame(loop);
-  })();
+    glow.style.transform =
+      'translate3d(' + cx + 'px,' + cy + 'px,0) translate(-50%,-50%)';
+
+    if (Math.abs(tx - cx) > .25 || Math.abs(ty - cy) > .25) {
+      rafId = requestAnimationFrame(animate);
+    } else {
+      rafId = 0;
+    }
+  }
+
+  addEventListener('pointermove', e => {
+    if (e.pointerType && e.pointerType !== 'mouse') return;
+    tx = e.clientX;
+    ty = e.clientY;
+    if (!rafId) rafId = requestAnimationFrame(animate);
+  }, {passive:true});
+
+  addEventListener('pointerleave', () => {
+    glow.style.opacity = '.3';
+  }, {passive:true});
+  addEventListener('pointerenter', () => {
+    glow.style.opacity = 'var(--glow-opacity, .9)';
+  }, {passive:true});
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = 0;
+    }
+  });
 }
 
 /* ================================================================
