@@ -1,0 +1,27 @@
+
+[
+  {
+    "title": "森林的呼吸",
+    "en": "Breath of the Forest",
+    "description": "探索森林、自然与生命之间的关系。这幅作品表达自然深处的宁静。",
+    "image": "images/artwork01.jpg"
+  },
+  {
+    "title": "金色黎明",
+    "en": "Golden Dawn",
+    "description": "描绘清晨阳光与大地之间的温暖关系。",
+    "image": "images/artwork02.jpg"
+  },
+  {
+    "title": "无声之海",
+    "en": "Silent Sea",
+    "description": "在流动的色彩中感受海洋的宁静与自由。",
+    "image": "images/artwork03.jpg"
+  },
+  {
+    "title": "大地诗篇",
+    "en": "Earth Poetry",
+    "description": "从土地的纹理中发现自然的美。",
+    "image": "images/artwork04.jpg"
+  }
+]
