@@ -326,7 +326,13 @@ async function makeArtwork(item,index){
   // Try the exact path in artworks.json first, then the filename in this folder.
   // This supports both /images/artwork01.jpg and /artwork01.jpg layouts.
   const imageName=String(item.image||'').split('/').pop();
-  const candidates=[...new Set([item.image,imageName].filter(Boolean))];
+  const candidates=[...new Set([
+   item.image,
+   imageName,
+   './'+imageName,
+   'images/'+imageName,
+   './images/'+imageName
+  ].filter(Boolean))];
   let lastError;
   for(const src of candidates){
    try{
@@ -357,8 +363,8 @@ async function makeArtwork(item,index){
  const side=index%2===0?-1:1;
  const row=Math.floor(index/2);
  const z=8-row*11.5;
- item._gallery={side,z,x};
  const x=side*9.7;
+ item._gallery={side,z,x};
 
  const frame=new THREE.Mesh(
   new THREE.BoxGeometry(.22,3.8,3.1),
@@ -666,7 +672,7 @@ try{
  console.error(error);
  $('loading').classList.add('error');
  $('loading').innerHTML=
-  '<div><h2>展馆加载失败</h2><p>请检查网络和图片路径。</p><pre style="white-space:pre-wrap">'+
+  '<div><h2>展馆加载失败</h2><p>请查看下方错误信息。若是 404，请确认 artworks.json 与 HTML 在同一目录，图片文件名和大小写完全一致；Three.js 还需要通过 Live Server 或 GitHub Pages 打开，不能直接双击 HTML。</p><pre style="white-space:pre-wrap">'+
   String(error.stack||error)+'</pre></div>';
 }
 </script>
