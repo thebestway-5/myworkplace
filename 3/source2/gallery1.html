@@ -1,0 +1,663 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101914">
+<title>THE QUIET GALLERY | 静谧之境</title>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<style>
+:root {
+  --bg:#101914;
+  --gold:#d5bc8b;
+  --cream:#f0eadc;
+  --muted:#a5afa4;
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;width:100%;height:100%;overflow:hidden;
+  background:var(--bg);color:var(--cream);
+  font-family:"Segoe UI","Microsoft YaHei",sans-serif
+}
+button{font:inherit;cursor:pointer}
+#scene{position:fixed;inset:0}
+#scene canvas{display:block;touch-action:none}
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:4;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:24px 32px;pointer-events:none
+}
+.brand{font-size:12px;letter-spacing:3px}
+.brand small{display:block;color:var(--muted);font-size:9px;margin-top:6px}
+.status{color:var(--gold);font-size:10px;letter-spacing:2px}
+.overlay{
+  position:fixed;inset:0;z-index:10;
+  display:flex;align-items:center;padding:8%;
+  background:linear-gradient(90deg,rgba(8,15,11,.96),rgba(8,15,11,.45));
+  transition:.6s
+}
+.overlay.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.welcome{max-width:680px}
+.kicker{font-size:10px;letter-spacing:5px;color:var(--gold)}
+h1{font-size:clamp(44px,8vw,88px);font-weight:300;line-height:1.05;margin:28px 0}
+h1 span{font-family:Georgia,serif;font-style:italic;color:var(--gold)}
+.welcome p{color:#bbc3b8;font-size:13px;line-height:2}
+#enter{
+  margin-top:28px;padding:16px 30px;border:0;
+  background:var(--gold);color:#182018;letter-spacing:2px
+}
+#enter:hover{background:#f3dfb6}
+#hud{
+  position:fixed;z-index:4;bottom:25px;left:28px;right:28px;
+  display:flex;align-items:end;justify-content:space-between;
+  pointer-events:none
+}
+#hudTitle{font-size:20px;margin-top:8px}
+#hudDesc{font-size:11px;color:#aeb8ac;max-width:350px;line-height:1.8;margin-top:7px}
+.eyebrow{font-size:9px;letter-spacing:3px;color:var(--gold)}
+.actions{display:flex;gap:8px;pointer-events:auto}
+.ui{
+  padding:12px 16px;border:1px solid #9a875e;
+  background:#111c16e8;color:var(--cream);font-size:10px
+}
+.ui:hover{background:var(--gold);color:#101914}
+#crosshair{
+  display:none;position:fixed;z-index:5;left:50%;top:50%;
+  width:8px;height:8px;border:1px solid white;border-radius:50%;
+  transform:translate(-50%,-50%);pointer-events:none
+}
+#hint{
+  position:fixed;top:60%;left:50%;transform:translateX(-50%);
+  color:#ddd;font-size:10px;letter-spacing:2px;z-index:5;
+  pointer-events:none
+}
+#detail{
+  position:fixed;z-index:8;right:22px;top:50%;
+  transform:translateY(-50%);width:min(320px,90vw);
+  padding:24px;background:#111c16ed;
+  border:1px solid #9a875e;backdrop-filter:blur(15px);
+  opacity:0;visibility:hidden;transition:.3s
+}
+#detail.show{opacity:1;visibility:visible}
+#detail h2{font-weight:300;font-size:24px}
+#detail p{font-size:12px;line-height:2;color:#bdc5b9}
+#close{float:right;background:none;border:0;color:var(--gold);font-size:22px}
+#toast{
+  position:fixed;z-index:20;top:85px;left:50%;
+  transform:translateX(-50%);background:#17231c;
+  border:1px solid #9a875e;padding:12px 20px;
+  font-size:11px;opacity:0;transition:.3s;pointer-events:none
+}
+#toast.show{opacity:1}
+#loading{
+  position:fixed;inset:0;z-index:30;background:#101914;
+  display:grid;place-items:center;color:var(--gold);
+  letter-spacing:3px;font-size:11px;transition:.5s
+}
+#loading.hide{opacity:0;pointer-events:none}
+#loading.error{color:#f0c3a9;letter-spacing:0;padding:25px;text-align:left}
+#mobile{
+  display:none;position:fixed;z-index:6;bottom:100px;left:15px;gap:6px
+}
+#mobile button{
+  width:44px;height:44px;border-radius:50%;
+  color:white;background:#17251dcc;border:1px solid #9a875e
+}
+@media(max-width:760px){
+  .topbar{padding:16px}
+  .status{display:none}
+  #hud{left:15px;right:15px;bottom:15px}
+  #hudTitle{font-size:16px}
+  #hudDesc{max-width:190px}
+  .actions{flex-direction:column}
+  .ui{padding:10px}
+  #mobile{display:flex;flex-wrap:wrap;width:150px}
+  #mobile button{touch-action:none}
+  #detail{right:10px;top:12%;transform:none;padding:17px;width:min(290px,88vw)}
+  #hint{top:55%;font-size:9px;letter-spacing:1px;text-align:center;width:90%}
+  h1{font-size:50px}
+}
+</style>
+</head>
+
+<body>
+<div id="scene"></div>
+
+<header class="topbar">
+  <div class="brand">
+    THE QUIET GALLERY
+    <small>沉浸式数字艺术空间</small>
+  </div>
+  <div class="status">ART · SPACE · LIGHT</div>
+</header>
+
+<section id="welcome" class="overlay">
+  <div class="welcome">
+    <div class="kicker">AN IMMERSIVE ART EXPERIENCE</div>
+    <h1>静谧之境<br><span>The Quiet</span><br>Gallery.</h1>
+    <p>让脚步慢下来，让目光停留。<br>
+    在光影、空间与艺术作品之间，寻找属于自己的宁静。</p>
+    <button id="enter">进入展馆　↗</button>
+    <p>电脑：W A S D 移动 · 鼠标转动视角<br>
+    点击作品查看介绍 · ESC 释放鼠标</p>
+  </div>
+</section>
+
+<div id="crosshair"></div>
+<div id="hint"></div>
+
+<section id="hud">
+  <div>
+    <div class="eyebrow">CURRENT EXHIBITION</div>
+    <div id="hudTitle">静谧之境</div>
+    <div id="hudDesc">探索艺术与空间的关系。</div>
+  </div>
+  <div class="actions">
+    <button class="ui" id="tour">自动导览 ↗</button>
+    <button class="ui" id="home">返回首页</button>
+  </div>
+</section>
+
+<div id="mobile">
+  <button data-m="forward">↑</button>
+  <button data-m="left">←</button>
+  <button data-m="back">↓</button>
+  <button data-m="right">→</button>
+</div>
+
+<aside id="detail">
+  <button id="close">×</button>
+  <div class="eyebrow" id="number">ARTWORK / 01</div>
+  <h2 id="title"></h2>
+  <p id="description"></p>
+</aside>
+
+<div id="toast"></div>
+<div id="loading">正在构建艺术空间……</div>
+
+<script type="module">
+import * as THREE from 'three';
+import {PointerLockControls} from 'three/addons/controls/PointerLockControls.js';
+
+const $=id=>document.getElementById(id);
+const root=$('scene');
+const clock=new THREE.Clock();
+
+let scene,camera,renderer,controls,raycaster;
+let pictures=[];
+let entered=false,tour=false,tourClock=0;
+let tourPoints=[],tourStage=0,tourStageTime=0;
+let mobilePointer=null,mobileYaw=0,mobilePitch=0;
+let galleryEnd=-62;
+const moveSpeed=5;
+let keys={forward:false,back:false,left:false,right:false};
+let touch={forward:false,back:false,left:false,right:false};
+let toastTimer;
+
+const DEFAULT_ARTS=[
+ {title:'森林的呼吸',en:'Breath of the Forest',description:'探索森林、自然与生命之间的关系。',image:'images/artwork01.jpg'},
+ {title:'金色黎明',en:'Golden Dawn',description:'描绘清晨阳光与大地之间的温暖关系。',image:'images/artwork02.jpg'},
+ {title:'无声之海',en:'Silent Sea',description:'在流动的色彩中感受海洋的宁静。',image:'images/artwork03.jpg'},
+ {title:'大地诗篇',en:'Earth Poetry',description:'从土地的纹理中发现自然的美。',image:'images/artwork04.jpg'}
+];
+
+let artworks=DEFAULT_ARTS;
+
+function toast(message){
+ $('toast').textContent=message;
+ $('toast').classList.add('show');
+ clearTimeout(toastTimer);
+ toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2500);
+}
+
+function isMobile(){
+ return matchMedia('(pointer:coarse)').matches || innerWidth<=760;
+}
+
+async function loadArtworks(){
+ try{
+  const response=await fetch('artworks.json');
+  if(!response.ok)throw new Error('artworks.json not found');
+  const data=await response.json();
+  if(Array.isArray(data)&&data.length)artworks=data;
+  else if(Array.isArray(data.artworks)&&data.artworks.length)artworks=data.artworks;
+  artworks=artworks.map((a,i)=>({...a,title:a.title||a.name||`Artwork ${i+1}`,image:a.image||a.src||`images/artwork${String(i+1).padStart(2,'0')}.jpg`}));
+ }catch(error){
+  console.warn('Using built-in artwork list:',error);
+ }
+}
+
+function material(color,roughness=.8){
+ return new THREE.MeshStandardMaterial({color,roughness});
+}
+
+function box(w,h,d,x,y,z,mat){
+ const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+ mesh.position.set(x,y,z);
+ scene.add(mesh);
+ return mesh;
+}
+
+function makeTextTexture(lines){
+ const canvas=document.createElement('canvas');
+ canvas.width=1024;canvas.height=512;
+ const ctx=canvas.getContext('2d');
+ ctx.fillStyle='#18251d';
+ ctx.fillRect(0,0,1024,512);
+
+ const gradient=ctx.createLinearGradient(0,0,1024,512);
+ gradient.addColorStop(0,'#25382a');
+ gradient.addColorStop(1,'#111b15');
+ ctx.fillStyle=gradient;
+ ctx.fillRect(0,0,1024,512);
+
+ ctx.strokeStyle='#bba477';
+ ctx.lineWidth=3;
+ ctx.strokeRect(28,28,968,456);
+
+ ctx.textAlign='center';
+ ctx.fillStyle='#d5bc8b';
+ ctx.font='28px Georgia,serif';
+ ctx.fillText(lines[0],512,135);
+
+ ctx.fillStyle='#f0eadc';
+ ctx.font='66px Georgia,serif';
+ ctx.fillText(lines[1],512,245);
+
+ ctx.fillStyle='#c5c5b2';
+ ctx.font='23px sans-serif';
+ ctx.fillText(lines[2],512,330);
+
+ ctx.fillStyle='#d5bc8b';
+ ctx.font='17px sans-serif';
+ ctx.fillText('ART · SPACE · LIGHT',512,405);
+
+ const texture=new THREE.CanvasTexture(canvas);
+ texture.colorSpace=THREE.SRGBColorSpace;
+ return texture;
+}
+
+function makeThemeWall(){
+ // Rear feature wall: visible from the gallery entrance.
+ box(18,7.5,.5,0,3.7,galleryEnd+2,material('#202c22'));
+
+ const hero=new THREE.Mesh(
+  new THREE.PlaneGeometry(10,4.6),
+  new THREE.MeshBasicMaterial({
+   map:makeTextTexture(['WELCOME TO','THE QUIET GALLERY','静谧之境 · 沉浸式艺术空间'])
+  })
+ );
+ hero.position.set(0,4.1,galleryEnd+2.28);
+ scene.add(hero);
+
+ // Gold frame around the signature wall.
+ const gold=material('#b69a64',.35);
+ box(10.4,.08,.12,0,6.48,galleryEnd+2.45,gold);
+ box(10.4,.08,.12,0,1.72,galleryEnd+2.45,gold);
+ box(.08,4.8,.12,-5.15,4.1,galleryEnd+2.45,gold);
+ box(.08,4.8,.12,5.15,4.1,galleryEnd+2.45,gold);
+
+ // Wall uplighting.
+ for(let x of [-6,-3,0,3,6]){
+  const light=new THREE.PointLight('#e4c98d',65,17,2);
+  light.position.set(x,5.9,galleryEnd+5.5);
+  scene.add(light);
+ }
+ const spot=new THREE.SpotLight('#f2d9a5',180,30,Math.PI/4,.6,1);
+ spot.position.set(0,6.7,galleryEnd+8);
+ spot.target.position.set(0,3.5,galleryEnd+2);
+ scene.add(spot,spot.target);
+}
+
+async function makeArtwork(item,index){
+ const textureLoader=new THREE.TextureLoader();
+ let texture;
+ try{
+  texture=await new Promise((resolve,reject)=>{
+   textureLoader.load(item.image,resolve,undefined,reject);
+  });
+  texture.colorSpace=THREE.SRGBColorSpace;
+ }catch(error){
+  console.warn('Image could not load:',item.image,error);
+  // A visible fallback panel identifies a missing image.
+  const c=document.createElement('canvas');
+  c.width=512;c.height=640;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle='#28382c';ctx.fillRect(0,0,512,640);
+  ctx.fillStyle='#d5bc8b';ctx.textAlign='center';
+  ctx.font='28px sans-serif';
+  ctx.fillText('IMAGE NOT FOUND',256,290);
+  ctx.font='20px sans-serif';
+  ctx.fillText(item.title||'Artwork',256,340);
+  texture=new THREE.CanvasTexture(c);
+  texture.colorSpace=THREE.SRGBColorSpace;
+ }
+
+ const side=index%2===0?-1:1;
+ const row=Math.floor(index/2);
+ const z=8-row*11.5;
+ item._gallery={side,z,x};
+ const x=side*9.7;
+
+ const frame=new THREE.Mesh(
+  new THREE.BoxGeometry(.22,3.8,3.1),
+  material('#a88e5c',.4)
+ );
+ frame.position.set(x,3.35,z);
+ scene.add(frame);
+
+ const picture=new THREE.Mesh(
+  new THREE.PlaneGeometry(2.85,3.55),
+  new THREE.MeshStandardMaterial({
+   map:texture,roughness:.8,side:THREE.DoubleSide
+  })
+ );
+ picture.position.set(x-side*.14,3.35,z);
+ picture.rotation.y=side===-1?Math.PI/2:-Math.PI/2;
+ picture.userData.artIndex=index;
+ scene.add(picture);
+ pictures.push(picture);
+
+ const light=new THREE.PointLight('#e7d3a5',35,9,2);
+ light.position.set(side*7.2,4.8,z);
+ scene.add(light);
+
+ const plaque=new THREE.Mesh(
+  new THREE.BoxGeometry(.05,.65,1.9),
+  material('#29352b')
+ );
+ plaque.position.set(x-side*.18,1.1,z);
+ scene.add(plaque);
+}
+
+async function build(){
+ const rows=Math.max(1,Math.ceil(artworks.length/2));
+ galleryEnd=-(rows-1)*11.5-18;
+ scene=new THREE.Scene();
+ scene.background=new THREE.Color('#101914');
+ scene.fog=new THREE.FogExp2('#101914',.006);
+
+ camera=new THREE.PerspectiveCamera(70,innerWidth/innerHeight,.1,Math.max(180,Math.abs(galleryEnd)+60));
+ camera.position.set(0,1.7,10);
+
+ renderer=new THREE.WebGLRenderer({antialias:true});
+ renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+ renderer.setSize(innerWidth,innerHeight);
+ renderer.outputColorSpace=THREE.SRGBColorSpace;
+ renderer.toneMapping=THREE.ACESFilmicToneMapping;
+ renderer.toneMappingExposure=1.2;
+ root.appendChild(renderer.domElement);
+
+ controls=new PointerLockControls(camera,renderer.domElement);
+ controls.pointerSpeed=.75;
+ scene.add(controls.getObject());
+
+ raycaster=new THREE.Raycaster();
+
+ scene.add(new THREE.HemisphereLight('#e0e4d3','#293328',2.0));
+ const ambient=new THREE.DirectionalLight('#f3e1bd',2);
+ ambient.position.set(-4,10,8);
+ scene.add(ambient);
+
+ // Main gallery structure.
+ const roomLength=14-galleryEnd;
+ const roomCenter=(14+galleryEnd)/2;
+ box(20,.3,roomLength,0,-.18,roomCenter,material('#30372e'));
+ box(20,.25,roomLength,0,7.1,roomCenter,material('#151e17'));
+ box(.35,7.2,roomLength,-10,3.5,roomCenter,material('#1a271e'));
+ box(.35,7.2,roomLength,10,3.5,roomCenter,material('#1a271e'));
+ box(20,7.2,.35,0,3.5,14,material('#1a271e'));
+
+ // Back wall and signature theme.
+ box(20,7.2,.35,0,3.5,galleryEnd,material('#202b21'));
+ makeThemeWall();
+
+ // Soft floor lighting lines.
+ const lineMat=new THREE.MeshStandardMaterial({color:'#8e805e',metalness:.4,roughness:.5});
+ for(let z=10;z>galleryEnd+2;z-=5){
+  box(19,.012,.018,0,-.01,z,lineMat);
+ }
+
+ // Artworks loaded from the images folder.
+ for(let i=0;i<artworks.length;i++){
+  await makeArtwork(artworks[i],i);
+ }
+
+ // Central decorative lights.
+ for(let z=5;z>galleryEnd+8;z-=11){
+  const ring=new THREE.Mesh(
+   new THREE.TorusGeometry(.65,.018,8,64),
+   new THREE.MeshStandardMaterial({
+    color:'#d5bc8b',emissive:'#8d6c32',emissiveIntensity:.5
+   })
+  );
+  ring.position.set(0,5.9,z);
+  ring.rotation.x=Math.PI/2;
+  scene.add(ring);
+ }
+ addPlants(rows);
+ buildTourPoints();
+}
+
+function addPlants(rows){
+ const potMats=['#45483e','#51483b','#3b403b'];
+ const greens=['#315b3c','#456c45','#58794b','#294d37'];
+ const burgundy=['#71343d','#8a4148'];
+ for(let r=0;r<rows;r++){
+  for(const side of (r%2===0?[-1,1]:[1,-1])){
+   const z=8-r*11.5-4.1;
+   const x=side*7.7;
+   const pot=new THREE.Mesh(new THREE.CylinderGeometry(.42,.34,.62,18),material(potMats[(r+(side>0?1:0))%potMats.length],.72));
+   pot.position.set(x,.31,z);scene.add(pot);
+   const rim=new THREE.Mesh(new THREE.TorusGeometry(.39,.035,8,24),material('#887451',.45));
+   rim.rotation.x=Math.PI/2;rim.position.set(x,.59,z);scene.add(rim);
+   const stemMat=material('#36543a');
+   for(let j=0;j<5;j++){
+    const angle=j*Math.PI*2/5+(side>0?.3:0);
+    const h=1.1+(j%3)*.22;
+    const leaf=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),material(j===1&&r%2===0?burgundy[(r+j)%2]:greens[(r+j)%greens.length],.82));
+    leaf.scale.set(.19,.62,.12);
+    leaf.position.set(x+Math.cos(angle)*(.28+j%2*.08),.72+h*.52,z+Math.sin(angle)*(.28+j%2*.08));
+    leaf.rotation.z=-Math.cos(angle)*.55;leaf.rotation.x=Math.sin(angle)*.45;scene.add(leaf);
+    const stem=new THREE.Mesh(new THREE.CylinderGeometry(.025,.035,h,7),stemMat);
+    stem.position.set(x+Math.cos(angle)*.12,.62+h/2,z+Math.sin(angle)*.12);
+    stem.rotation.z=-Math.cos(angle)*.18;scene.add(stem);
+   }
+  }
+ }
+}
+
+function buildTourPoints(){
+ tourPoints=[];
+ artworks.forEach((a,i)=>{
+  const {side,z}=a._gallery;
+  tourPoints.push({position:new THREE.Vector3(side*6.0,1.7,z+2.7),target:new THREE.Vector3(side*9.55,3.35,z),duration:4.2,hold:2.2});
+ });
+ tourPoints.push({position:new THREE.Vector3(0,1.7,galleryEnd+10),target:new THREE.Vector3(0,3.6,galleryEnd+2),duration:4.5,hold:2.5});
+}
+
+function openArtwork(index){
+ const item=artworks[index];
+ if(!item)return;
+ $('number').textContent='ARTWORK / '+String(index+1).padStart(2,'0');
+ $('title').textContent=item.title||'Untitled';
+ $('description').textContent=item.description||item.desc||'';
+ $('detail').classList.add('show');
+ $('hudTitle').textContent=item.title||'Artwork';
+ $('hudDesc').textContent=item.description||item.desc||'';
+}
+function closeArtwork(){$('detail').classList.remove('show');}
+
+function enterGallery(){
+ entered=true;
+ $('welcome').classList.add('hidden');
+ $('crosshair').style.display='block';
+ $('hint').textContent=isMobile()?'拖动屏幕环视 · 左下角移动 · 点击作品查看详情':'W A S D 移动 · 鼠标转动视角 · 点击作品查看详情';
+ if(!isMobile()&&!controls.isLocked){
+  controls.lock();
+ }
+ toast('欢迎来到静谧之境');
+}
+
+$('enter').addEventListener('click',enterGallery);
+$('close').addEventListener('click',closeArtwork);
+
+$('home').addEventListener('click',()=>{
+ if(controls.isLocked)controls.unlock();
+ entered=false;tour=false;
+ $('welcome').classList.remove('hidden');
+ $('crosshair').style.display='none';
+ $('hint').textContent='';
+ keys={forward:false,back:false,left:false,right:false};touch={forward:false,back:false,left:false,right:false};
+ closeArtwork();
+});
+
+$('tour').addEventListener('click',()=>{
+ tour=!tour;
+ tourClock=0;tourStage=0;tourStageTime=0;
+ $('tour').textContent=tour?'停止导览 ■':'自动导览 ↗';
+ if(tour){
+  entered=true;
+  $('welcome').classList.add('hidden');
+  if(controls.isLocked)controls.unlock();
+  toast('自动导览开始');
+ }else toast('自动导览结束');
+});
+
+document.addEventListener('keydown',e=>{
+ if(e.code==='KeyW'||e.code==='ArrowUp')keys.forward=true;
+ if(e.code==='KeyS'||e.code==='ArrowDown')keys.back=true;
+ if(e.code==='KeyA'||e.code==='ArrowLeft')keys.left=true;
+ if(e.code==='KeyD'||e.code==='ArrowRight')keys.right=true;
+});
+document.addEventListener('keyup',e=>{
+ if(e.code==='KeyW'||e.code==='ArrowUp')keys.forward=false;
+ if(e.code==='KeyS'||e.code==='ArrowDown')keys.back=false;
+ if(e.code==='KeyA'||e.code==='ArrowLeft')keys.left=false;
+ if(e.code==='KeyD'||e.code==='ArrowRight')keys.right=false;
+});
+
+document.querySelectorAll('[data-m]').forEach(button=>{
+ const key=button.dataset.m;
+ button.addEventListener('pointerdown',e=>{
+  e.preventDefault();touch[key]=true;
+ });
+ ['pointerup','pointerleave','pointercancel'].forEach(event=>{
+  button.addEventListener(event,()=>touch[key]=false);
+ });
+});
+
+function clickArtwork(event){
+ if(!entered)return;
+ const rect=renderer.domElement.getBoundingClientRect();
+ const pointer=new THREE.Vector2(
+  (event.clientX-rect.left)/rect.width*2-1,
+  -(event.clientY-rect.top)/rect.height*2+1
+ );
+ raycaster.setFromCamera(pointer,camera);
+ const hits=raycaster.intersectObjects(pictures);
+ if(hits.length)openArtwork(hits[0].object.userData.artIndex);
+}
+rendererClickSetup();
+
+function rendererClickSetup(){
+ // Listener is connected after renderer creation below.
+}
+
+function animate(){
+ requestAnimationFrame(animate);
+ const dt=Math.min(clock.getDelta(),.05);
+
+ if(entered&&!tour&&controls){
+  const speed=5*dt;
+  if(keys.forward||touch.forward)controls.moveForward(speed);
+  if(keys.back||touch.back)controls.moveForward(-speed);
+  if(keys.left||touch.left)controls.moveRight(-speed);
+  if(keys.right||touch.right)controls.moveRight(speed);
+  const p=controls.getObject().position;
+  p.y=1.7;
+  p.x=THREE.MathUtils.clamp(p.x,-8.8,8.8);
+  p.z=THREE.MathUtils.clamp(p.z,galleryEnd+4,11);
+ }
+
+ if(tour&&tourPoints.length){
+  tourClock+=dt;tourStageTime+=dt;
+  const point=tourPoints[tourStage];
+  const moveT=Math.min(tourStageTime/point.duration,1);
+  const eased=moveT*moveT*(3-2*moveT);
+  const previous=tourStage===0?new THREE.Vector3(0,1.7,10):tourPoints[tourStage-1].position;
+  camera.position.lerpVectors(previous,point.position,eased);
+  camera.lookAt(point.target);
+  if(moveT>=1&&tourStageTime>=point.duration+point.hold){
+   tourStage++;tourStageTime=0;
+   if(tourStage>=tourPoints.length){tour=false;$('tour').textContent='自动导览 ↗';toast('导览结束，感谢参观');}
+  }
+ }
+ renderer.render(scene,camera);
+}
+
+try{
+ await loadArtworks();
+ await build();
+
+ renderer.domElement.addEventListener('click',event=>{
+  if(isMobile())return;
+  if(controls.isLocked){raycaster.setFromCamera(new THREE.Vector2(0,0),camera);const hits=raycaster.intersectObjects(pictures);if(hits.length)openArtwork(hits[0].object.userData.artIndex);}
+  else clickArtwork(event);
+ });
+ // Mobile: drag anywhere to look around; a short tap selects the artwork.
+ renderer.domElement.addEventListener('pointerdown',e=>{
+  if(!isMobile()||!entered||tour)return;
+  mobilePointer={id:e.pointerId,x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,moved:false};
+  renderer.domElement.setPointerCapture?.(e.pointerId);
+ });
+ renderer.domElement.addEventListener('pointermove',e=>{
+  if(!mobilePointer||mobilePointer.id!==e.pointerId)return;
+  const dx=e.clientX-mobilePointer.lastX,dy=e.clientY-mobilePointer.lastY;
+  if(Math.abs(e.clientX-mobilePointer.x)+Math.abs(e.clientY-mobilePointer.y)>7)mobilePointer.moved=true;
+  mobileYaw-=dx*.0045;mobilePitch=THREE.MathUtils.clamp(mobilePitch-dy*.0045,-1.15,1.15);
+  camera.rotation.order='YXZ';camera.rotation.y=mobileYaw;camera.rotation.x=mobilePitch;
+  mobilePointer.lastX=e.clientX;mobilePointer.lastY=e.clientY;
+ });
+ renderer.domElement.addEventListener('pointerup',e=>{
+  if(!mobilePointer||mobilePointer.id!==e.pointerId)return;
+  if(!mobilePointer.moved){const rect=renderer.domElement.getBoundingClientRect();const p=new THREE.Vector2((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);raycaster.setFromCamera(p,camera);const hits=raycaster.intersectObjects(pictures);if(hits.length)openArtwork(hits[0].object.userData.artIndex);}
+  mobilePointer=null;
+ });
+
+ controls.addEventListener('lock',()=>{
+  $('welcome').classList.add('hidden');
+  $('hint').textContent='W A S D 移动 · 鼠标环视 · 点击作品查看详情 · ESC 退出';
+ });
+ controls.addEventListener('unlock',()=>{
+  if(entered&&!tour)$('hint').textContent='点击展馆画面继续漫游';
+ });
+
+ addEventListener('resize',()=>{
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+ });
+
+ animate();
+ setTimeout(()=>$('loading').classList.add('hide'),400);
+}catch(error){
+ console.error(error);
+ $('loading').classList.add('error');
+ $('loading').innerHTML=
+  '<div><h2>展馆加载失败</h2><p>请检查网络和图片路径。</p><pre style="white-space:pre-wrap">'+
+  String(error.stack||error)+'</pre></div>';
+}
+</script>
+</body>
+</html>
