@@ -205,10 +205,10 @@ let touch={forward:false,back:false,left:false,right:false};
 let toastTimer;
 
 const DEFAULT_ARTS=[
- {title:'森林的呼吸',en:'Breath of the Forest',description:'探索森林、自然与生命之间的关系。',image:'images/artwork01.jpg'},
- {title:'金色黎明',en:'Golden Dawn',description:'描绘清晨阳光与大地之间的温暖关系。',image:'images/artwork02.jpg'},
- {title:'无声之海',en:'Silent Sea',description:'在流动的色彩中感受海洋的宁静。',image:'images/artwork03.jpg'},
- {title:'大地诗篇',en:'Earth Poetry',description:'从土地的纹理中发现自然的美。',image:'images/artwork04.jpg'}
+ {title:'森林的呼吸',en:'Breath of the Forest',description:'探索森林、自然与生命之间的关系。',image:'artwork01.jpg'},
+ {title:'金色黎明',en:'Golden Dawn',description:'描绘清晨阳光与大地之间的温暖关系。',image:'artwork02.jpg'},
+ {title:'无声之海',en:'Silent Sea',description:'在流动的色彩中感受海洋的宁静。',image:'artwork03.jpg'},
+ {title:'大地诗篇',en:'Earth Poetry',description:'从土地的纹理中发现自然的美。',image:'artwork04.jpg'}
 ];
 
 let artworks=DEFAULT_ARTS;
@@ -231,7 +231,7 @@ async function loadArtworks(){
   const data=await response.json();
   if(Array.isArray(data)&&data.length)artworks=data;
   else if(Array.isArray(data.artworks)&&data.artworks.length)artworks=data.artworks;
-  artworks=artworks.map((a,i)=>({...a,title:a.title||a.name||`Artwork ${i+1}`,image:a.image||a.src||`images/artwork${String(i+1).padStart(2,'0')}.jpg`}));
+  artworks=artworks.map((a,i)=>({...a,title:a.title||a.name||`Artwork ${i+1}`,image:a.image||a.src||`artwork${String(i+1).padStart(2,'0')}.jpg`}));
  }catch(error){
   console.warn('Using built-in artwork list:',error);
  }
@@ -323,9 +323,20 @@ async function makeArtwork(item,index){
  const textureLoader=new THREE.TextureLoader();
  let texture;
  try{
-  texture=await new Promise((resolve,reject)=>{
-   textureLoader.load(item.image,resolve,undefined,reject);
-  });
+  // Try the exact path in artworks.json first, then the filename in this folder.
+  // This supports both /images/artwork01.jpg and /artwork01.jpg layouts.
+  const imageName=String(item.image||'').split('/').pop();
+  const candidates=[...new Set([item.image,imageName].filter(Boolean))];
+  let lastError;
+  for(const src of candidates){
+   try{
+    texture=await new Promise((resolve,reject)=>{
+     textureLoader.load(src,resolve,undefined,reject);
+    });
+    break;
+   }catch(err){lastError=err;}
+  }
+  if(!texture)throw lastError||new Error('Artwork image not found');
   texture.colorSpace=THREE.SRGBColorSpace;
  }catch(error){
   console.warn('Image could not load:',item.image,error);
